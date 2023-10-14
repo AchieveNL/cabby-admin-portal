@@ -35,8 +35,15 @@ const CreateDamageReport = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Create Damage Report</h1>
+    <div
+      style={{
+        maxWidth: '600px',
+        margin: '0 auto',
+      }}
+    >
+      <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>
+        Create Damage Report
+      </h1>
       <Form onFinish={onFinish} layout="vertical">
         <Form.Item
           label="Vehicle"
@@ -71,16 +78,6 @@ const CreateDamageReport = () => {
           </Button>
         </Form.Item>
       </Form>
-      <style jsx>{`
-        .container {
-          max-width: 600px;
-          margin: 0 auto;
-        }
-        h1 {
-          font-size: 24px;
-          margin-bottom: 16px;
-        }
-      `}</style>
     </div>
   );
 };
