@@ -12,7 +12,6 @@ export const getAllDrivers = async (): Promise<Driver[]> => {
 };
 
 export const getDriverById = async (id: string): Promise<Driver> => {
-  console.log(id);
   const response = await axios.get(`${DRIVERS_URL}/${id}`);
   return response.data.payload;
 };

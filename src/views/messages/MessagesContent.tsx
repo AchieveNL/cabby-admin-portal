@@ -15,8 +15,8 @@ import {
   Message,
   getMessages,
   sendMessageToSupabase,
-} from '@/supabase/messages';
-import { supabase } from '@/supabase/supabaseClient';
+} from '@/api/supabase/messages';
+import { supabase } from '@/api/supabase/supabaseClient';
 import { REALTIME_LISTEN_TYPES } from '@supabase/supabase-js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
@@ -61,8 +61,6 @@ const MessagesContent: FC = () => {
   }, [messages]);
 
   useEffect(() => {
-    const channels = supabase.getChannels();
-    console.log(channels);
     const messageSubscription = supabase
       .channel('any')
       .on(
@@ -72,7 +70,6 @@ const MessagesContent: FC = () => {
         { event: '*', schema: 'public', table: 'message' },
         (payload: Payload) => {
           const newMessage = payload.new;
-          console.log(payload);
           if (
             newMessage &&
             ((newMessage.senderId === currentUserId &&

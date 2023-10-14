@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { Form, Input, Button, Col, Row } from 'antd';
 import type { FormItemProps } from 'antd';
 import Image from 'next/image';
-import styles from '../../src/styles/Login.module.css';
+import styles from '../../styles/Login.module.css';
 
 const MyFormItemContext = React.createContext<(string | number)[]>([]);
 interface MyFormItemGroupProps {
@@ -43,13 +43,7 @@ const ForgotPasswordForm = () => {
   const router: any = useRouter();
 
   const onHandleNext = () => null;
-  const requestForResetLink = async (email: string) => {
-    try {
-      console.log('In progress', email);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const requestForResetLink = async (email: string) => email;
   const onFinish = async (value: any) => {
     const {
       user: { email },

@@ -3,7 +3,7 @@ import OtpInput from 'react-otp-input';
 import { useRouter } from 'next/router';
 import { Form, Input, Button, Row } from 'antd';
 import type { FormItemProps } from 'antd';
-import styles from '../../src/styles/Login.module.css';
+import styles from '../../styles/Login.module.css';
 import { verifyOtp } from '@/api/auth/auth';
 
 const MyFormItemContext = React.createContext<(string | number)[]>([]);

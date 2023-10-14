@@ -50,7 +50,6 @@ export const useDriversByStatus = (status: UserProfileStatus) => {
 };
 
 export const useDriverById = (id: string) => {
-  console.log(id);
   const [data, setData] = useState<Driver | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<AxiosError | null>(null);

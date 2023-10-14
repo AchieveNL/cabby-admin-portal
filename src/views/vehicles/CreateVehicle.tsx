@@ -87,8 +87,6 @@ const CreateVehicle: React.FC = () => {
     }));
   };
 
-  console.log(vehicleData);
-
   return (
     <div className="p-8">
       <div className="flex mb-4">
