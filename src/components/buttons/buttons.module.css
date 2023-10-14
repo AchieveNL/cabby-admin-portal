@@ -1,0 +1,9 @@
+.button_content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.button_content span {
+  vertical-align: unset !important;
+}

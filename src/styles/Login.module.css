@@ -1,0 +1,113 @@
+.leftBox {
+  /* background-color: linear-gradient(189.91deg, #5C7FFC -24.69%, #2D46C4 74.85%); */
+  background-image: url('/bg-login.png');
+  background-repeat: no-repeat;
+  background-color: #5c7ffc;
+  background-size: cover;
+  min-height: 100vh;
+}
+
+.leftBox .imgBox {
+  justify-content: center;
+  display: flex;
+  align-content: center;
+  height: 100vh;
+}
+/* .leftBox .imgBox img{} */
+.loginBox {
+  justify-content: center;
+  display: flex;
+  align-content: center;
+  height: 100vh;
+}
+
+.loginBox .loginHeading {
+  color: #0a0a1c;
+  font-size: 2rem;
+  font-family: 'THICCCBOI', sans-serif;
+  font-weight: 700;
+  line-height: 2.5rem; /* 125% */
+  margin-bottom: 0.75rem;
+}
+
+.loginBox .loginSubHeading {
+  font-family: 'THICCCBOI', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem; /* 142.857% */
+}
+
+.loginBox .form {
+  margin-top: 12px;
+  margin-left: 1px;
+}
+
+.loginBox .form label {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #0a0a1c;
+}
+
+.loginBox .form input {
+  border-radius: 8px;
+  padding: 12px;
+  color: #8d8d8d;
+  margin: 8px 0px;
+  background: #f4f4f4;
+  border: 0px;
+  font-weight: 400;
+}
+
+.loginBox .form .loginBtn:hover {
+  background-color: #2d46c4;
+}
+
+.loginBox .form .externalLinkBox {
+  width: 100%;
+  height: 32px;
+  padding: 0px 6px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.loginBox .form .externalLink {
+  color: #2d46c4;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.form .unOrderList {
+  margin-left: 15px;
+}
+
+.form .unOrderList .listGreen {
+  color: green;
+}
+
+.form .unOrderList .listRed {
+  color: red;
+}
+
+.arrowBackIcon {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.arrowBackLabel {
+  position: relative;
+  top: -2px;
+  left: 1px;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #2d46c4;
+}

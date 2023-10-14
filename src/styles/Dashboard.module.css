@@ -1,0 +1,16 @@
+.logo {
+  width: 145px;
+  height: 58px;
+  top: 7px;
+  position: relative;
+  left: 24px;
+}
+
+.setSideBar {
+  position: relative;
+  top: 60px;
+}
+
+a.menuItemLink{
+  color: #7B8EF0;
+}

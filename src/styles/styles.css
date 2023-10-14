@@ -1,0 +1,115 @@
+body {
+  margin: 0 auto;
+  padding: 0;
+  background-color: #fff;
+  height: 100vh;
+}
+
+.container {
+  width: 95%;
+  margin: 0 auto;
+}
+
+input {
+  height: 45px;
+}
+.documentBox {
+  width: 80%;
+  border-radius: 20px;
+  margin-top: 10px;
+}
+.primaryBtn {
+  width: auto;
+  height: 45px;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background-color: #3050c4;
+}
+
+.outlineBtn {
+  width: auto;
+  height: 45px;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: grey;
+  background-color: #fff;
+  border: 1px solid grey;
+  border-radius: 10px;
+}
+.outlineBtn:hover {
+  width: auto;
+  height: 45px;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: grey !important;
+  background-color: #fff;
+  border: 1px solid grey !important;
+  border-radius: 10px;
+}
+
+.primaryBtn:hover {
+  width: auto;
+  height: 45px;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background-color: #3050c4 !important;
+}
+
+.ant-card {
+  border-radius: 20px;
+}
+
+.ant-tabs-nav {
+  background-color: #fff;
+  height: 60px;
+  padding-left: 28px;
+  font-style: normal;
+}
+.ant-tabs-tab {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+/* Change the white to any color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #f4f4f4 inset !important;
+}
+
+.title {
+  margin: 0;
+  padding: 0;
+  color: #0a0a1c;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+}
+
+.subHeading {
+  margin: 0;
+  padding: 0;
+  color: #8d8d8d;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.pwdBox {
+  position: relative;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 9px;
+  top: 18px;
+  cursor: pointer;
+}

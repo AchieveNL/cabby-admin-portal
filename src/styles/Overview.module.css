@@ -1,0 +1,52 @@
+.card {
+  margin: 5px 5px;
+  background-image: url('/bg-login.png');
+  background-repeat: no-repeat;
+  background: rgb(45, 70, 196);
+  background: linear-gradient(90deg, rgba(45, 70, 196, 1) 0%, rgba(92, 127, 252, 1) 70%);
+  background-size: cover;
+  color: #fff;
+}
+
+.card .count {
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  color: #fff;
+  padding-bottom: 5px;
+}
+
+.card .heading {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #fff;
+}
+
+.card .icon {
+  visibility: visible;
+}
+
+
+@media only screen and (max-width: 767px) {
+  .card .icon {
+    visibility: hidden;
+  }
+
+
+  .card .count {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 16px;
+    padding-bottom: 5px;
+  }
+
+  .card .heading {
+    font-size: 12px;
+    line-height: 12px;
+  }
+}

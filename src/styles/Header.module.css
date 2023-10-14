@@ -1,0 +1,65 @@
+.headerLayout {
+  min-height: 80px;
+  height: auto;
+  background: #fff;
+  padding: 14px 0px;
+}
+.pageHeading {
+  min-width: 70px;
+  height: 24px;
+  position: relative;
+  top: 24px;
+  left: 26px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #2d46c4;
+}
+
+.icons {
+  position: relative;
+  top: 12px;
+  right: 25px;
+}
+.icons > img {
+  margin: 0px 8px;
+}
+
+.menuItem{
+  min-width: 190px;
+  width: 92%;
+  margin: 0;
+  padding: 0;
+  height: 50px;
+  padding: 5px 20px;
+  margin: 0px 10px;
+  cursor: pointer;
+}
+
+.menuItemActive{
+  border-radius: 10px;
+  border-color: #F2F4FF;
+  background-color: #F2F4FF;
+}
+
+.menuItemLabel{
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 48px;
+}
+
+.menuItemIcon{
+  position: relative;
+  top: 6px;
+  left: -7px;
+  margin-left: 5px;
+}
+
+.logoutBtn,.logoutBtn:hover{
+  width: 88px;
+  padding: 11px 11px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  color: #2d46c4;
+}
