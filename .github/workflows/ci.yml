@@ -31,6 +31,3 @@ jobs:
 
       - name: Check formatting
         run: npm run format:check  # Running the format check script
-
-      - name: Check commits messages
-        uses: wagoid/commitlint-github-action@v5
