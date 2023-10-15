@@ -39,6 +39,8 @@ jobs:
         run: npm run format:check
 
   build-and-deploy-staging:
+    environment:
+      name: staging
     name: Build and Deploy to Cloud Run (Staging)
     needs: run-ci
     runs-on: ubuntu-latest
@@ -72,13 +74,15 @@ jobs:
 
       - name: Deploy to Cloud Run (Staging)
         run: |
-          gcloud run deploy your-staging-service-name \
+          gcloud run deploy cabby-admin-staging \
             --image ${{ env.IMAGE_URL }}:staging-${{ github.sha }} \
             --region ${{ secrets.REGION }} \
             --platform managed \
             --no-traffic
 
   build-and-deploy-production:
+    environment:
+      name: production
     name: Build and Deploy to Cloud Run (Production)
     needs: run-ci
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == '*deploy prod*'
@@ -113,7 +117,7 @@ jobs:
 
       - name: Deploy to Cloud Run (Production)
         run: |
-          gcloud run deploy your-production-service-name \
+          gcloud run deploy cabby-admin-production \
             --image ${{ env.IMAGE_URL }}:production-${{ github.sha }} \
             --region ${{ secrets.REGION }} \
             --platform managed
