@@ -19,13 +19,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci 
 
@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -57,20 +57,20 @@ jobs:
 
       - name: Install dependencies
         run: npm ci 
-      
+
       - name: Build
         run: npm run build
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
         with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
+          project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
 
       - name: Build and push Docker image to GCR (Staging)
         run: | 
-          gcloud builds submit --tag ${{ env.IMAGE_URL }}:staging-${{ github.sha }}
+          gcloud builds submit --tag ${{ env.IMAGE_URL }}:staging-${{ github.sha }} --project ${{ env.PROJECT_ID }}
 
       - name: Deploy to Cloud Run (Staging)
         run: |
@@ -78,7 +78,8 @@ jobs:
             --image ${{ env.IMAGE_URL }}:staging-${{ github.sha }} \
             --region ${{ secrets.REGION }} \
             --platform managed \
-            --no-traffic
+            --no-traffic \
+            --project ${{ env.PROJECT_ID }}
 
   build-and-deploy-production:
     environment:
@@ -91,7 +92,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -107,17 +108,18 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
         with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
+          project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
 
       - name: Build and push Docker image to GCR (Production)
         run: | 
-          gcloud builds submit --tag ${{ env.IMAGE_URL }}:production-${{ github.sha }}
+          gcloud builds submit --tag ${{ env.IMAGE_URL }}:production-${{ github.sha }} --project ${{ env.PROJECT_ID }}
 
       - name: Deploy to Cloud Run (Production)
         run: |
           gcloud run deploy cabby-admin-production \
             --image ${{ env.IMAGE_URL }}:production-${{ github.sha }} \
             --region ${{ secrets.REGION }} \
-            --platform managed
+            --platform managed \
+            --project ${{ env.PROJECT_ID }}
