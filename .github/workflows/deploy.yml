@@ -60,6 +60,12 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
@@ -70,7 +76,11 @@ jobs:
 
       - name: Build and push Docker image to GCR (Staging)
         run: | 
-          gcloud builds submit --tag ${{ env.IMAGE_URL }}:staging-${{ github.sha }} --project ${{ env.PROJECT_ID }}
+          gcloud builds submit \
+            --tag ${{ env.IMAGE_URL }}:staging-${{ github.sha }} \
+            --project ${{ env.PROJECT_ID }} \
+            --substitutions=_NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }},_NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }},_NEXT_PUBLIC_NODE_ENV=${{ secrets.NEXT_PUBLIC_NODE_ENV }},_NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
 
       - name: Deploy to Cloud Run (Staging)
         run: |
@@ -104,6 +114,12 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
@@ -114,7 +130,11 @@ jobs:
 
       - name: Build and push Docker image to GCR (Production)
         run: | 
-          gcloud builds submit --tag ${{ env.IMAGE_URL }}:production-${{ github.sha }} --project ${{ env.PROJECT_ID }}
+          gcloud builds submit \
+            --tag ${{ env.IMAGE_URL }}:production-${{ github.sha }} \
+            --project ${{ env.PROJECT_ID }} \
+            --substitutions=_NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }},_NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }},_NEXT_PUBLIC_NODE_ENV=${{ secrets.NEXT_PUBLIC_NODE_ENV }},_NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
 
       - name: Deploy to Cloud Run (Production)
         run: |
