@@ -74,6 +74,12 @@ jobs:
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
 
+      - name: Build and push Docker image to GCR
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS }}" | docker login -u _json_key --password-stdin https://gcr.io
+          docker build -t ${{ env.IMAGE_URL }}:staging-${{ github.sha }} .
+          docker push ${{ env.IMAGE_URL }}:staging-${{ github.sha }}
+
       - name: Deploy to Cloud Run (Staging)
         run: |
           gcloud run deploy cabby-admin-staging \
@@ -119,6 +125,12 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
+
+      - name: Build and push Docker image to GCR
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS }}" | docker login -u _json_key --password-stdin https://gcr.io
+          docker build -t ${{ env.IMAGE_URL }}:production-${{ github.sha }} .
+          docker push ${{ env.IMAGE_URL }}:production-${{ github.sha }}
 
       - name: Deploy to Cloud Run (Production)
         run: |
