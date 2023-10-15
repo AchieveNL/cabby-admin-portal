@@ -18,7 +18,7 @@ const AuthLayout = ({ children }: Props) => {
         <title>Cabby - Auth</title>
       </Head>
       <Row style={{ margin: 0 }}>
-        <Col xs={24} sm={24} md={24} lg={12} xl={12} className={styles.leftBox}>
+        <Col xs={0} sm={0} md={0} lg={12} xl={12} className={styles.leftBox}>
           <Row align="middle" className={styles.imgBox}>
             <Col>
               <Image alt="" src="/logo.png" width={240} height={93} />

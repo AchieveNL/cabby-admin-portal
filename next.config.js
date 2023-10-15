@@ -8,6 +8,15 @@ const nextConfig = {
   images: {
     domains: ['storage.googleapis.com'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/dashboard',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
