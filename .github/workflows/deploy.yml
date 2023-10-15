@@ -1,23 +1,23 @@
-name: CI/CD Workflow
+name: Build and Deploy Next.js to Cloud Run
 
 on:
   push:
     branches:
       - main
   pull_request:
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  IMAGE_URL: gcr.io/cabby-392012/cabby-admin
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  REGION: ${{ secrets.REGION }}
+  IMAGE_URL: gcr.io/cabby-392012/cabby-admin:latest
 
 jobs:
-  run-ci:
-    name: Run CI Checks
+  build-and-check:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Set up Node
@@ -26,106 +26,71 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci 
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: Check types
+      - name: Check Types
         run: npm run type-check
 
-      - name: Check linting
+      - name: Check Linting
         run: npm run lint
 
-      - name: Check formatting
+      - name: Prettier Check
         run: npm run format:check
 
-  build-and-deploy-staging:
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
+  deploy-staging:
     environment:
       name: staging
-    name: Build and Deploy to Cloud Run (Staging)
-    needs: run-ci
+    needs: build-and-check
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v0'
         with:
-          node-version: '18'
-          cache: 'npm'
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      - name: Install dependencies
-        run: npm ci 
-
-      - name: Build
-        run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
-
-
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+      - name: Deploy to Cloud Run Staging
+        uses: google-github-actions/deploy-cloudrun@v0
         with:
-          project_id: ${{ env.PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          export_default_credentials: true
+          service: cabby-admin-staging
+          region: ${{ secrets.REGION }}
+          image: ${{ env.IMAGE_URL }}:staging-${{ github.sha }}
+          env_vars: |
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_NODE_ENV=staging
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
-      - name: Deploy to Cloud Run (Staging)
-        run: |
-          gcloud run deploy cabby-admin-staging \
-            --image ${{ env.IMAGE_URL }}:staging-${{ github.sha }} \
-            --region ${{ secrets.REGION }} \
-            --platform managed \
-            --project ${{ env.PROJECT_ID }} \
-            --set-env-vars NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }},NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }},NEXT_PUBLIC_NODE_ENV=${{ secrets.NEXT_PUBLIC_NODE_ENV }},NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
-
-
-  build-and-deploy-production:
+  deploy-production:
     environment:
       name: production
-    name: Build and Deploy to Cloud Run (Production)
-    needs: run-ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    needs: build-and-check
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v0'
         with:
-          node-version: '18'
-          cache: 'npm'
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      - name: Install dependencies
-        run: npm ci 
-
-      - name: Build
-        run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
-
-
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+      - name: Deploy to Cloud Run Production
+        uses: google-github-actions/deploy-cloudrun@v0
         with:
-          project_id: ${{ env.PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          export_default_credentials: true
-
-      - name: Deploy to Cloud Run (Production)
-        run: |
-          gcloud run deploy cabby-admin-production \
-            --image ${{ env.IMAGE_URL }}:production-${{ github.sha }} \
-            --region ${{ secrets.REGION }} \
-            --platform managed \
-            --project ${{ env.PROJECT_ID }} \
-            --set-env-vars NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }},NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }},NEXT_PUBLIC_NODE_ENV=${{ secrets.NEXT_PUBLIC_NODE_ENV }},NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
-
+          service: cabby-admin-production
+          region: ${{ secrets.REGION }}
+          image: ${{ env.IMAGE_URL }}:production-${{ github.sha }}
+          env_vars: |
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_NODE_ENV=production
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
