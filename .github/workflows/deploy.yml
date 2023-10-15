@@ -78,7 +78,6 @@ jobs:
             --image ${{ env.IMAGE_URL }}:staging-${{ github.sha }} \
             --region ${{ secrets.REGION }} \
             --platform managed \
-            --no-traffic \
             --project ${{ env.PROJECT_ID }}
 
   build-and-deploy-production:
