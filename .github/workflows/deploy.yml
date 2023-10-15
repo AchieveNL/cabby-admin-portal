@@ -87,7 +87,6 @@ jobs:
       name: production
     name: Build and Deploy to Cloud Run (Production)
     needs: run-ci
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == '*deploy prod*'
     runs-on: ubuntu-latest
 
     steps:
