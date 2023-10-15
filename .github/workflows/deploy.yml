@@ -75,10 +75,12 @@ jobs:
           export_default_credentials: true
 
       - name: Build and push Docker image to GCR
+        env:  # Ensure that the secret is only used where needed
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: |
-          echo "${{ secrets.GCP_CREDENTIALS }}" | docker login -u _json_key --password-stdin https://gcr.io
-          docker build -t ${{ env.IMAGE_URL }}:staging-${{ github.sha }} .
-          docker push ${{ env.IMAGE_URL }}:staging-${{ github.sha }}
+          echo "$GCP_CREDENTIALS" | docker login -u _json_key --password-stdin https://gcr.io
+          docker build -t ${{ env.IMAGE_URL }}:production-${{ github.sha }} .
+          docker push ${{ env.IMAGE_URL }}:production-${{ github.sha }}
 
       - name: Deploy to Cloud Run (Staging)
         run: |
@@ -127,8 +129,10 @@ jobs:
           export_default_credentials: true
 
       - name: Build and push Docker image to GCR
+        env:  # Ensure that the secret is only used where needed
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: |
-          echo "${{ secrets.GCP_CREDENTIALS }}" | docker login -u _json_key --password-stdin https://gcr.io
+          echo "$GCP_CREDENTIALS" | docker login -u _json_key --password-stdin https://gcr.io
           docker build -t ${{ env.IMAGE_URL }}:production-${{ github.sha }} .
           docker push ${{ env.IMAGE_URL }}:production-${{ github.sha }}
 
