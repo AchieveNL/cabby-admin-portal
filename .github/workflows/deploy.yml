@@ -140,10 +140,10 @@ jobs:
       - name: Build and push Docker image to GCR (Production)
         env:  # Ensure that the secret is only used where needed
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY_PROD }}  # Example if you have different values for prod
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL_PROD }}
-          NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV_PROD }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL_PROD }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}  # Example if you have different values for prod
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
         run: |
           echo "$GCP_CREDENTIALS" | docker login -u _json_key --password-stdin https://gcr.io
           docker build --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY \
