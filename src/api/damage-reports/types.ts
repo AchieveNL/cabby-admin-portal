@@ -1,3 +1,5 @@
+import { Vehicle } from '../vehicles/types';
+
 export enum ReportStatus {
   UNDERPAID = 'UNDERPAID',
   REPAIRED = 'REPAIRED',
@@ -9,7 +11,7 @@ export interface DamageReportResponse {
   description: string;
   status: ReportStatus;
   amount?: number;
-  repairedAt?: Date;
+  repairedAt?: string;
   vehicleId: string;
   userId: string;
   user: {
@@ -21,6 +23,27 @@ export interface DamageReportResponse {
     model: string;
     companyName: string;
   };
+}
+
+export interface DamageReportDetailsResponse {
+  id: number;
+  reportedAt: string;
+  description: string;
+  status: ReportStatus;
+  amount?: number;
+  repairedAt?: string;
+  vehicleId: string;
+  userId: string;
+  images: string[];
+  user: {
+    role: string;
+    profile: {
+      fullName: string;
+      lastName: string;
+      firstName: string;
+    };
+  };
+  vehicle: Vehicle;
 }
 
 export interface CreateDamageReportDto {

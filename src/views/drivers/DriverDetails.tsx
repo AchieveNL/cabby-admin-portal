@@ -24,7 +24,7 @@ const InputItem = ({ label, value }: { label: string; value: string }) => (
 export default function DriverDetails() {
   const router = useRouter();
   const driverId = router.query.driverId as string;
-  const { data: driver, loading } = useDriverById(driverId);
+  const { data: driver, loading, refetch } = useDriverById(driverId);
 
   if (loading || !driver) return <div>Loading...</div>;
 
@@ -41,7 +41,7 @@ export default function DriverDetails() {
         ) : (
           <div
             className={styles.pdfBox}
-            onClick={() => window.open(documentLink, '_blank')}
+            onClick={() => window.open(documentLink, '_blank', 'noopener')}
           >
             <PdfIcon />
             <h6 className={styles.pdfIconLabel}>{title} Document</h6>
@@ -63,14 +63,14 @@ export default function DriverDetails() {
       </h4>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-8 mb-6">
-        <DriverCard driver={driver} isDetailPage={true} />
+        <DriverCard refetch={refetch} driver={driver} isDetailPage={true} />
 
         <Card title="Personal Info" className="space-y-4">
           {/* <InputItem label="Email" value={driver.email} /> */}
           <InputItem label="Phone Number" value={driver.phoneNumber} />
           <InputItem
             label="Date of Birth"
-            value={driver?.driverLicense.dateOfBirth.split('T')[0]}
+            value={driver?.dateOfBirth?.split('T')[0] ?? 'N/A'}
           />
           <InputItem label="Address" value={driver.fullAddress} />
         </Card>
@@ -100,13 +100,13 @@ export default function DriverDetails() {
               driver.permitDetails.taxiPermitPicture,
               true,
             )}
-          {driver?.permitDetails.kiwaTaxiVergunningId &&
+          {driver?.permitDetails.kiwaDocument &&
             renderDocument(
               'Kiwa Taxi Vergunning',
-              driver.permitDetails.kiwaTaxiVergunningId,
+              driver.permitDetails.kiwaDocument,
             )}
-          {driver?.permitDetails.kvkDocumentId &&
-            renderDocument('KVK Document', driver.permitDetails.kvkDocumentId)}
+          {driver?.permitDetails.kvkDocument &&
+            renderDocument('KVK Document', driver.permitDetails.kvkDocument)}
         </ul>
       </Card>
     </div>

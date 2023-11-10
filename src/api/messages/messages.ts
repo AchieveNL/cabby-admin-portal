@@ -27,7 +27,7 @@ export const getConversations = async (): Promise<
   UserConversationResponse[]
 > => {
   try {
-    const response = await axios.get(`${baseUrl}/messages/conversations`);
+    const response = await axios.get(`${apiUrl}/messages/conversations`);
     return response.data.payload;
   } catch (error) {
     console.error('Error fetching conversations:', error);

@@ -12,12 +12,19 @@ import { ExportOutlined } from '@ant-design/icons';
 interface DriverCardProps {
   driver: Driver;
   isDetailPage?: boolean;
+  refetch: () => void;
 }
 
-const DriverCard: React.FC<DriverCardProps> = ({ driver, isDetailPage }) => {
+const DriverCard: React.FC<DriverCardProps> = ({
+  driver,
+  isDetailPage,
+  refetch,
+}) => {
   const router = useRouter();
   const renderTag = (label: string, defaultValue: string, value?: string) => (
-    <Tag color="blue">{value ? `${label} ${value}` : defaultValue}</Tag>
+    <Tag color="blue">
+      {label}: {value || defaultValue}
+    </Tag>
   );
   const { updateStatus } = useUpdateDriverStatus();
 
@@ -25,6 +32,7 @@ const DriverCard: React.FC<DriverCardProps> = ({ driver, isDetailPage }) => {
     try {
       await updateStatus(id, UserProfileStatus.ACTIVE);
       message.success('Driver approved successfully');
+      refetch();
     } catch (error) {
       message.error('Failed to approve the driver');
     }
@@ -34,6 +42,7 @@ const DriverCard: React.FC<DriverCardProps> = ({ driver, isDetailPage }) => {
     try {
       await updateStatus(id, UserProfileStatus.REJECTED);
       message.success('Driver rejected successfully');
+      refetch();
     } catch (error) {
       message.error('Failed to reject the driver');
     }
@@ -51,6 +60,7 @@ const DriverCard: React.FC<DriverCardProps> = ({ driver, isDetailPage }) => {
     try {
       await updateStatus(driver.id, UserProfileStatus.BLOCKED);
       message.success('Driver blocked successfully');
+      refetch();
     } catch (error) {
       message.error('Failed to block the driver');
     }
@@ -63,34 +73,32 @@ const DriverCard: React.FC<DriverCardProps> = ({ driver, isDetailPage }) => {
         {renderTag(
           'KVK ID',
 
-          'KVK ID 12345234',
-          driver?.permitDetails.kvkDocumentId,
+          'N/A',
+          driver?.permitDetails.kvkDocument,
         )}
         {renderTag(
           'Taxi permit',
 
-          'Taxi permit TP143653423',
+          'N/A',
           driver?.permitDetails.taxiPermitId,
         )}
       </Row>
       <Row className={styles.tagsRow}>
         {renderTag(
           'Kiwa taxi vergunning',
-
-          'Kiwa taxi vergunning B01000111100',
-          driver?.permitDetails.kiwaTaxiVergunningId,
+          'N/A',
+          driver?.permitDetails.kiwaDocument,
         )}
       </Row>
       <Row className={styles.tagsRow}>
         {renderTag(
           'Drivers License ID',
-
-          'Drivers License ID A123-34534-123',
+          'N/A',
           driver?.driverLicense.bsnNumber,
         )}
         <Tag color="blue">
-          {driver?.driverLicense.driverLicenseExpiry ||
-            'License expired: Not Available'}
+          License expired on:
+          {driver?.driverLicense.driverLicenseExpiry || 'Not Available'}
         </Tag>
       </Row>
       <Row style={{ marginTop: '8px' }}>

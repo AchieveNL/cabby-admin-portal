@@ -39,7 +39,7 @@ const ClosedDamageReports = () => {
       title: 'User',
       dataIndex: 'user',
       key: 'user',
-      render: (user: any) => user.profile.fullName,
+      render: (user: any) => user.profile?.fullName || 'N/A',
     },
     {
       title: 'Vehicle',

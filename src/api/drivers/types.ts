@@ -10,6 +10,7 @@ export interface Driver {
   profilePhoto?: string;
   signature?: string;
   zip?: string;
+  dateOfBirth: string;
   status: UserProfileStatus;
   driverLicense: DriverLicense;
   permitDetails: PermitDetails;
@@ -27,8 +28,8 @@ export interface DriverLicense {
 
 export interface PermitDetails {
   id: string;
-  kiwaTaxiVergunningId?: string;
-  kvkDocumentId?: string;
+  kiwaDocument?: string;
+  kvkDocument?: string;
   taxiPermitId?: string;
   taxiPermitExpiry?: string;
   taxiPermitPicture?: string;

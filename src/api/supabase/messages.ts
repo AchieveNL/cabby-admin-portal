@@ -8,17 +8,15 @@ export interface Message {
 }
 
 export const getMessages = async (
-  userId1: string,
-  userId2: string,
+  currentUserId: string,
+  recipientId: string,
 ): Promise<Message[]> => {
   try {
     const { data, error } = await supabase
       .from('message')
       .select('*')
-      .ilike('senderId', userId1)
-      .or(
-        `senderId.ilike.${userId2};recipientId.ilike.${userId1},recipientId.ilike.${userId2}`,
-      );
+      .or(`senderId.eq.${currentUserId},recipientId.eq.${currentUserId}`)
+      .or(`senderId.eq.${recipientId},recipientId.eq.${recipientId}`);
 
     if (error) throw error;
     return data || [];

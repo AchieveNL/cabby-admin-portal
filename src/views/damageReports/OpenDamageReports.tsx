@@ -7,6 +7,7 @@ import ButtonWithIcon from '@/components/buttons/buttons';
 import { CheckOutlined, PlusOutlined } from '@ant-design/icons';
 import { closeDamageReports } from '@/api/damage-reports/damage-reports';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const OpenDamageReports = () => {
   const router = useRouter();
@@ -55,7 +56,7 @@ const OpenDamageReports = () => {
       title: 'User',
       dataIndex: 'user',
       key: 'user',
-      render: (user: any) => user.profile.fullName,
+      render: (user: any) => user.profile?.fullName || 'N/A',
     },
     {
       title: 'Vehicle',
@@ -68,13 +69,16 @@ const OpenDamageReports = () => {
       dataIndex: 'id',
       key: 'id',
       render: (value: any, row: any) => (
-        <ButtonWithIcon
-          icon={<CheckOutlined rev={undefined} />}
-          style={{ color: 'green' }}
-          onClick={() => onCloseDamageReport(row.id)}
-        >
-          Repaired
-        </ButtonWithIcon>
+        <div className="flex gap-1">
+          <Link href={`/dashboard/damage-reports/${value}`}>Details</Link>
+          <ButtonWithIcon
+            icon={<CheckOutlined rev={undefined} />}
+            style={{ color: 'green' }}
+            onClick={() => onCloseDamageReport(row.id)}
+          >
+            Repaired
+          </ButtonWithIcon>
+        </div>
       ),
     },
   ];

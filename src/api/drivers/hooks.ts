@@ -53,23 +53,22 @@ export const useDriverById = (id: string) => {
   const [data, setData] = useState<Driver | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<AxiosError | null>(null);
-
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const driver = await DriverAPI.getDriverById(id);
+      setData(driver);
+    } catch (error) {
+      setError(error as AxiosError);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const driver = await DriverAPI.getDriverById(id);
-        setData(driver);
-      } catch (error) {
-        setError(error as AxiosError);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [id]);
 
-  return { data, loading, error };
+  return { data, loading, error, refetch: fetchData };
 };
 
 export const useUpdateDriverStatus = () => {

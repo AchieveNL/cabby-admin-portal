@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   CreateDamageReportDto,
+  DamageReportDetailsResponse,
   DamageReportResponse,
   ReportStatus,
 } from './types';
@@ -14,6 +15,17 @@ export const getDamageReportsByStatus = async (
 ): Promise<DamageReportResponse[]> => {
   try {
     const response = await axios.get(`${BASE_URL}/${status}`);
+    return response.data.payload;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getDamageReportsById = async (
+  id: string,
+): Promise<DamageReportDetailsResponse> => {
+  try {
+    const response = await axios.get(`${BASE_URL}/details/${id}`);
     return response.data.payload;
   } catch (error) {
     throw error;
