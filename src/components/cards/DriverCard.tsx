@@ -12,7 +12,7 @@ import { ExportOutlined } from '@ant-design/icons';
 interface DriverCardProps {
   driver: Driver;
   isDetailPage?: boolean;
-  refetch: () => void;
+  refetch?: () => void;
 }
 
 const DriverCard: React.FC<DriverCardProps> = ({
@@ -32,7 +32,9 @@ const DriverCard: React.FC<DriverCardProps> = ({
     try {
       await updateStatus(id, UserProfileStatus.ACTIVE);
       message.success('Driver approved successfully');
-      refetch();
+      if (refetch) {
+        refetch();
+      }
     } catch (error) {
       message.error('Failed to approve the driver');
     }
@@ -42,7 +44,9 @@ const DriverCard: React.FC<DriverCardProps> = ({
     try {
       await updateStatus(id, UserProfileStatus.REJECTED);
       message.success('Driver rejected successfully');
-      refetch();
+      if (refetch) {
+        refetch();
+      }
     } catch (error) {
       message.error('Failed to reject the driver');
     }
@@ -60,7 +64,9 @@ const DriverCard: React.FC<DriverCardProps> = ({
     try {
       await updateStatus(driver.id, UserProfileStatus.BLOCKED);
       message.success('Driver blocked successfully');
-      refetch();
+      if (refetch) {
+        refetch();
+      }
     } catch (error) {
       message.error('Failed to block the driver');
     }
