@@ -28,7 +28,7 @@ const DamageReportDetails = () => {
   }
 
   if (!report) {
-    return <div>Not found!</div>;
+    return <div>No damage report found!</div>;
   }
 
   const imageCarousel =

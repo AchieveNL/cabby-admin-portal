@@ -13,6 +13,7 @@ import { useOrderDetails } from '@/api/orders/hooks';
 import { useRouter } from 'next/router';
 import { OrderStatus } from '@/api/orders/types';
 import dayjs from 'dayjs';
+import { currencyFormatter } from '@/common/utits';
 
 const getStatusColor = (status: OrderStatus): string => {
   switch (status) {
@@ -122,7 +123,7 @@ export default function OrderDetails() {
               <Tag color={getStatusColor(order.status)}>{order.status}</Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Total Amount">
-              ${order.totalAmount}
+              {currencyFormatter.format(order.totalAmount)}
             </Descriptions.Item>
             <Descriptions.Item label="Rental Start Date">
               {order.rentalStartDate}
