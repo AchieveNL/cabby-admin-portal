@@ -4,9 +4,9 @@ import UploadImage from '@/components/inputs/UploadImage';
 import { useRouter } from 'next/router'; // Fixed 'next/navigation' to 'next/router'
 import { VehicleInput, VehicleStatus } from '@/api/vehicles/types';
 import { useCreateVehicle } from '@/api/vehicles/hooks';
-import { getVehicleByRDWLicencePlate } from '@/api/openData/openApi';
 import DisplayImage from '@/components/image/DisplayImage';
 import styles from './CreateVehicle.module.scss';
+import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
 
 const initialVehicleData: VehicleInput = {
   logo: '',
@@ -23,7 +23,7 @@ const initialVehicleData: VehicleInput = {
   images: [],
   availability: 'available',
   currency: 'EUR',
-  pricePerDay: 60.0,
+  pricePerDay: 0.0,
   status: VehicleStatus.PENDING,
 };
 
@@ -32,6 +32,7 @@ const CreateVehicle: React.FC = () => {
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
   const { create, loading: isCreating } = useCreateVehicle();
   const router = useRouter();
+  const [form] = Form.useForm();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -49,18 +50,22 @@ const CreateVehicle: React.FC = () => {
       if (fetchedVehicle && fetchedVehicle.length > 0) {
         const vehicleInfo = fetchedVehicle[0];
 
-        // Mapping the data from the RDW API to your vehicleData state.
-        setVehicleData((prevData) => ({
-          ...prevData,
-          licensePlate: vehicleInfo.kenteken || '',
-          companyName: vehicleInfo.merk || '',
-          model: vehicleInfo.handelsbenaming || '',
+        const updatedVehicleData = {
+          ...vehicleData,
+          companyName: vehicleInfo.merk,
+          model: vehicleInfo.handelsbenaming,
+          licensePlate: vehicleInfo.kenteken,
           manufactureYear:
             new Date(vehicleInfo.datum_eerste_toelating_dt)
               .getFullYear()
               .toString() || '',
-          // Add more mappings as necessary. If some data isn't available in the API response, it will remain an empty string or its initial value.
-        }));
+          seatingCapacity: vehicleInfo.aantal_zitplaatsen,
+        };
+
+        console.log(updatedVehicleData);
+
+        setVehicleData(updatedVehicleData);
+        form.setFieldsValue(updatedVehicleData);
       } else {
         message.error('No data found for the provided plate number.');
       }
@@ -103,10 +108,10 @@ const CreateVehicle: React.FC = () => {
           <span className="font-bold">Search Vehicle</span>
         </button>
       </div>
-      <Form layout={'vertical'} initialValues={vehicleData}>
+      <Form form={form} layout={'vertical'} initialValues={vehicleData}>
         <div className="vehicle-form bg-white border border-gray-300 rounded-xl p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Form.Item<any> label="Plate Number" name="plateNumber">
+            <Form.Item<any> label="Plate Number" name="licensePlate">
               <Input
                 name="licensePlate"
                 value={vehicleData?.licensePlate}
@@ -122,7 +127,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., Toyota"
               />
             </Form.Item>
-            <Form.Item<any> label="Model Name" name="modelName">
+            <Form.Item<any> label="Model Name" name="model">
               <Input
                 name="model"
                 value={vehicleData?.model}
@@ -130,7 +135,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., Camry"
               />
             </Form.Item>
-            <Form.Item<any> label="Type" name="type">
+            <Form.Item<any> label="Type" name="availability">
               <Input
                 name="availability"
                 value={vehicleData?.availability}
@@ -138,7 +143,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., Available"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Year" name="year">
+            <Form.Item<any> label="Year" name="manufactureYear">
               <Input
                 name="manufactureYear"
                 value={vehicleData?.manufactureYear}
@@ -146,7 +151,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., 2022"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Engine" name="engine">
+            <Form.Item<any> label="Engine" name="engineType">
               <Input
                 name="engineType"
                 value={vehicleData?.engineType}
@@ -154,7 +159,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., V8"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Total Seats/Doors" name="totalSeats">
+            <Form.Item<any> label="Total Seats/Doors" name="seatingCapacity">
               <Input
                 name="seatingCapacity"
                 value={vehicleData?.seatingCapacity}
@@ -170,7 +175,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., 4000mAh"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Rental Period" name="rentalPeriod">
+            <Form.Item<any> label="Rental Period" name="rentalDuration">
               <Input
                 name="rentalDuration"
                 value={vehicleData?.rentalDuration}
@@ -178,7 +183,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., 7 days"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Price From" name="priceRangeFrom">
+            <Form.Item<any> label="Price From" name="pricePerDay">
               <Input
                 type="number"
                 name="pricePerDay"

@@ -55,6 +55,15 @@ export const getVehicleByLicensePlate = async (
   return response.data;
 };
 
+export const getVehicleByRDWLicencePlate = async (
+  licensePlate: string,
+): Promise<any> => {
+  const response = await axios.get(
+    `${VEHICLES_URL}/licensePlate/opendata/${licensePlate}`,
+  );
+  return response.data.payload;
+};
+
 export const getVehicleById = async (id: string): Promise<Vehicle> => {
   const response = await axios.get(`${VEHICLES_URL}/${id}`);
   return response.data.payload;
