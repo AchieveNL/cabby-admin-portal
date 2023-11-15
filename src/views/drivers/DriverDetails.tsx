@@ -82,31 +82,31 @@ export default function DriverDetails() {
 
       <Card>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {driver?.driverLicense.driverLicenseFront &&
+          {driver?.driverLicense?.driverLicenseFront &&
             renderDocument(
               "Driver's License (Front)",
-              driver.driverLicense.driverLicenseFront,
+              driver.driverLicense?.driverLicenseFront,
               true,
             )}
-          {driver?.driverLicense.driverLicenseBack &&
+          {driver?.driverLicense?.driverLicenseBack &&
             renderDocument(
               "Driver's License (Back)",
-              driver.driverLicense.driverLicenseBack,
+              driver.driverLicense?.driverLicenseBack,
               true,
             )}
-          {driver?.permitDetails.taxiPermitPicture &&
+          {driver?.permitDetails?.taxiPermitPicture &&
             renderDocument(
               'Taxi Permit',
-              driver.permitDetails.taxiPermitPicture,
+              driver.permitDetails?.taxiPermitPicture,
               true,
             )}
-          {driver?.permitDetails.kiwaDocument &&
+          {driver?.permitDetails?.kiwaDocument &&
             renderDocument(
               'Kiwa Taxi Vergunning',
-              driver.permitDetails.kiwaDocument,
+              driver.permitDetails?.kiwaDocument,
             )}
-          {driver?.permitDetails.kvkDocument &&
-            renderDocument('KVK Document', driver.permitDetails.kvkDocument)}
+          {driver?.permitDetails?.kvkDocument &&
+            renderDocument('KVK Document', driver.permitDetails?.kvkDocument)}
         </ul>
       </Card>
     </div>
