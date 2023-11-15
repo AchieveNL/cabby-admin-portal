@@ -31,22 +31,22 @@ export const useDriversByStatus = (status: UserProfileStatus) => {
   const [data, setData] = useState<Driver[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const drivers = await DriverAPI.getDriverByStatus(status);
+      setData(drivers);
+    } catch (error) {
+      message.error((error as AxiosError).message);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const drivers = await DriverAPI.getDriverByStatus(status);
-        setData(drivers);
-      } catch (error) {
-        message.error((error as AxiosError).message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [status]);
 
-  return { data, loading };
+  return { data, loading, refresh: fetchData };
 };
 
 export const useDriverById = (id: string) => {

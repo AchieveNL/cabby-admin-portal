@@ -5,9 +5,11 @@ import { useDriversByStatus } from '@/api/drivers/hooks';
 import DriverCard from '@/components/cards/DriverCard';
 
 const PendingDriversTable = () => {
-  const { data: drivers, loading } = useDriversByStatus(
-    UserProfileStatus.PENDING,
-  );
+  const {
+    data: drivers,
+    loading,
+    refresh,
+  } = useDriversByStatus(UserProfileStatus.PENDING);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -37,7 +39,7 @@ const PendingDriversTable = () => {
             span={11}
             key={ind}
           >
-            <DriverCard driver={driver} />
+            <DriverCard driver={driver} refetch={refresh} />
           </Col>
         ))}
       </Row>
