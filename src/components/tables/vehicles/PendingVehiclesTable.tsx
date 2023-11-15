@@ -14,20 +14,25 @@ import { useRouter } from 'next/router';
 
 export const PendingVehiclesTable = () => {
   const router = useRouter();
-  const { data: vehicles, loading } = useVehiclesByStatus(
-    VehicleStatus.PENDING,
-  );
+  const {
+    data: vehicles,
+    loading,
+    refresh,
+  } = useVehiclesByStatus(VehicleStatus.PENDING);
 
   const handleApprove = async (vehicleId: string) => {
     await updateVehicleStatus(vehicleId, VehicleStatus.ACTIVE);
+    await refresh();
   };
 
   const handleReject = async (vehicleId: string) => {
     await updateVehicleStatus(vehicleId, VehicleStatus.REJECTED);
+    await refresh();
   };
 
   const onSubmitRejectReason = async (id: string, reason: string) => {
     await saveVehicleRejection(id, reason);
+    await refresh();
   };
 
   const columns = [

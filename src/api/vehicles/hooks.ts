@@ -31,22 +31,23 @@ export const useVehiclesByStatus = (status: VehicleStatus) => {
   const [data, setData] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const vehicles = await VehicleAPI.getVehiclesByStatus(status);
+      setData(vehicles);
+    } catch (error) {
+      message.error((error as AxiosError).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const vehicles = await VehicleAPI.getVehiclesByStatus(status);
-        setData(vehicles);
-      } catch (error) {
-        message.error((error as AxiosError).message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [status]);
 
-  return { data, loading };
+  return { data, loading, refresh: fetchData };
 };
 
 // ... More hooks can be added for each API, following the structure shown above.
