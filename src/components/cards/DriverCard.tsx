@@ -80,31 +80,31 @@ const DriverCard: React.FC<DriverCardProps> = ({
           'KVK ID',
 
           'N/A',
-          driver?.permitDetails.kvkDocument,
+          driver?.permitDetails?.kvkDocument,
         )}
         {renderTag(
           'Taxi permit',
 
           'N/A',
-          driver?.permitDetails.taxiPermitId,
+          driver?.permitDetails?.taxiPermitId,
         )}
       </Row>
       <Row className={styles.tagsRow}>
         {renderTag(
           'Kiwa taxi vergunning',
           'N/A',
-          driver?.permitDetails.kiwaDocument,
+          driver?.permitDetails?.kiwaDocument || 'N/A',
         )}
       </Row>
       <Row className={styles.tagsRow}>
         {renderTag(
           'Drivers License ID',
           'N/A',
-          driver?.driverLicense.bsnNumber,
+          driver?.driverLicense?.bsnNumber,
         )}
         <Tag color="blue">
           License expired on:
-          {driver?.driverLicense.driverLicenseExpiry || 'Not Available'}
+          {driver?.driverLicense?.driverLicenseExpiry || 'Not Available'}
         </Tag>
       </Row>
       <Row style={{ marginTop: '8px' }}>
