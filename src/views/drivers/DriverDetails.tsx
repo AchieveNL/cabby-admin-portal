@@ -6,6 +6,7 @@ import DriverCard from '../../components/cards/DriverCard';
 import styles from '@/styles/Driver.module.css';
 import { useDriverById } from '@/api/drivers/hooks';
 import PdfIcon from '@/components/icons/PdfIcon';
+import UserVerificationCard from './UserVerificationCard';
 
 const InputItem = ({ label, value }: { label: string; value: string }) => (
   <div>
@@ -61,19 +62,24 @@ export default function DriverDetails() {
       <h4 className="mb-6 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
         {driver.fullName} ({driver.status})
       </h4>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-8 mb-6">
-        <DriverCard refetch={refetch} driver={driver} isDetailPage={true} />
-
-        <Card title="Personal Info" className="space-y-4">
-          {/* <InputItem label="Email" value={driver.email} /> */}
-          <InputItem label="Phone Number" value={driver.phoneNumber} />
-          <InputItem
-            label="Date of Birth"
-            value={driver?.dateOfBirth?.split('T')[0] ?? 'N/A'}
-          />
-          <InputItem label="Address" value={driver.fullAddress} />
-        </Card>
+      <div className="mb-8">
+      <DriverCard refetch={refetch} driver={driver} isDetailPage={true} />
+      </div>
+      <div className="mb-8">
+      <Card title="Personal Info" className="space-y-4">
+        {/* <InputItem label="Email" value={driver.email} /> */}
+        <InputItem label="Phone Number" value={driver.phoneNumber} />
+        <InputItem
+          label="Date of Birth"
+          value={driver?.dateOfBirth?.split('T')[0] ?? 'N/A'}
+        />
+        <InputItem label="Address" value={driver.fullAddress} />
+      </Card>
+      </div>
+      <div className="mb-8">
+      {driver.userVerification && (
+        <UserVerificationCard verificationData={driver.userVerification} />
+      )}
       </div>
 
       <h4 className="mb-6 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">

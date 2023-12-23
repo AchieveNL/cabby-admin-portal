@@ -14,6 +14,26 @@ export interface Driver {
   status: UserProfileStatus;
   driverLicense: DriverLicense;
   permitDetails: PermitDetails;
+  userVerification?: UserVerification;
+}
+
+export interface UserVerification {
+  id: string;
+  userProfileId: string;
+  extractedFirstName: string | null;
+  extractedLastName: string | null;
+  extractedBsnNumber: string | null;
+  extractedDateOfBirth: string | null;
+  extractedExpiryDate: string | null;
+  existingFirstName: string | null;
+  existingLastName: string | null;
+  existingBsnNumber: string | null;
+  existingDateOfBirth: string | null;
+  existingExpiryDate: string | null;
+  isNameMatch: boolean;
+  isBsnNumberMatch: boolean;
+  isDateOfBirthMatch: boolean;
+  isExpiryDateMatch: boolean;
 }
 
 export interface DriverLicense {
