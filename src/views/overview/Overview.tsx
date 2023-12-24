@@ -22,6 +22,7 @@ import {
 } from '@ant-design/icons';
 import { useOverview, usePendingDetails } from '@/api/overview/hooks';
 import Link from 'next/link';
+import { formatToEuro } from '@/utils/utils';
 
 const StatisticCard: React.FC<{
   title: string;
@@ -234,7 +235,7 @@ const Overview: React.FC = () => {
                         />
                       }
                     >
-                      Total: ${order.totalAmount}
+                      Total: {formatToEuro(order.totalAmount)}
                     </Timeline.Item>
                     <Timeline.Item
                       dot={

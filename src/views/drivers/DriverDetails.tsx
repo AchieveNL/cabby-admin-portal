@@ -63,23 +63,23 @@ export default function DriverDetails() {
         {driver.fullName} ({driver.status})
       </h4>
       <div className="mb-8">
-      <DriverCard refetch={refetch} driver={driver} isDetailPage={true} />
+        <DriverCard refetch={refetch} driver={driver} isDetailPage={true} />
       </div>
       <div className="mb-8">
-      <Card title="Personal Info" className="space-y-4">
-        {/* <InputItem label="Email" value={driver.email} /> */}
-        <InputItem label="Phone Number" value={driver.phoneNumber} />
-        <InputItem
-          label="Date of Birth"
-          value={driver?.dateOfBirth?.split('T')[0] ?? 'N/A'}
-        />
-        <InputItem label="Address" value={driver.fullAddress} />
-      </Card>
+        <Card title="Personal Info" className="space-y-4">
+          {/* <InputItem label="Email" value={driver.email} /> */}
+          <InputItem label="Phone Number" value={driver.phoneNumber} />
+          <InputItem
+            label="Date of Birth"
+            value={driver?.dateOfBirth?.split('T')[0] ?? 'N/A'}
+          />
+          <InputItem label="Address" value={driver.fullAddress} />
+        </Card>
       </div>
       <div className="mb-8">
-      {driver.userVerification && (
-        <UserVerificationCard verificationData={driver.userVerification} />
-      )}
+        {driver.userVerification && (
+          <UserVerificationCard verificationData={driver.userVerification} />
+        )}
       </div>
 
       <h4 className="mb-6 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
