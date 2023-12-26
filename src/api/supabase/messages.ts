@@ -1,5 +1,7 @@
+import axios from 'axios';
 import { supabase } from './supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
+import { apiUrl } from '@/common/constants';
 
 export interface Message {
   senderId: string;
@@ -40,6 +42,24 @@ export const sendMessageToSupabase = async (
   } catch (error) {
     console.error('Error sending message to Supabase:');
     throw error;
+  }
+};
+
+export const sendNotificationToUser = async (
+  userId: string,
+  content: string,
+) => {
+  try {
+    const BASE_URL = apiUrl + '/notification/send-notification';
+    const response = await axios.post(BASE_URL, {
+      userId,
+      title: 'New Message from Cabby',
+      body: 'Cabby replied: ' + content,
+      metadata: JSON.stringify({ type: 'message' }),
+    });
+    return response.data.payload;
+  } catch (error) {
+    console.log(error);
   }
 };
 

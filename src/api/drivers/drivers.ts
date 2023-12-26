@@ -19,9 +19,11 @@ export const getDriverById = async (id: string): Promise<Driver> => {
 export const updateDriverStatus = async (
   id: string,
   status: UserProfileStatus,
+  reason?: string,
 ): Promise<Driver> => {
   const response = await axios.patch<Driver>(`${DRIVERS_URL}/status/${id}`, {
     status,
+    reason,
   });
   return response.data;
 };

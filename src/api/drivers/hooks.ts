@@ -76,10 +76,10 @@ export const useUpdateDriverStatus = () => {
   const [error, setError] = useState<AxiosError | null>(null);
 
   const updateStatus = useCallback(
-    async (id: string, status: UserProfileStatus) => {
+    async (id: string, status: UserProfileStatus, reason?: string) => {
       setLoading(true);
       try {
-        await DriverAPI.updateDriverStatus(id, status);
+        await DriverAPI.updateDriverStatus(id, status, reason);
       } catch (error) {
         setError(error as AxiosError);
       } finally {

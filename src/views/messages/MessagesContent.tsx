@@ -15,6 +15,7 @@ import {
   Message,
   getMessages,
   sendMessageToSupabase,
+  sendNotificationToUser,
 } from '@/api/supabase/messages';
 import { supabase } from '@/api/supabase/supabaseClient';
 import { REALTIME_LISTEN_TYPES } from '@supabase/supabase-js';
@@ -92,6 +93,7 @@ const MessagesContent: FC = () => {
     try {
       await sendMessageToSupabase(currentUserId, recipientId, input);
       setInput('');
+      await sendNotificationToUser(recipientId, input);
     } catch (err) {
       console.error('Error sending message:', err);
     }
