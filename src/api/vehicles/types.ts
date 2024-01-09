@@ -27,4 +27,5 @@ export type VehicleInput = {
   currency?: string;
   pricePerDay?: number;
   status: VehicleStatus;
+  vin?: string;
 };

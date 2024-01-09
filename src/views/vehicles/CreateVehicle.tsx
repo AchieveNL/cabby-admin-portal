@@ -25,6 +25,7 @@ const initialVehicleData: VehicleInput = {
   currency: 'EUR',
   pricePerDay: 0.0,
   status: VehicleStatus.PENDING,
+  vin: '',
 };
 
 const CreateVehicle: React.FC = () => {
@@ -206,6 +207,14 @@ const CreateVehicle: React.FC = () => {
                 value={vehicleData?.uniqueFeature}
                 onChange={handleInputChange}
                 placeholder="e.g., Self-parking feature"
+              />
+            </Form.Item>
+            <Form.Item<any> label="VIN number" name="vin">
+              <Input
+                name="vin"
+                value={vehicleData?.vin}
+                onChange={handleInputChange}
+                placeholder="e.g., VIN number of the tesla"
               />
             </Form.Item>
           </div>
