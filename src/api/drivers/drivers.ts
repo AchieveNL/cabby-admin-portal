@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { Driver, UserProfileStatus } from './types';
 import { apiUrl } from '@/common/constants';
 

@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Col, Form, Input, Row, Select, message } from 'antd';
 import { useRouter } from 'next/router';
 import { useCreateRefund } from '@/api/refunds/hooks';
-import { RefundInput } from '@/api/refunds/types';
 import { useAllDrivers } from '@/api/drivers/hooks';
-
-const initialRefundData: RefundInput = {
-  userProfileId: '',
-  amount: '',
-};
 
 const CreateRefund: React.FC = () => {
   const [form] = Form.useForm();
