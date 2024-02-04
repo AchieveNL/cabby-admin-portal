@@ -39,6 +39,11 @@ const navLinks: NavLinkData[] = [
     label: 'Damage reports',
     iconPath: '/Description.png',
   },
+  {
+    href: '/dashboard/refunds',
+    label: 'Refunds',
+    iconPath: '/Money.png',
+  },
 ];
 
 const Sidebar = ({
