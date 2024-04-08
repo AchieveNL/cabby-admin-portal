@@ -7,9 +7,10 @@ import ConfirmationModal from '../modals/ConfirmationModal';
 import RejectionModal from '../modals/RejectionModal';
 
 interface Props {
-  onApprove: (id: string) => void;
-  onRejectReason: (id: string, reason: string) => void;
-  onReject: (id: string) => void;
+  onApprove?: (id: string) => void;
+  onRejectReason?: (id: string, reason: string) => void;
+  onReject?: (id: string) => void;
+  onCancel?: (id: string) => void;
   recordId: string;
   confirmationMessage: string;
   fullWidth?: boolean;
@@ -21,42 +22,67 @@ export default function ActionButtons({
   recordId,
   confirmationMessage,
   onReject,
+  onCancel,
   fullWidth,
 }: Props) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showRejectReason, setShowRejectReason] = useState(false);
 
   const handleConfirm = () => {
-    onReject(recordId);
-    setShowConfirm(false);
-    setShowRejectReason(true);
+    if (onReject) {
+      onReject(recordId);
+      setShowConfirm(false);
+      setShowRejectReason(true);
+    }
+    else if (onCancel) {
+      onCancel(recordId);
+      setShowConfirm(false);
+    }
   };
 
   const handleRejectReasonSubmit = (reason: string) => {
-    onRejectReason(recordId, reason);
-    setShowRejectReason(false);
+    if (onRejectReason) {
+      onRejectReason(recordId, reason);
+      setShowRejectReason(false);
+    }
   };
 
   return (
     <Space size="middle">
-      <ButtonWithIcon
-        icon={<CheckOutlined rev={undefined} />}
-        style={{ color: 'green' }}
-        onClick={() => onApprove(recordId)}
-        block={fullWidth}
-      >
-        Approve
-      </ButtonWithIcon>
-      <ButtonWithIcon
-        icon={<CloseOutlined rev={undefined} />}
-        danger
-        onClick={() => {
-          setShowConfirm(true);
-        }}
-        block={fullWidth}
-      >
-        Reject
-      </ButtonWithIcon>
+      {onApprove && (
+        <ButtonWithIcon
+          icon={<CheckOutlined rev={undefined} />}
+          style={{ color: 'green' }}
+          onClick={() => onApprove(recordId)}
+          block={fullWidth}
+        >
+          Approve
+        </ButtonWithIcon>
+      )}
+      {onReject && (
+        <ButtonWithIcon
+          icon={<CloseOutlined rev={undefined} />}
+          danger
+          onClick={() => {
+            setShowConfirm(true);
+          }}
+          block={fullWidth}
+        >
+          Reject
+        </ButtonWithIcon>
+      )}
+      {onCancel && (
+        <ButtonWithIcon
+          icon={<CloseOutlined rev={undefined} />}
+          danger
+          onClick={() => {
+            setShowConfirm(true);
+          }}
+          block={fullWidth}
+        >
+          Cancel
+        </ButtonWithIcon>
+      )}
 
       <ConfirmationModal
         open={showConfirm}

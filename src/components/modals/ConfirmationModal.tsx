@@ -46,7 +46,7 @@ const ConfirmationModal: React.FC<Props> = ({
           type="button"
           className="btn-primary w-full"
         >
-          <span className="text-base font-bold">Reject</span>
+          <span className="text-base font-bold">Confirm</span>
         </button>
       </div>
     </div>
