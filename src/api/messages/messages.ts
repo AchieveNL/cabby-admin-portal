@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { MinimalUser, UserConversationResponse } from './types';
-import { apiUrl, baseUrl } from '@/common/constants';
+import { apiUrl } from '@/common/constants';
 
 const BASE_URL = apiUrl + '/users';
 axios.defaults.withCredentials = true;

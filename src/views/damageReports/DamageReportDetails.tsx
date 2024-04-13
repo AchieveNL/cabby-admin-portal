@@ -4,6 +4,7 @@ import { Card, Descriptions, Spin, Button, Carousel, message } from 'antd';
 import { useDamageReportDetails } from '@/api/damage-reports/hooks';
 import { CheckOutlined } from '@ant-design/icons';
 import { closeDamageReports } from '@/api/damage-reports/damage-reports';
+import Image from 'next/image';
 
 const DamageReportDetails = () => {
   const router = useRouter();
@@ -36,7 +37,7 @@ const DamageReportDetails = () => {
       <Carousel autoplay>
         {report.images.map((imgUrl, idx) => (
           <div key={idx}>
-            <img
+            <Image
               src={imgUrl}
               alt={`Damage report image ${idx + 1}`}
               style={{
