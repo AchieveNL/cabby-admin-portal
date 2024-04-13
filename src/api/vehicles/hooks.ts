@@ -63,17 +63,26 @@ export const useCreateVehicle = () => {
     try {
       return await VehicleAPI.createVehicle(data);
     } catch (error) {
-        const axiosError = error as AxiosError; 
-        if (axiosError.response) {
-          const responseData = axiosError.response.data as { rawErrors?: string[] }; 
-          if (responseData && responseData.rawErrors && responseData.rawErrors.length > 0) {
-              message.error(responseData.rawErrors[0]);
-          } else if (responseData && typeof responseData === 'object' && 'message' in responseData) {
-              message.error(responseData.message as string);
-          }
-          else {
-            setError(error as AxiosError);
-          }
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        const responseData = axiosError.response.data as {
+          rawErrors?: string[];
+        };
+        if (
+          responseData &&
+          responseData.rawErrors &&
+          responseData.rawErrors.length > 0
+        ) {
+          message.error(responseData.rawErrors[0]);
+        } else if (
+          responseData &&
+          typeof responseData === 'object' &&
+          'message' in responseData
+        ) {
+          message.error(responseData.message as string);
+        } else {
+          setError(error as AxiosError);
+        }
       } else {
         setError(error as AxiosError);
       }

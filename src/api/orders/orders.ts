@@ -69,4 +69,4 @@ export const cancelOrder = async (orderId: string) => {
   } catch (error) {
     throw error;
   }
-}
+};

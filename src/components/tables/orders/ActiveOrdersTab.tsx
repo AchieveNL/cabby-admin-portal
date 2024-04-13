@@ -12,12 +12,11 @@ export default function ActiveOrdersTab() {
   const { data, loading, error, refetch } = useOrders(OrderStatus.CONFIRMED);
 
   const handleCancel = async (orderId: string) => {
-    try{
+    try {
       await cancelOrder(orderId);
       await refetch();
       message.success('Order cancelled successfully');
-    }
-    catch(err : any) {
+    } catch (err: any) {
       message.error(err.response.data.message);
     }
   };

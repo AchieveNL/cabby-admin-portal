@@ -33,8 +33,7 @@ export default function ActionButtons({
       onReject(recordId);
       setShowConfirm(false);
       setShowRejectReason(true);
-    }
-    else if (onCancel) {
+    } else if (onCancel) {
       onCancel(recordId);
       setShowConfirm(false);
     }
