@@ -66,15 +66,6 @@ const DriverCard: React.FC<DriverCardProps> = ({
     setIsBlockModalVisible(true);
   };
 
-  const handleBlockModalOk = async () => {
-    setIsBlockModalVisible(false);
-    await handleBlockWithReason(blockReason);
-  };
-
-  const handleBlockModalCancel = () => {
-    setIsBlockModalVisible(false);
-  };
-
   const handleBlockWithReason = async (reason: string) => {
     try {
       console.log('Blocking reason:', reason);
@@ -87,6 +78,15 @@ const DriverCard: React.FC<DriverCardProps> = ({
     } catch (error) {
       message.error('Failed to block the driver');
     }
+  };
+
+  const handleBlockModalOk = async () => {
+    setIsBlockModalVisible(false);
+    await handleBlockWithReason(blockReason);
+  };
+
+  const handleBlockModalCancel = () => {
+    setIsBlockModalVisible(false);
   };
 
   const handleBlock = () => {
