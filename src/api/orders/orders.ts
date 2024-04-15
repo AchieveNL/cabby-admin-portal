@@ -59,3 +59,14 @@ export const rejectOrder = async (orderId: string) => {
     throw error;
   }
 };
+
+export const cancelOrder = async (orderId: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/cancel`, {
+      orderId,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
