@@ -90,6 +90,7 @@ const CreateVehicle: React.FC = () => {
   const handleCreateVehicle = async () => {
     if (router.query.vehicleId) { // update
       vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
+      vehicleData.status = VehicleStatus.PENDING;
       await update(router.query.vehicleId as string, vehicleData);
       message.success('Vehicle updated successfully');
       router.push('/dashboard/vehicles');
