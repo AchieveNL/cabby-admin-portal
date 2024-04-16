@@ -98,7 +98,7 @@ export const useUpdateVehicle = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<AxiosError | null>(null);
 
-  const update = useCallback(async (id: string, data: Vehicle) => {
+  const update = useCallback(async (id: string, data: VehicleInput) => {
     setLoading(true);
     try {
       await VehicleAPI.updateVehicle(id, data);
