@@ -12,7 +12,7 @@ import DisplayImage from '@/components/image/DisplayImage';
 import styles from './CreateVehicle.module.scss';
 import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
 
-let initialVehicleData: VehicleInput = {
+const initialVehicleData: VehicleInput = {
   logo: '',
   companyName: '',
   model: '',
