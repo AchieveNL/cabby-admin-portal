@@ -3,7 +3,11 @@ import { Button, Col, Form, Input, Row, message } from 'antd';
 import UploadImage from '@/components/inputs/UploadImage';
 import { useRouter } from 'next/router'; // Fixed 'next/navigation' to 'next/router'
 import { VehicleInput, VehicleStatus } from '@/api/vehicles/types';
-import { useCreateVehicle, useUpdateVehicle, useVehicleById } from '@/api/vehicles/hooks';
+import {
+  useCreateVehicle,
+  useUpdateVehicle,
+  useVehicleById,
+} from '@/api/vehicles/hooks';
 import DisplayImage from '@/components/image/DisplayImage';
 import styles from './CreateVehicle.module.scss';
 import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
@@ -32,18 +36,20 @@ const CreateVehicle: React.FC = () => {
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
   const { create, loading: isCreating } = useCreateVehicle();
-  const { update, loading: isUpdating} = useUpdateVehicle();
+  const { update, loading: isUpdating } = useUpdateVehicle();
   const router = useRouter();
   const [form] = Form.useForm();
-  const { data: vehicle, loading } = useVehicleById(router.query.vehicleId as string);
+  const { data: vehicle, loading } = useVehicleById(
+    router.query.vehicleId as string,
+  );
 
   useEffect(() => {
     if (vehicle) {
       form.setFieldsValue(vehicle);
       setVehicleData(vehicle);
     }
-  }, [vehicle]);  
-  
+  }, [vehicle]);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setVehicleData((prevData) => ({
@@ -88,14 +94,14 @@ const CreateVehicle: React.FC = () => {
   };
 
   const handleCreateVehicle = async () => {
-    if (router.query.vehicleId) { // update
+    if (router.query.vehicleId) {
+      // update
       vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
       vehicleData.status = VehicleStatus.PENDING;
       await update(router.query.vehicleId as string, vehicleData);
       message.success('Vehicle updated successfully');
       router.push('/dashboard/vehicles');
-    }
-    else{
+    } else {
       const data = await create(vehicleData);
       if (data) {
         message.success('Vehicle added successfully');
@@ -257,7 +263,7 @@ const CreateVehicle: React.FC = () => {
                 className="btn-outline-primary cursor-pointer block text-center font-bold h-12"
                 block
               >
-                {router.query.vehicleId ? 'Update Vehicle' : 'Create Vehicle' }
+                {router.query.vehicleId ? 'Update Vehicle' : 'Create Vehicle'}
               </Button>
             </div>
           </div>
