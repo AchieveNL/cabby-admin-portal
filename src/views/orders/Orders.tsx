@@ -29,7 +29,7 @@ export const getOrderColumns = (action?: boolean): TableColumnsType<Order> => [
     render: (vehicle: Vehicle) => (
       <div>
         <div>
-          <img src={vehicle.logo} alt={vehicle.companyName} />
+          <img src={vehicle.images?.[0]} alt={vehicle.companyName} />
         </div>
         <div>{vehicle.companyName}</div>
       </div>
