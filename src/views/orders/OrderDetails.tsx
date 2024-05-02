@@ -101,6 +101,9 @@ export default function OrderDetails() {
             <Descriptions.Item label="Rental Duration">
               {order.vehicle.rentalDuration}
             </Descriptions.Item>
+            <Descriptions.Item label="Vin">
+              {order.vehicle.vin}
+            </Descriptions.Item>
             <Descriptions.Item label="Availability">
               <Tag
                 color={
