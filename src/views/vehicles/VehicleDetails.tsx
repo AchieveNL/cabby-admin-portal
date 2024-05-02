@@ -76,6 +76,12 @@ const VehicleDetails = () => {
         <h4 className="mr-auto mb-1 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
           Details info
         </h4>
+        <Link
+          href={`/dashboard/vehicles/create-vehicle?vehicleId=${vehicleId}`}
+          className="btn-primary"
+        >
+          <span className="text-base font-bold">Edit</span>
+        </Link>
         <div className="flex gap-4">
           {vehicle?.status === VehicleStatus.PENDING && (
             <ActionButtons

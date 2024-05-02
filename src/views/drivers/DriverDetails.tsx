@@ -67,7 +67,7 @@ export default function DriverDetails() {
       </div>
       <div className="mb-8">
         <Card title="Personal Info" className="space-y-4">
-          {/* <InputItem label="Email" value={driver.email} /> */}
+          <InputItem label="Email" value={driver.user.email} />
           <InputItem label="Phone Number" value={driver.phoneNumber} />
           <InputItem
             label="Date of Birth"

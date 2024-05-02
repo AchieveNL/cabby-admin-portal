@@ -1,6 +1,12 @@
+export interface User {
+  email: string;
+  status: UserProfileStatus;
+}
+
 export interface Driver {
   id: string;
   userId: string;
+  user: User;
   city: string;
   fullAddress: string;
   fullName: string;
