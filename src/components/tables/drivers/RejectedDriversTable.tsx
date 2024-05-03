@@ -1,13 +1,17 @@
 import React from 'react';
 import { Table } from 'antd';
 import { UserProfileStatus } from '@/api/drivers/types';
-import { useDriversByStatus } from '@/api/drivers/hooks';
+import { useDriversByStatus, useUpdateDriverStatus } from '@/api/drivers/hooks';
 import { driversColumns } from '@/views/drivers/Drivers';
 
 const RejectedDriversTable = () => {
-  const { data: drivers, loading } = useDriversByStatus(
-    UserProfileStatus.REJECTED,
-  );
+  const {
+    data: drivers,
+    loading,
+    refresh,
+  } = useDriversByStatus(UserProfileStatus.REJECTED);
+
+  const { updateStatus } = useUpdateDriverStatus();
 
   if (loading) {
     return <div>Loading...</div>;
@@ -25,7 +29,14 @@ const RejectedDriversTable = () => {
           </h6>
         </div>
       </div>
-      <Table dataSource={drivers} columns={driversColumns} />
+      <Table
+        dataSource={drivers}
+        columns={driversColumns({
+          showChangeStatus: true,
+          changeStatus: updateStatus,
+          refresh,
+        })}
+      />
     </div>
   );
 };

@@ -1,14 +1,30 @@
 import React from 'react';
 import RejectedDriversTable from '@/components/tables/drivers/RejectedDriversTable';
 import ActiveDriversTable from '@/components/tables/drivers/ActiveDriversTable';
-import { Tabs, TabsProps } from 'antd';
+import { Modal, Tabs, TabsProps, message } from 'antd';
 import Link from 'next/link';
 import PendingDriversTable from '@/components/tables/drivers/PendingDriversTable';
 import BlockedDriversTable from '@/components/tables/drivers/BlockedDriversTable';
 import Moment from 'moment';
 import { DriverLicense, PermitDetails } from '@/api/orders/types';
+import { ReloadOutlined } from '@ant-design/icons';
+import DeleteModal from '@/components/modals/DeleteModal';
+import DefaultModal from '@/components/modals/DefautlModal';
+import { UserProfileStatus } from '@/api/drivers/types';
 
-export const driversColumns = [
+export const driversColumns = ({
+  showChangeStatus,
+  changeStatus,
+  refresh,
+}: {
+  showChangeStatus?: boolean;
+  refresh?: () => void;
+  changeStatus?: (
+    id: string,
+    status: UserProfileStatus,
+    reason?: string | undefined,
+  ) => Promise<void>;
+}) => [
   {
     title: "Driver's name",
     dataIndex: 'fullName',
@@ -76,9 +92,32 @@ export const driversColumns = [
   {
     title: 'Action',
     dataIndex: 'id',
-    render: (id: string) => (
-      <Link href={`/dashboard/drivers/${id}`}>Details</Link>
-    ),
+    render: (id: string) => {
+      return (
+        <div className="flex gap-2 items-center">
+          {showChangeStatus && changeStatus && refresh && (
+            <DefaultModal
+              title="Wil je zeker dat je deze bestuurder wilt deblokeren?"
+              button={
+                <button className="flex items-center gap-1 text-success-base">
+                  <ReloadOutlined /> herstellen
+                </button>
+              }
+              confirmPlaceholder="Verder"
+              fn={async () => {
+                await changeStatus(id, UserProfileStatus.PENDING);
+                refresh();
+                message.success('Driver on pending successfully');
+              }}
+            >
+              Zodra je verdergaat, wordt de bestuurder gedeblokkeerd en kan
+              diegene de app weer gebruiken.
+            </DefaultModal>
+          )}
+          <Link href={`/dashboard/drivers/${id}`}>Details</Link>
+        </div>
+      );
+    },
   },
 ];
 

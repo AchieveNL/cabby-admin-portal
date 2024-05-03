@@ -25,7 +25,7 @@ const BlockedDriversTable = () => {
           </h6>
         </div>
       </div>
-      <Table dataSource={drivers} columns={driversColumns} />
+      <Table dataSource={drivers} columns={driversColumns({})} />
     </div>
   );
 };
