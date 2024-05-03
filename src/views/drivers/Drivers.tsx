@@ -100,7 +100,7 @@ export const driversColumns = ({
               title="Wil je zeker dat je deze bestuurder wilt deblokeren?"
               button={
                 <button className="flex items-center gap-1 text-success-base">
-                  <ReloadOutlined /> herstellen
+                  <ReloadOutlined rev={undefined} /> herstellen
                 </button>
               }
               confirmPlaceholder="Verder"
