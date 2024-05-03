@@ -17,7 +17,7 @@ const RejectedOrdersTab = () => {
       <div className="flex items-end flex-wrap gap-4 mb-5">
         <div className="mr-auto">
           <h4 className="mb-1 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
-            Pending Orders
+            Annuleringsverzoeken
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
             Total {data.length} pending orders

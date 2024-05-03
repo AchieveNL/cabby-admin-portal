@@ -5,6 +5,8 @@ import ManageAccountIcon from '@/components/icons/ManageAccountIcon';
 import SmsIcon from '@/components/icons/SmsIcon';
 import MenuIcon from '@/components/icons/MenuIcon';
 import { useRouter } from 'next/router';
+import { Breadcrumb } from 'antd';
+import Link from 'next/link';
 
 const pageNameMappings: Record<string, string> = {
   notifications: 'Notifications',
@@ -47,6 +49,13 @@ const Header = ({ onMenu }: { onMenu: React.MouseEventHandler }) => {
             <h6 className="mb-2 text-primary-base text-base font-bold">
               {getPageName()}
             </h6>
+            {/* <Breadcrumb
+              items={[
+                { title: 'sample' },
+                { title: <Link href={'/'}>Home</Link> },
+                { title: 'test1' },
+              ]}
+            /> */}
           </div>
           <div className="flex gap-6 lg:gap-8">
             <div className="flex items-center gap-3 lg:gap-6">
