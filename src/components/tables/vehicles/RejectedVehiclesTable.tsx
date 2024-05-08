@@ -13,7 +13,7 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { UserProfileStatus } from '@/api/drivers/types';
 
 export const RejectedVehiclesTable = () => {
-  const { data: vehicles, loading } = useVehiclesByStatus(
+  const { data: vehicles, isLoading } = useVehiclesByStatus(
     VehicleStatus.REJECTED,
   );
 
@@ -65,7 +65,7 @@ export const RejectedVehiclesTable = () => {
           </h6>
         </div>
       </div>
-      <Table columns={columns} dataSource={vehicles} loading={loading} />
+      <Table columns={columns} dataSource={vehicles} loading={isLoading} />
     </div>
   );
 };

@@ -5,7 +5,9 @@ import { useVehiclesByStatus } from '@/api/vehicles/hooks';
 import { VehicleStatus } from '@/api/vehicles/types';
 
 export const ActiveVehiclesTable = () => {
-  const { data: vehicles, loading } = useVehiclesByStatus(VehicleStatus.ACTIVE);
+  const { data: vehicles, isLoading } = useVehiclesByStatus(
+    VehicleStatus.ACTIVE,
+  );
 
   return (
     <div className="px-6">
@@ -22,7 +24,7 @@ export const ActiveVehiclesTable = () => {
       <Table
         columns={vehiclesColumns()}
         dataSource={vehicles}
-        loading={loading}
+        loading={isLoading}
       />
     </div>
   );

@@ -22,9 +22,9 @@ const reports = [{}, {}, {}];
 const VehicleDetails = () => {
   const router = useRouter();
   const vehicleId = router.query.vehicleId as string;
-  const { data: vehicle, loading } = useVehicleById(vehicleId);
+  const { data: vehicle, isLoading } = useVehicleById(vehicleId);
   const { mutateAsync: updateStatus } = useUpdateVehicleStatus();
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 

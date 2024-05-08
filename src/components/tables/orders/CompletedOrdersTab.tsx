@@ -5,7 +5,7 @@ import { OrderStatus } from '@/api/orders/types';
 import { getOrderColumns } from '@/views/orders/Orders';
 
 export default function CompletedOrdersTab() {
-  const { data, loading, error } = useOrders(OrderStatus.COMPLETED);
+  const { data, isLoading, error } = useOrders(OrderStatus.COMPLETED);
 
   const columns = getOrderColumns();
 
@@ -21,11 +21,11 @@ export default function CompletedOrdersTab() {
             Completed Orders
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
-            Total {data.length} completed orders
+            Total {data?.length} completed orders
           </h6>
         </div>
       </div>
-      <Table columns={columns} dataSource={data} loading={loading} />
+      <Table columns={columns} dataSource={data} loading={isLoading} />
     </div>
   );
 }

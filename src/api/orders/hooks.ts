@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
+
 import { Order, OrderStatus } from './types';
 import { getOrderDetails, getOrders } from './orders';
 import { AxiosError } from 'axios';
 import { useQuery } from '@tanstack/react-query';
+type Keys = keyof typeof OrderStatus;
 
 export const queryKey = ['orders'];
 
-export const useOrders = (status: OrderStatus) => {
+export const useOrders = (status: Keys) => {
   return useQuery({ queryKey, queryFn: () => getOrders(status) });
   // const [data, setData] = useState<Order[]>([]);
   // const [loading, setLoading] = useState<boolean>(false);

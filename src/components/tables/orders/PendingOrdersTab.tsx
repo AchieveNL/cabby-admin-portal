@@ -12,7 +12,7 @@ import Link from 'next/link';
 import ActionButtons from '@/components/ActionButtons/ActionButtons';
 
 const PendingOrdersTable = () => {
-  const { data, loading, error, refetch } = useOrders(OrderStatus.PENDING);
+  const { data, isLoading, error, refetch } = useOrders(OrderStatus.PENDING);
 
   const handleApprove = async (orderId: string) => {
     await confirmOrder(orderId);
@@ -60,11 +60,11 @@ const PendingOrdersTable = () => {
             Pending Orders
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
-            Total {data.length} pending orders
+            Total {data?.length} pending orders
           </h6>
         </div>
       </div>
-      <Table columns={columns} dataSource={data} loading={loading} />
+      <Table columns={columns} dataSource={data} loading={isLoading} />
     </div>
   );
 };

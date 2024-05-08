@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { cancelOrder } from '@/api/orders/orders';
 
 export default function ActiveOrdersTab() {
-  const { data, loading, error, refetch } = useOrders(OrderStatus.CONFIRMED);
+  const { data, isLoading, error, refetch } = useOrders(OrderStatus.CONFIRMED);
 
   const handleCancel = async (orderId: string) => {
     try {
@@ -51,11 +51,11 @@ export default function ActiveOrdersTab() {
             Actieve order
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
-            Total {data.length} active orders
+            Total {data?.length} active orders
           </h6>
         </div>
       </div>
-      <Table columns={columns} dataSource={data} loading={loading} />
+      <Table columns={columns} dataSource={data} loading={isLoading} />
     </div>
   );
 }

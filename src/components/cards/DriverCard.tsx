@@ -131,7 +131,6 @@ const DriverCard: React.FC<DriverCardProps> = ({
         {!isDetailPage && (
           <ButtonWithIcon
             icon={<ExportOutlined rev={undefined} />}
-            type="ghost"
             onClick={() => router.push(`/dashboard/drivers/${driver.id}`)}
           >
             Open Profile
@@ -144,7 +143,7 @@ const DriverCard: React.FC<DriverCardProps> = ({
           recordId={driver.id}
           confirmationMessage="Are you sure you want to reject this driver?"
         />
-        <ButtonWithIcon icon={<BlockIcon />} danger onClick={handleBlock}>
+        <ButtonWithIcon icon={<BlockIcon />} onClick={handleBlock}>
           Block
         </ButtonWithIcon>
       </Row>

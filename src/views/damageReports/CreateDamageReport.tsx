@@ -9,7 +9,7 @@ const { Option } = Select;
 
 const CreateDamageReport = () => {
   const router = useRouter();
-  const { data: vehicles, loading: vehiclesLoading } = useAllVehicles();
+  const { data: vehicles, isLoading: vehiclesLoading } = useAllVehicles();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values: CreateDamageReportDto) => {

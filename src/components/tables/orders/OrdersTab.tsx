@@ -17,7 +17,7 @@ import { currencyFormatter } from '@/common/utits';
 import Countdown from '@/components/CountDown/Countdown';
 
 type Keys = keyof typeof OrderStatus;
-type Status = (typeof OrderStatus)[Keys];
+// type Status = (typeof OrderStatus)[Keys];
 
 const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
   const handleApprove = async (orderId: string) => {

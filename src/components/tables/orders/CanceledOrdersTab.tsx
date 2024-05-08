@@ -5,7 +5,7 @@ import { useOrders } from '@/api/orders/hooks';
 import { getOrderColumns } from '@/views/orders/Orders';
 
 export default function CanceledOrdersTab() {
-  const { data, loading, error } = useOrders(OrderStatus.CANCELED);
+  const { data, isLoading, error } = useOrders(OrderStatus.CANCELED);
 
   const columns = getOrderColumns();
 
@@ -21,11 +21,11 @@ export default function CanceledOrdersTab() {
             Cancelation Orders
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
-            Total {data.length} cancelation orders
+            Total {data?.length} cancelation orders
           </h6>
         </div>
       </div>
-      <Table columns={columns} dataSource={data} loading={loading} />
+      <Table columns={columns} dataSource={data} loading={isLoading} />
     </div>
   );
 }

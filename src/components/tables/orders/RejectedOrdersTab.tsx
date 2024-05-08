@@ -5,7 +5,7 @@ import { useOrders } from '@/api/orders/hooks';
 import { getOrderColumns } from '@/views/orders/Orders';
 
 const RejectedOrdersTab = () => {
-  const { data, loading, error } = useOrders(OrderStatus.PENDING);
+  const { data, isLoading, error } = useOrders(OrderStatus.PENDING);
 
   const columns = getOrderColumns();
   if (error) {
@@ -20,11 +20,11 @@ const RejectedOrdersTab = () => {
             Annuleringsverzoeken
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
-            Total {data.length} pending orders
+            Total {data?.length} pending orders
           </h6>
         </div>
       </div>
-      <Table columns={columns} dataSource={data} loading={loading} />
+      <Table columns={columns} dataSource={data} loading={isLoading} />
     </div>
   );
 };

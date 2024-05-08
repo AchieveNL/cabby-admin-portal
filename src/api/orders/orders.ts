@@ -7,11 +7,11 @@ import { queryKey } from './hooks';
 const BASE_URL = apiUrl + '/orders';
 
 axios.defaults.withCredentials = true;
-
+type Keys = keyof typeof OrderStatus;
 export const invalidateOrders = () =>
   queryClient.invalidateQueries({ queryKey: queryKey });
 
-export const getOrders = async (status: OrderStatus): Promise<Order[]> => {
+export const getOrders = async (status: Keys): Promise<Order[]> => {
   try {
     const response = await axios.get(`${BASE_URL}/status/${status}`);
     return response.data.payload;
