@@ -7,14 +7,23 @@ import MenuIcon from '@/components/icons/MenuIcon';
 import { useRouter } from 'next/router';
 import { Breadcrumb } from 'antd';
 import Link from 'next/link';
+import {
+  BreadcrumbItemType,
+  BreadcrumbSeparatorType,
+} from 'antd/es/breadcrumb/Breadcrumb';
 
 const pageNameMappings: Record<string, string> = {
   notifications: 'Notifications',
   messages: 'Messages',
   users: 'Manage Users',
 };
-
-const Header = ({ onMenu }: { onMenu: React.MouseEventHandler }) => {
+interface Props {
+  onMenu: React.MouseEventHandler;
+  breadcrumbItems:
+    | Partial<BreadcrumbItemType & BreadcrumbSeparatorType>[]
+    | undefined;
+}
+const Header = ({ onMenu, breadcrumbItems }: Props) => {
   const router = useRouter();
   const logout = () => {
     deleteCookie('token');
@@ -49,13 +58,7 @@ const Header = ({ onMenu }: { onMenu: React.MouseEventHandler }) => {
             <h6 className="mb-2 text-primary-base text-base font-bold">
               {getPageName()}
             </h6>
-            {/* <Breadcrumb
-              items={[
-                { title: 'sample' },
-                { title: <Link href={'/'}>Home</Link> },
-                { title: 'test1' },
-              ]}
-            /> */}
+            <Breadcrumb items={breadcrumbItems} />
           </div>
           <div className="flex gap-6 lg:gap-8">
             <div className="flex items-center gap-3 lg:gap-6">

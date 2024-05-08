@@ -1,97 +1,119 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import * as VehicleAPI from './vehicles';
 import { Vehicle, VehicleInput, VehicleStatus } from './types';
 import { message } from 'antd';
+import { queryClient } from '@/pages/_app';
 
 export const useAllVehicles = () => {
-  const [data, setData] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError | null>(null);
+  return useQuery({
+    queryKey: ['vehicles'],
+    queryFn: VehicleAPI.getAllVehicles,
+  });
+  // const [data, setData] = useState<Vehicle[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<AxiosError | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const vehicles = await VehicleAPI.getAllVehicles();
-        setData(vehicles);
-      } catch (error) {
-        setError(error as AxiosError);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const vehicles = await VehicleAPI.getAllVehicles();
+  //       setData(vehicles);
+  //     } catch (error) {
+  //       setError(error as AxiosError);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
-  return { data, loading, error };
+  // return { data, loading, error };
 };
 
 export const useVehiclesByStatus = (status: VehicleStatus) => {
-  const [data, setData] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  return useQuery({
+    queryKey: ['vehicles', status],
+    queryFn: () => VehicleAPI.getVehiclesByStatus(status),
+  });
+  // const [data, setData] = useState<Vehicle[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const vehicles = await VehicleAPI.getVehiclesByStatus(status);
-      setData(vehicles);
-    } catch (error) {
-      message.error((error as AxiosError).message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const vehicles = await VehicleAPI.getVehiclesByStatus(status);
+  //     setData(vehicles);
+  //   } catch (error) {
+  //     message.error((error as AxiosError).message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, [status]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [status]);
 
-  return { data, loading, refresh: fetchData };
+  // return { data, loading, refresh: fetchData };
+};
+
+export const useUpdateVehicleStatus = () => {
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: VehicleStatus }) =>
+      VehicleAPI.updateVehicleStatus(id, status),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vehicles'] }),
+  });
 };
 
 // ... More hooks can be added for each API, following the structure shown above.
 
 // A hook for creating a vehicle
 export const useCreateVehicle = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError | null>(null);
+  return useMutation({
+    mutationFn: (data: VehicleInput) => VehicleAPI.createVehicle(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vehicles'] }),
+  });
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<AxiosError | null>(null);
 
-  const create = useCallback(async (data: VehicleInput) => {
-    setLoading(true);
-    try {
-      return await VehicleAPI.createVehicle(data);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        const responseData = axiosError.response.data as {
-          rawErrors?: string[];
-        };
-        if (
-          responseData &&
-          responseData.rawErrors &&
-          responseData.rawErrors.length > 0
-        ) {
-          message.error(responseData.rawErrors[0]);
-        } else if (
-          responseData &&
-          typeof responseData === 'object' &&
-          'message' in responseData
-        ) {
-          message.error(responseData.message as string);
-        } else {
-          setError(error as AxiosError);
-        }
-      } else {
-        setError(error as AxiosError);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // const create = useCallback(async (data: VehicleInput) => {
+  //   setLoading(true);
+  //   try {
+  //     return await VehicleAPI.createVehicle(data);
+  //   } catch (error) {
+  //     const axiosError = error as AxiosError;
+  //     if (axiosError.response) {
+  //       const responseData = axiosError.response.data as {
+  //         rawErrors?: string[];
+  //       };
+  //       if (
+  //         responseData &&
+  //         responseData.rawErrors &&
+  //         responseData.rawErrors.length > 0
+  //       ) {
+  //         message.error(responseData.rawErrors[0]);
+  //       } else if (
+  //         responseData &&
+  //         typeof responseData === 'object' &&
+  //         'message' in responseData
+  //       ) {
+  //         message.error(responseData.message as string);
+  //       } else {
+  //         setError(error as AxiosError);
+  //       }
+  //     } else {
+  //       setError(error as AxiosError);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
-  return { create, loading, error };
+  // return { create, loading, error };
 };
 
 export const useUpdateVehicle = () => {
@@ -182,26 +204,30 @@ export const useVehicleByLicensePlate = (licensePlate: string) => {
 };
 
 export const useVehicleById = (id: string) => {
-  const [data, setData] = useState<Vehicle | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError | null>(null);
+  return useQuery({
+    queryKey: ['vehicles', id],
+    queryFn: () => VehicleAPI.getVehicleById(id),
+  });
+  // const [data, setData] = useState<Vehicle | null>(null);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<AxiosError | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const vehicle = await VehicleAPI.getVehicleById(id);
-        setData(vehicle);
-      } catch (error) {
-        setError(error as AxiosError);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [id]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const vehicle = await VehicleAPI.getVehicleById(id);
+  //       setData(vehicle);
+  //     } catch (error) {
+  //       setError(error as AxiosError);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [id]);
 
-  return { data, loading, error };
+  // return { data, loading, error };
 };
 
 export const useDeleteVehicle = () => {

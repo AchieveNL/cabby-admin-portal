@@ -60,6 +60,7 @@ export type Payment = {
 
 export enum OrderStatus {
   PENDING = 'PENDING',
+  UNPAID = 'UNPAID',
   CONFIRMED = 'CONFIRMED',
   REJECTED = 'REJECTED',
   COMPLETED = 'COMPLETED',

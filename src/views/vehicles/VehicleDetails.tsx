@@ -8,7 +8,7 @@ import ElectricCarIcon from '@/components/icons/ElectricCarIcon';
 import EventSeatIcon from '@/components/icons/EventSeatIcon';
 import BatteryChargingIcon from '@/components/icons/BatteryChargingIcon';
 import StarIcon from '@/components/icons/StarIcon';
-import { useVehicleById } from '@/api/vehicles/hooks';
+import { useUpdateVehicleStatus, useVehicleById } from '@/api/vehicles/hooks';
 import { formatToEuro } from '@/utils/utils';
 import ActionButtons from '@/components/ActionButtons/ActionButtons';
 import { VehicleStatus } from '@/api/vehicles/types';
@@ -23,7 +23,7 @@ const VehicleDetails = () => {
   const router = useRouter();
   const vehicleId = router.query.vehicleId as string;
   const { data: vehicle, loading } = useVehicleById(vehicleId);
-
+  const { mutateAsync: updateStatus } = useUpdateVehicleStatus();
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -52,12 +52,14 @@ const VehicleDetails = () => {
     // ... Add more badges as required
   ];
 
-  const handleApprove = async () => {
-    await updateVehicleStatus(vehicleId, VehicleStatus.ACTIVE);
+  const handleApprove = async (vehicleId: string) => {
+    await updateStatus({ id: vehicleId, status: VehicleStatus.ACTIVE });
+    // await refresh();
   };
 
-  const handleReject = async () => {
-    await updateVehicleStatus(vehicleId, VehicleStatus.REJECTED);
+  const handleReject = async (vehicleId: string) => {
+    await updateStatus({ id: vehicleId, status: VehicleStatus.REJECTED });
+    // await refresh();
   };
 
   const onSubmitRejectReason = async (id: string, reason: string) => {

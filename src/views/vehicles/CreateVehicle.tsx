@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Input, Row, message } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Row,
+  Table,
+  message,
+} from 'antd';
 import UploadImage from '@/components/inputs/UploadImage';
 import { useRouter } from 'next/router'; // Fixed 'next/navigation' to 'next/router'
 import { VehicleInput, VehicleStatus } from '@/api/vehicles/types';
@@ -11,6 +20,92 @@ import {
 import DisplayImage from '@/components/image/DisplayImage';
 import styles from './CreateVehicle.module.scss';
 import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
+import { ColumnsType } from 'antd/es/table';
+
+const defaultTimeframes = [
+  {
+    day: 'monday',
+    title: 'MA',
+    data: [
+      { title: '06:00 t/m 12:00', value: 0 },
+      { title: '12:00 t/m 18:00', value: 0 },
+      { title: '18:00 t/m 00:00', value: 0 },
+      { title: '00:00 t/m 16:00', value: 0 },
+    ],
+  },
+  {
+    day: 'tuesday',
+    title: 'DI',
+    data: [
+      { title: '06:00 t/m 12:00', value: 0 },
+      { title: '12:00 t/m 18:00', value: 0 },
+      { title: '18:00 t/m 00:00', value: 0 },
+      { title: '00:00 t/m 16:00', value: 0 },
+    ],
+  },
+  {
+    day: 'wednesday',
+    title: 'WO',
+    data: [
+      { title: '06:00 t/m 12:00', value: 0 },
+      { title: '12:00 t/m 18:00', value: 0 },
+      { title: '18:00 t/m 00:00', value: 0 },
+      { title: '00:00 t/m 16:00', value: 0 },
+    ],
+  },
+  {
+    day: 'thursday',
+    title: 'DO',
+    data: [
+      { title: '06:00 t/m 12:00', value: 0 },
+      { title: '12:00 t/m 18:00', value: 0 },
+      { title: '18:00 t/m 00:00', value: 0 },
+      { title: '00:00 t/m 16:00', value: 0 },
+    ],
+  },
+  {
+    day: 'friday',
+    title: 'VR',
+    data: [
+      { title: '06:00 t/m 12:00', value: 0 },
+      { title: '12:00 t/m 18:00', value: 0 },
+      { title: '18:00 t/m 00:00', value: 0 },
+      { title: '00:00 t/m 16:00', value: 0 },
+    ],
+  },
+  {
+    day: 'saturday',
+    title: 'ZA',
+    data: [
+      { title: '06:00 t/m 12:00', value: 0 },
+      { title: '12:00 t/m 18:00', value: 0 },
+      { title: '18:00 t/m 00:00', value: 0 },
+      { title: '00:00 t/m 16:00', value: 0 },
+    ],
+  },
+  {
+    day: 'sunday',
+    title: 'ZO',
+    data: [
+      { title: '06:00 t/m 12:00', value: 0 },
+      { title: '12:00 t/m 18:00', value: 0 },
+      { title: '18:00 t/m 00:00', value: 0 },
+      { title: '00:00 t/m 16:00', value: 0 },
+    ],
+  },
+];
+const dataSource: readonly object[] | undefined = [0, 1, 2, 3].map((el) => {
+  return {
+    key: el,
+    monday: defaultTimeframes[0].data[el],
+    tuesday: defaultTimeframes[1].data[el],
+    wednesday: defaultTimeframes[2].data[el],
+    thursday: defaultTimeframes[3].data[el],
+    friday: defaultTimeframes[4].data[el],
+    saturday: defaultTimeframes[5].data[el],
+    sunday: defaultTimeframes[6].data[el],
+  };
+});
 
 const initialVehicleData: VehicleInput = {
   logo: '',
@@ -30,23 +125,77 @@ const initialVehicleData: VehicleInput = {
   pricePerDay: 0.0,
   status: VehicleStatus.PENDING,
   vin: '',
+  timeframes: defaultTimeframes,
 };
 
 const CreateVehicle: React.FC = () => {
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
-  const { create, loading: isCreating } = useCreateVehicle();
-  const { update, loading: isUpdating } = useUpdateVehicle();
+  const { mutate: create, isPending: isCreating } = useCreateVehicle();
+  const { update } = useUpdateVehicle();
   const router = useRouter();
   const [form] = Form.useForm();
-  const { data: vehicle, loading } = useVehicleById(
-    router.query.vehicleId as string,
+  const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
+
+  const columns: ColumnsType<object> | undefined = defaultTimeframes.map(
+    (el, index) => ({
+      title: el.title,
+      key: el.day,
+      align: 'center',
+      render: (data) => {
+        const timeframe = data?.[el.day];
+        const title = timeframe?.title;
+        // const value = timeframe?.value;
+        const timeframes = vehicleData.timeframes;
+        const ownTimeframes = timeframes?.[index].data;
+        const ownTimeframe = ownTimeframes?.find((el) => el.title === title);
+        const value = ownTimeframe?.value;
+        return (
+          <div className="flex flex-col">
+            <label htmlFor="">{title}</label>
+            <InputNumber
+              onChange={(val) => {
+                const newTimeFrames = timeframes?.map((el, i) =>
+                  i !== index
+                    ? el
+                    : {
+                        ...el,
+                        data: el?.data.map((element) => {
+                          return element.title === title
+                            ? {
+                                ...element,
+                                value: val,
+                              }
+                            : element;
+                        }),
+                      },
+                );
+                setVehicleData((el) => ({
+                  ...el,
+                  timeframes: newTimeFrames,
+                }));
+              }}
+              value={value}
+              addonAfter="€"
+              className="w-full"
+            />
+          </div>
+        );
+      },
+    }),
   );
 
   useEffect(() => {
     if (vehicle) {
       form.setFieldsValue(vehicle);
-      setVehicleData(vehicle);
+      if (!vehicle.timeframes) {
+        return setVehicleData({
+          ...initialVehicleData,
+          ...vehicle,
+          timeframes: initialVehicleData.timeframes,
+        });
+      }
+      setVehicleData({ ...initialVehicleData, ...vehicle });
     }
   }, [vehicle]);
 
@@ -103,10 +252,10 @@ const CreateVehicle: React.FC = () => {
       router.push('/dashboard/vehicles');
     } else {
       const data = await create(vehicleData);
-      if (data) {
-        message.success('Vehicle added successfully');
-        router.push('/dashboard/vehicles');
-      }
+      // if (data) {
+      message.success('Vehicle added successfully');
+      router.push('/dashboard/vehicles');
+      // }
     }
   };
 
@@ -242,7 +391,12 @@ const CreateVehicle: React.FC = () => {
               />
             </Form.Item>
           </div>
-
+          <Table
+            rowClassName="bg-primary-light-2"
+            dataSource={dataSource}
+            columns={columns}
+            pagination={false}
+          />
           <div className={styles.columns}>
             <div>
               <Row gutter={16}>

@@ -12,6 +12,7 @@ import CompletedOrdersTab from '@/components/tables/orders/CompletedOrdersTab';
 import CanceledOrdersTab from '@/components/tables/orders/CanceledOrdersTab';
 import { Vehicle } from '@/api/vehicles/types';
 import RejectedOrdersTab from '@/components/tables/orders/RejectedOrdersTab';
+import OrdersTable from '@/components/tables/orders/OrdersTab';
 
 export const getOrderColumns = (action?: boolean): TableColumnsType<Order> => [
   {
@@ -99,20 +100,23 @@ const Orders = () => {
 
   return (
     <Tabs defaultActiveKey={currentTab} onChange={handleTabChange}>
-      <TabPane tab="Pending" key="1">
-        <PendingOrdersTable />
+      <TabPane tab="In behandeling" key="1">
+        <OrdersTable status="PENDING" />
       </TabPane>
-      <TabPane tab="Active" key="2">
-        <ActiveOrdersTab />
+      <TabPane tab="Bevestigd" key="2">
+        <OrdersTable status="CONFIRMED" />
       </TabPane>
-      <TabPane tab="Completed" key="3">
-        <CompletedOrdersTab />
+      <TabPane tab="Voltooid" key="3">
+        <OrdersTable status="COMPLETED" />
       </TabPane>
-      <TabPane tab="Rejected" key="4">
-        <RejectedOrdersTab />
+      <TabPane tab="Geannuleerd" key="4">
+        <OrdersTable status="CANCELED" />
       </TabPane>
-      <TabPane tab="Cancelation Request" key="5">
-        <CanceledOrdersTab />
+      <TabPane tab="Onbetaald" key="5">
+        <OrdersTable status="UNPAID" />
+      </TabPane>
+      <TabPane tab="Afgewezen" key="6">
+        <OrdersTable status="REJECTED" />
       </TabPane>
     </Tabs>
   );
