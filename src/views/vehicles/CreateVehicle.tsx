@@ -22,88 +22,57 @@ import styles from './CreateVehicle.module.scss';
 import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
 import { ColumnsType } from 'antd/es/table';
 
-const defaultTimeframes = [
+const timeframesTitles = [
+  '06:00 t/m 12:00',
+  '12:00 t/m 18:00',
+  '18:00 t/m 00:00',
+  '00:00 T/M 6:00',
+];
+
+const timeframesStructure = [
   {
-    day: 'monday',
     title: 'MA',
-    data: [
-      { title: '06:00 t/m 12:00', value: 0 },
-      { title: '12:00 t/m 18:00', value: 0 },
-      { title: '18:00 t/m 00:00', value: 0 },
-      { title: '00:00 t/m 16:00', value: 0 },
-    ],
   },
   {
-    day: 'tuesday',
     title: 'DI',
-    data: [
-      { title: '06:00 t/m 12:00', value: 0 },
-      { title: '12:00 t/m 18:00', value: 0 },
-      { title: '18:00 t/m 00:00', value: 0 },
-      { title: '00:00 t/m 16:00', value: 0 },
-    ],
   },
   {
-    day: 'wednesday',
     title: 'WO',
-    data: [
-      { title: '06:00 t/m 12:00', value: 0 },
-      { title: '12:00 t/m 18:00', value: 0 },
-      { title: '18:00 t/m 00:00', value: 0 },
-      { title: '00:00 t/m 16:00', value: 0 },
-    ],
   },
   {
-    day: 'thursday',
     title: 'DO',
-    data: [
-      { title: '06:00 t/m 12:00', value: 0 },
-      { title: '12:00 t/m 18:00', value: 0 },
-      { title: '18:00 t/m 00:00', value: 0 },
-      { title: '00:00 t/m 16:00', value: 0 },
-    ],
   },
   {
-    day: 'friday',
     title: 'VR',
-    data: [
-      { title: '06:00 t/m 12:00', value: 0 },
-      { title: '12:00 t/m 18:00', value: 0 },
-      { title: '18:00 t/m 00:00', value: 0 },
-      { title: '00:00 t/m 16:00', value: 0 },
-    ],
   },
   {
-    day: 'saturday',
     title: 'ZA',
-    data: [
-      { title: '06:00 t/m 12:00', value: 0 },
-      { title: '12:00 t/m 18:00', value: 0 },
-      { title: '18:00 t/m 00:00', value: 0 },
-      { title: '00:00 t/m 16:00', value: 0 },
-    ],
   },
   {
-    day: 'sunday',
     title: 'ZO',
-    data: [
-      { title: '06:00 t/m 12:00', value: 0 },
-      { title: '12:00 t/m 18:00', value: 0 },
-      { title: '18:00 t/m 00:00', value: 0 },
-      { title: '00:00 t/m 16:00', value: 0 },
-    ],
   },
 ];
+
+const defaultTimeframes = [
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+];
+
 const dataSource: readonly object[] | undefined = [0, 1, 2, 3].map((el) => {
   return {
     key: el,
-    monday: defaultTimeframes[0].data[el],
-    tuesday: defaultTimeframes[1].data[el],
-    wednesday: defaultTimeframes[2].data[el],
-    thursday: defaultTimeframes[3].data[el],
-    friday: defaultTimeframes[4].data[el],
-    saturday: defaultTimeframes[5].data[el],
-    sunday: defaultTimeframes[6].data[el],
+    monday: defaultTimeframes[0][el],
+    tuesday: defaultTimeframes[1][el],
+    wednesday: defaultTimeframes[2][el],
+    thursday: defaultTimeframes[3][el],
+    friday: defaultTimeframes[4][el],
+    saturday: defaultTimeframes[5][el],
+    sunday: defaultTimeframes[6][el],
   };
 });
 
@@ -137,38 +106,29 @@ const CreateVehicle: React.FC = () => {
   const [form] = Form.useForm();
   const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
 
-  const columns: ColumnsType<object> | undefined = defaultTimeframes.map(
-    (el, index) => ({
+  const columns: ColumnsType<object> | undefined = timeframesStructure.map(
+    (el, dayIndex) => ({
       title: el.title,
-      key: el.day,
+      key: el.title,
       align: 'center',
       render: (data) => {
-        const timeframe = data?.[el.day];
-        const title = timeframe?.title;
-        // const value = timeframe?.value;
+        const timeframeIndex = data.key;
+        const title = timeframesTitles[timeframeIndex];
         const timeframes = vehicleData.timeframes;
-        const ownTimeframes = timeframes?.[index].data;
-        const ownTimeframe = ownTimeframes?.find((el) => el.title === title);
-        const value = ownTimeframe?.value;
+        const value = timeframes[dayIndex][timeframeIndex];
+        // console.log(timeframes);
         return (
           <div className="flex flex-col">
             <label htmlFor="">{title}</label>
             <InputNumber
+              min={0}
               onChange={(val) => {
-                const newTimeFrames = timeframes?.map((el, i) =>
-                  i !== index
+                const newTimeFrames = timeframes?.map((el, index1) =>
+                  index1 !== dayIndex
                     ? el
-                    : {
-                        ...el,
-                        data: el?.data.map((element) => {
-                          return element.title === title
-                            ? {
-                                ...element,
-                                value: val,
-                              }
-                            : element;
-                        }),
-                      },
+                    : el?.map((element, index2) => {
+                        return index2 === timeframeIndex ? val || 0 : element;
+                      }),
                 );
                 setVehicleData((el) => ({
                   ...el,

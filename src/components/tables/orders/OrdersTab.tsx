@@ -7,19 +7,39 @@ import {
   invalidateOrders,
   rejectOrder,
 } from '@/api/orders/orders';
-import { Table, TableColumnsType, message } from 'antd';
+import {
+  Badge,
+  Button,
+  Dropdown,
+  MenuProps,
+  Space,
+  Table,
+  TableColumnsType,
+  message,
+} from 'antd';
 import { useOrders } from '@/api/orders/hooks';
 import Link from 'next/link';
 import ActionButtons from '@/components/ActionButtons/ActionButtons';
 import { Vehicle } from '@/api/vehicles/types';
-import dayjs from 'dayjs';
 import { currencyFormatter } from '@/common/utits';
 import Countdown from '@/components/CountDown/Countdown';
+import Image from 'next/image';
+import { CloseOutlined, MoreOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
 type Keys = keyof typeof OrderStatus;
 // type Status = (typeof OrderStatus)[Keys];
+const orderStatusArray = Object.values(OrderStatus);
 
-const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
+const items: MenuProps['items'] = orderStatusArray.map((el) => ({
+  key: el,
+  label: el,
+  // onClick: () => {},
+}));
+
+const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
   const handleApprove = async (orderId: string) => {
     await confirmOrder(orderId);
     await invalidateOrders();
@@ -46,7 +66,7 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
 
   return [
     {
-      title: 'Driver',
+      title: 'Naam bestuurder',
       dataIndex: 'user',
       key: 'user',
       className: 'table-bg-primary',
@@ -55,30 +75,41 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       ),
     },
     {
-      title: 'Vehicle',
+      title: 'Auto',
       dataIndex: 'vehicle',
       className: 'table-bg-primary',
       key: 'vehicle',
       render: (vehicle: Vehicle) => (
-        <div>
-          <div>
-            <img src={vehicle.images?.[0]} alt={vehicle.companyName} />
-          </div>
+        <div className="flex items-center gap-2">
+          <Image
+            src={vehicle.images?.[0]}
+            alt={vehicle.companyName}
+            width={30}
+            height={30}
+            className="rounded-full aspect-square object-cover"
+          />
+          {/* <img src={vehicle.images?.[0]} alt={vehicle.companyName} /> */}
           <div>{vehicle.companyName}</div>
         </div>
       ),
     },
     {
-      title: 'Rental Period',
+      title: 'begin',
+      dataIndex: 'rentalStartDate',
+      className: 'table-bg-primary',
+      key: 'rentalStartDate',
+      render: (value: string, row: Order) => (
+        <>{dayjs(row.rentalStartDate).format('DD/MM/YYYY • hh:mm')}</>
+      ),
+    },
+    {
+      title: 'einde',
       dataIndex: 'rentalStartDate',
       className: 'table-bg-primary',
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
         <>
-          <div>
-            From: {dayjs(row.rentalStartDate).format('DD/MM/YYYY • hh:mm')}
-          </div>
-          <div>to: {dayjs(row.rentalEndDate).format('DD/MM/YYYY • hh:mm')}</div>
+          <div>{dayjs(row.rentalEndDate).format('DD/MM/YYYY • hh:mm')}</div>
         </>
       ),
     },
@@ -90,32 +121,42 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       render: (value: number) => currencyFormatter.format(value),
     },
     {
-      title: 'Countdown',
+      title: 'Tijd',
       dataIndex: 'rentalStartDate',
       className: 'table-bg-primary',
       key: 'countdown',
-      render: (value: string) => <Countdown targetDate={value} />,
+      render: (value: string, row) => (
+        <>
+          {/* <Countdown targetDate={value} /> */}
+          {dayjs
+            .duration(dayjs(row.rentalEndDate).diff(dayjs(row.rentalStartDate)))
+            .format('HH:mm:ss')}
+        </>
+      ),
     },
+    // {
+    //   title: 'Created At',
+    //   dataIndex: 'createdAt',
+    //   key: 'createdAt',
+    //   className: 'table-bg-primary',
+    //   render: (date: string) => dayjs(date).format('DD/MM/YYYY • hh:mm'),
+    // },
     {
-      title: 'Created At',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      title: 'Details',
+      dataIndex: 'id',
+      key: 'id',
       className: 'table-bg-primary',
-      render: (date: string) => dayjs(date).format('DD/MM/YYYY • hh:mm'),
+      render: (id) => (
+        <Link href={`/dashboard/orders/${id}`} className="text-primary-base">
+          Details
+        </Link>
+      ),
     },
     {
-      title: 'Note',
-      dataIndex: 'note',
-      key: 'note',
-      className: 'table-bg-primary',
-      render: (note?: string) => note || 'N/A',
-    },
-    {
-      title: 'Action',
+      title: 'Actie',
       // align: 'center',
       render: (value: any, record: Order) => (
-        <div className="flex items-center gap-2 w-[200px]">
-          <Link href={`/dashboard/orders/${record.id}`}>Details</Link>
+        <div className="flex items-center gap-2">
           {status === 'PENDING' ? (
             <ActionButtons
               onApprove={handleApprove}
@@ -130,6 +171,23 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
               recordId={record.id}
               confirmationMessage="Are you sure you want to cancel this order?"
             />
+          ) : status === 'UNPAID' ? (
+            <>
+              <Button type="text" danger className="flex items-center gap-1">
+                <CloseOutlined rev={undefined} /> Stop
+              </Button>
+              <Badge className="bg-danger-light-2 p-2 rounded-lg text-danger-base">
+                Onbetaald
+              </Badge>
+              <Dropdown className="hover:cursor-pointer" menu={{ items }}>
+                <Space>
+                  <MoreOutlined
+                    rev={undefined}
+                    className="text-primary-base text-3xl"
+                  />
+                </Space>
+              </Dropdown>
+            </>
           ) : (
             <></>
           )}
@@ -139,26 +197,10 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
   ];
 };
 
-const OrdersTable = ({ status }: { status: Keys }) => {
+const OrdersTable = ({ status }: { status?: Keys }) => {
   const { data, isFetching, error } = useOrders(status);
 
   const columns = getColumns({ status });
-  // {
-  //   title: 'Action',
-  //   key: 'action',
-  //   render: (text: any, record: any) => (
-  //     <div className="flex items-center gap-2">
-  //       <Link href={`/dashboard/orders/${record.id}`}>Details</Link>
-  //       <ActionButtons
-  //         onApprove={handleApprove}
-  //         onRejectReason={onSubmitRejectReason}
-  //         onReject={handleReject}
-  //         recordId={record.id}
-  //         confirmationMessage="Are you sure you want to reject this vehicle?"
-  //       />
-  //     </div>
-  //   ),
-  // },
 
   if (error) {
     return <div>Error loading data</div>;

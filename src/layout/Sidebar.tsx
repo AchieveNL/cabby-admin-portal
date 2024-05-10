@@ -25,7 +25,7 @@ const navLinks: NavLinkData[] = [
   },
   {
     href: '/dashboard/vehicles',
-    label: 'Vehicles',
+    label: "Auto's",
     iconPath: '/DirectionsCarFilled.png',
     // numberList: 4,
   },

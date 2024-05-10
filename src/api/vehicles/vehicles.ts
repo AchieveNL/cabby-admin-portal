@@ -2,6 +2,8 @@
 import axios from 'axios';
 import { Vehicle, VehicleInput, VehicleStatus } from './types';
 import { apiUrl } from '@/common/constants';
+import { VehicleStatusType } from '@/components/tables/vehicles/VehiclesTab';
+import { invalidateVehicles } from './hooks';
 
 const VEHICLES_URL = apiUrl + '/vehicles';
 
@@ -26,7 +28,7 @@ export const getAllVehicles = async (): Promise<Vehicle[]> => {
 };
 
 export const getVehiclesByStatus = async (
-  status: VehicleStatus,
+  status: VehicleStatusType,
 ): Promise<Vehicle[]> => {
   const response = await axios.get(`${VEHICLES_URL}/status/${status}`);
   return response.data.payload;
@@ -82,6 +84,7 @@ export const updateVehicleStatus = async (
 
 export const deleteVehicle = async (id: string): Promise<Vehicle> => {
   const response = await axios.delete<Vehicle>(`${VEHICLES_URL}/${id}`);
+  await invalidateVehicles();
   return response.data;
 };
 

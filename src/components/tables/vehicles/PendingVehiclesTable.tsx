@@ -85,8 +85,9 @@ export const PendingVehiclesTable = () => {
         </Button>
       </div>
       <Table
-        className=""
-        tableLayout="auto"
+        // scroll={{ x: 'max-content' }}
+        className="w-full"
+        tableLayout="fixed"
         columns={columns}
         dataSource={vehicles}
         loading={isLoading}

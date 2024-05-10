@@ -9,7 +9,7 @@ interface Props {
   confirmPlaceholder?: string;
   title: string;
   fn: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   button: React.ReactNode;
 }
 

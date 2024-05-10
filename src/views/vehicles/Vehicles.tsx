@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { TableColumnsType, Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import { PendingVehiclesTable } from '@/components/tables/vehicles/PendingVehiclesTable';
-import { Vehicle } from '@/api/vehicles/types';
+import { Vehicle, VehicleStatus } from '@/api/vehicles/types';
 import { ActiveVehiclesTable } from '@/components/tables/vehicles/ActiveVehiclesTable';
 import { RejectedVehiclesTable } from '@/components/tables/vehicles/RejectedVehiclesTable';
 import { BlockedVehiclesTable } from '@/components/tables/vehicles/BlockedVehiclesTable';
 import Link from 'next/link';
+import { VehiclesTab } from '@/components/tables/vehicles/VehiclesTab';
 
 export const vehiclesColumns = (action?: any): TableColumnsType<Vehicle> => [
   {
@@ -71,9 +72,18 @@ const Vehicles = () => {
     setCurrentTab(key);
   };
 
+  const tabs: TabsProps['items'] = Object.values(VehicleStatus).map(
+    (status, index) => ({
+      key: (index + 1).toString(),
+      label: status,
+      status,
+      children: <VehiclesTab status={status} />,
+    }),
+  );
+
   return (
     <div>
-      <Tabs defaultActiveKey={currentTab} items={items} onChange={onChange} />
+      <Tabs defaultActiveKey={currentTab} items={tabs} onChange={onChange} />
     </div>
   );
 };

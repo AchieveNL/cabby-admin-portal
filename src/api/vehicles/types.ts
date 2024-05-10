@@ -28,9 +28,5 @@ export type VehicleInput = {
   pricePerDay?: number;
   status: VehicleStatus;
   vin?: string;
-  timeframes: {
-    day: string;
-    title: string;
-    data: { title: string; value: number | null }[];
-  }[];
+  timeframes: number[][];
 };

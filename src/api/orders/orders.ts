@@ -3,6 +3,7 @@ import { Order, OrderStatus } from './types';
 import axios from 'axios';
 import { queryClient } from '@/pages/_app';
 import { queryKey } from './hooks';
+import { useQuery } from '@tanstack/react-query';
 
 const BASE_URL = apiUrl + '/orders';
 
@@ -11,7 +12,7 @@ type Keys = keyof typeof OrderStatus;
 export const invalidateOrders = () =>
   queryClient.invalidateQueries({ queryKey: queryKey });
 
-export const getOrders = async (status: Keys): Promise<Order[]> => {
+export const getOrders = async (status?: Keys): Promise<Order[]> => {
   try {
     const response = await axios.get(`${BASE_URL}/status/${status}`);
     return response.data.payload;

@@ -8,8 +8,11 @@ type Keys = keyof typeof OrderStatus;
 
 export const queryKey = ['orders'];
 
-export const useOrders = (status: Keys) => {
-  return useQuery({ queryKey, queryFn: () => getOrders(status) });
+export const useOrders = (status?: Keys) => {
+  return useQuery({
+    queryKey: ['orders', status],
+    queryFn: () => getOrders(status),
+  });
   // const [data, setData] = useState<Order[]>([]);
   // const [loading, setLoading] = useState<boolean>(false);
   // const [error, setError] = useState<AxiosError | null>(null);

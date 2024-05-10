@@ -6,6 +6,12 @@ import * as VehicleAPI from './vehicles';
 import { Vehicle, VehicleInput, VehicleStatus } from './types';
 import { message } from 'antd';
 import { queryClient } from '@/pages/_app';
+import { VehicleStatusType } from '@/components/tables/vehicles/VehiclesTab';
+
+export const invalidateVehicles = () =>
+  queryClient.invalidateQueries({
+    queryKey: ['vehicles'],
+  });
 
 export const useAllVehicles = () => {
   return useQuery({
@@ -34,7 +40,7 @@ export const useAllVehicles = () => {
   // return { data, loading, error };
 };
 
-export const useVehiclesByStatus = (status: VehicleStatus) => {
+export const useVehiclesByStatus = (status: VehicleStatusType) => {
   return useQuery({
     queryKey: ['vehicles', status],
     queryFn: () => VehicleAPI.getVehiclesByStatus(status),
