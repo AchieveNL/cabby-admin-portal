@@ -223,7 +223,7 @@ const CreateVehicle: React.FC = () => {
   const onSetPaperImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
-      papers: [...prevData.images, url],
+      papers: [...prevData.papers, url],
     }));
   };
   const onSetCarImageUrl = (url: string) => {
