@@ -82,6 +82,7 @@ export default function ActionButtons({
       {onCancel && (
         <ButtonWithIcon
           icon={<CloseOutlined rev={undefined} />}
+          className="text-danger-base hover:text-danger-light-2 hover:bg-danger-base px-2 py-1 rounded-lg"
           onClick={() => {
             setShowConfirm(true);
           }}

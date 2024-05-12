@@ -75,7 +75,16 @@ const Vehicles = () => {
   const tabs: TabsProps['items'] = Object.values(VehicleStatus).map(
     (status, index) => ({
       key: (index + 1).toString(),
-      label: status,
+      label:
+        status === 'PENDING'
+          ? 'In behandeling'
+          : status === 'ACTIVE'
+          ? 'Actief'
+          : status === 'REJECTED'
+          ? 'Afgewezen'
+          : status === 'BLOCKED'
+          ? 'Geblokkeerd'
+          : '',
       status,
       children: <VehiclesTab status={status} />,
     }),

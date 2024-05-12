@@ -84,7 +84,7 @@ const VehicleDetails = () => {
         >
           <span className="text-base font-bold">Edit</span>
         </Link>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           {vehicle?.status === VehicleStatus.PENDING && (
             <ActionButtons
               onApprove={handleApprove}
