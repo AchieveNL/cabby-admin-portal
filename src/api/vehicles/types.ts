@@ -22,6 +22,7 @@ export type VehicleInput = {
   batteryCapacity: string;
   uniqueFeature: string;
   images: string[];
+  papers: string[];
   availability?: string;
   unavailabilityReason?: string;
   currency?: string;

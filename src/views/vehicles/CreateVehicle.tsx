@@ -89,6 +89,7 @@ const initialVehicleData: VehicleInput = {
   batteryCapacity: '',
   uniqueFeature: '',
   images: [],
+  papers: [],
   availability: 'available',
   currency: 'EUR',
   pricePerDay: 0.0,
@@ -219,7 +220,13 @@ const CreateVehicle: React.FC = () => {
     }
   };
 
-  const onSetImageUrl = (url: string) => {
+  const onSetPaperImageUrl = (url: string) => {
+    setVehicleData((prevData) => ({
+      ...prevData,
+      papers: [...prevData.images, url],
+    }));
+  };
+  const onSetCarImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
       images: [...prevData.images, url],
@@ -358,6 +365,7 @@ const CreateVehicle: React.FC = () => {
             pagination={false}
           />
           <div className={styles.columns}>
+            <h3 className="text-lg">Car images</h3>
             <div>
               <Row gutter={16}>
                 {vehicleData.images.map((image) => (
@@ -368,7 +376,26 @@ const CreateVehicle: React.FC = () => {
               </Row>
             </div>
             <div>
-              <UploadImage setImageUrl={onSetImageUrl} />
+              <UploadImage
+                placeholder="Upload car images"
+                setImageUrl={onSetCarImageUrl}
+              />
+            </div>
+            <h3 className="text-lg">Paper images</h3>
+            <div>
+              <Row gutter={16}>
+                {vehicleData.papers.map((image) => (
+                  <Col span={6} key={image}>
+                    <DisplayImage imageUrl={image} onImageDelete={() => null} />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+            <div>
+              <UploadImage
+                placeholder="Upload paper images"
+                setImageUrl={onSetPaperImageUrl}
+              />
             </div>
             <div>
               <Button

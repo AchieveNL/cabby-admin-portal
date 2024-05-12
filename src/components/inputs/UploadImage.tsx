@@ -5,9 +5,13 @@ import { uploadFile } from '@/api/upload/upload';
 
 interface UploadImageProps {
   setImageUrl: (url: string) => void;
+  placeholder?: string;
 }
 
-const UploadImage: React.FC<UploadImageProps> = ({ setImageUrl }) => {
+const UploadImage: React.FC<UploadImageProps> = ({
+  setImageUrl,
+  placeholder,
+}) => {
   const handleUpload = async (options: any) => {
     const { onSuccess, onError, file } = options;
 
@@ -45,8 +49,11 @@ const UploadImage: React.FC<UploadImageProps> = ({ setImageUrl }) => {
       showUploadList={false}
       beforeUpload={beforeUploadHandler}
     >
-      <Button className="w-full" icon={<UploadOutlined rev={undefined} />}>
-        Upload Image Only
+      <Button
+        className="w-full flex items-center justify-center"
+        icon={<UploadOutlined rev={undefined} />}
+      >
+        {placeholder ?? ' Upload Image Only'}
       </Button>
     </Upload>
   );
