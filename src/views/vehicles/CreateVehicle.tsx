@@ -23,10 +23,10 @@ import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
 import { ColumnsType } from 'antd/es/table';
 
 const timeframesTitles = [
+  '00:00 T/M 6:00',
   '06:00 t/m 12:00',
   '12:00 t/m 18:00',
   '18:00 t/m 00:00',
-  '00:00 T/M 6:00',
 ];
 
 const timeframesStructure = [
