@@ -27,6 +27,8 @@ import Image from 'next/image';
 import { CloseOutlined, MoreOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 dayjs.extend(duration);
 
 type Keys = keyof typeof OrderStatus;
@@ -99,7 +101,7 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
       className: 'table-bg-primary',
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
-        <>{dayjs(row.rentalStartDate).format('DD/MM/YYYY • hh:mm')}</>
+        <>{dayjs.utc(row.rentalStartDate).format('DD/MM/YYYY • hh:mm')}</>
       ),
     },
     {
@@ -109,7 +111,7 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
         <>
-          <div>{dayjs(row.rentalEndDate).format('DD/MM/YYYY • hh:mm')}</div>
+          <div>{dayjs.utc(row.rentalEndDate).format('DD/MM/YYYY • hh:mm')}</div>
         </>
       ),
     },
