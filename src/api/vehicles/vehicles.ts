@@ -4,6 +4,7 @@ import { Vehicle, VehicleInput, VehicleStatus } from './types';
 import { apiUrl } from '@/common/constants';
 import { VehicleStatusType } from '@/components/tables/vehicles/VehiclesTab';
 import { invalidateVehicles } from './hooks';
+import { queryClient } from '@/pages/_app';
 
 const VEHICLES_URL = apiUrl + '/vehicles';
 
@@ -123,5 +124,20 @@ export const saveVehicleRejection = async (
     vehicleId,
     reason,
   });
+  return response.data;
+};
+
+export const getDeposit = async (): Promise<string> => {
+  const response = await axios.get(`${VEHICLES_URL}/deposit`);
+  return response.data.payload;
+};
+
+export const upsertDeposit = async ({
+  value,
+}: {
+  value: number;
+}): Promise<any> => {
+  const response = await axios.post(`${VEHICLES_URL}/deposit`, { value });
+  await queryClient.invalidateQueries({ queryKey: ['deposit'] });
   return response.data;
 };

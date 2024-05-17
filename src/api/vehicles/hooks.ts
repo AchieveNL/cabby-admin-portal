@@ -1,6 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useCallback } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  UndefinedInitialDataOptions,
+} from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import * as VehicleAPI from './vehicles';
 import { Vehicle, VehicleInput, VehicleStatus } from './types';
@@ -65,6 +69,13 @@ export const useVehiclesByStatus = (status: VehicleStatusType) => {
   // }, [status]);
 
   // return { data, loading, refresh: fetchData };
+};
+
+export const useGetDeposit = () => {
+  return useQuery({
+    queryKey: ['deposit'],
+    queryFn: () => VehicleAPI.getDeposit(),
+  });
 };
 
 export const useUpdateVehicleStatus = () => {
