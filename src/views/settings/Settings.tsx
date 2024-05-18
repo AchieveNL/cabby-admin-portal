@@ -31,7 +31,6 @@ const Settings = () => {
           />
           <Button
             htmlType="submit"
-            onClick={changeDeposit}
             className="w-full bg-primary-base text-white mt-2"
           >
             Save

@@ -5,15 +5,13 @@ import { useDriversByStatus, useUpdateDriverStatus } from '@/api/drivers/hooks';
 import { driversColumns } from '@/views/drivers/Drivers';
 
 const RejectedDriversTable = () => {
-  const {
-    data: drivers,
-    loading,
-    refresh,
-  } = useDriversByStatus(UserProfileStatus.REJECTED);
+  const { data: drivers, isFetching } = useDriversByStatus(
+    UserProfileStatus.REJECTED,
+  );
 
   const { updateStatus } = useUpdateDriverStatus();
 
-  if (loading) {
+  if (isFetching) {
     return <div>Loading...</div>;
   }
 
@@ -25,7 +23,7 @@ const RejectedDriversTable = () => {
             Rejected drivers
           </h4>
           <h6 className="font-medium text-base text-neutral-50">
-            Total {drivers.length} rejected drivers
+            Total {drivers?.length} rejected drivers
           </h6>
         </div>
       </div>
@@ -34,7 +32,6 @@ const RejectedDriversTable = () => {
         columns={driversColumns({
           showChangeStatus: true,
           changeStatus: updateStatus,
-          refresh,
         })}
       />
     </div>

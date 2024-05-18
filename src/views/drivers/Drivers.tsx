@@ -96,7 +96,7 @@ export const driversColumns = ({
     render: (id: string) => {
       return (
         <div className="flex gap-2 items-center">
-          {showChangeStatus && changeStatus && refresh && (
+          {showChangeStatus && changeStatus && (
             <DefaultModal
               title="Wil je zeker dat je deze bestuurder wilt deblokeren?"
               button={
@@ -107,7 +107,6 @@ export const driversColumns = ({
               confirmPlaceholder="Verder"
               fn={async () => {
                 await changeStatus(id, UserProfileStatus.PENDING);
-                refresh();
                 message.success('Driver on pending successfully');
               }}
             >
@@ -124,28 +123,28 @@ export const driversColumns = ({
 
 const Drivers = () => {
   const [currentTab, setCurrentTab] = React.useState('1');
-  const items: TabsProps['items'] = [
-    {
-      key: '1',
-      label: 'Pending',
-      children: <PendingDriversTable />,
-    },
-    {
-      key: '2',
-      label: 'Active',
-      children: <ActiveDriversTable />,
-    },
-    {
-      key: '3',
-      label: 'Rejected',
-      children: <RejectedDriversTable />,
-    },
-    {
-      key: '4',
-      label: 'Block',
-      children: <BlockedDriversTable />,
-    },
-  ];
+  // const items: TabsProps['items'] = [
+  //   {
+  //     key: '1',
+  //     label: 'Pending',
+  //     children: <PendingDriversTable />,
+  //   },
+  //   {
+  //     key: '2',
+  //     label: 'Active',
+  //     children: <ActiveDriversTable />,
+  //   },
+  //   {
+  //     key: '3',
+  //     label: 'Rejected',
+  //     children: <RejectedDriversTable />,
+  //   },
+  //   {
+  //     key: '4',
+  //     label: 'Block',
+  //     children: <BlockedDriversTable />,
+  //   },
+  // ];
 
   const onChange = (key: string) => {
     setCurrentTab(key);
