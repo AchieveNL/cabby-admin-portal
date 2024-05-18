@@ -224,27 +224,8 @@ export const useVehicleById = (id: string) => {
   return useQuery({
     queryKey: ['vehicles', id],
     queryFn: () => VehicleAPI.getVehicleById(id),
+    enabled: !!id,
   });
-  // const [data, setData] = useState<Vehicle | null>(null);
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<AxiosError | null>(null);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const vehicle = await VehicleAPI.getVehicleById(id);
-  //       setData(vehicle);
-  //     } catch (error) {
-  //       setError(error as AxiosError);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [id]);
-
-  // return { data, loading, error };
 };
 
 export const useDeleteVehicle = () => {

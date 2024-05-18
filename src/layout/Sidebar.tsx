@@ -39,6 +39,11 @@ const navLinks: NavLinkData[] = [
     label: 'Damage reports',
     iconPath: '/Description.png',
   },
+  {
+    href: '/dashboard/settings',
+    label: 'Instellingen',
+    iconPath: '/settings.svg',
+  },
   // {
   //   href: '/dashboard/refunds',
   //   label: 'Refunds',

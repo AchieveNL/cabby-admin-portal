@@ -15,11 +15,7 @@ interface DriverCardProps {
   refetch?: () => void;
 }
 
-const DriverCard: React.FC<DriverCardProps> = ({
-  driver,
-  isDetailPage,
-  refetch,
-}) => {
+const DriverCard: React.FC<DriverCardProps> = ({ driver, isDetailPage }) => {
   const router = useRouter();
   const renderTag = (label: string, defaultValue: string, value?: string) => (
     <Tag color="blue">
@@ -34,9 +30,6 @@ const DriverCard: React.FC<DriverCardProps> = ({
     try {
       await updateStatus(id, UserProfileStatus.ACTIVE);
       message.success('Driver approved successfully');
-      if (refetch) {
-        refetch();
-      }
     } catch (error) {
       message.error('Failed to approve the driver');
     }
@@ -46,9 +39,6 @@ const DriverCard: React.FC<DriverCardProps> = ({
     try {
       await updateStatus(id, UserProfileStatus.REJECTED);
       message.success('Driver rejected successfully');
-      if (refetch) {
-        refetch();
-      }
     } catch (error) {
       message.error('Failed to reject the driver');
     }
@@ -72,9 +62,6 @@ const DriverCard: React.FC<DriverCardProps> = ({
       // Here, you can make an API call to submit the reason
       await updateStatus(driver.id, UserProfileStatus.BLOCKED, reason);
       message.success('Driver blocked successfully');
-      if (refetch) {
-        refetch();
-      }
     } catch (error) {
       message.error('Failed to block the driver');
     }

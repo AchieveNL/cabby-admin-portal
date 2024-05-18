@@ -79,3 +79,27 @@ export const cancelOrder = async (orderId: string) => {
     throw error;
   }
 };
+
+export const stopOrder = async (orderId: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/stop`, {
+      orderId,
+    });
+    await invalidateOrders();
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const completeOrderAdmin = async (orderId: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/complete-admin`, {
+      orderId,
+    });
+    await invalidateOrders();
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

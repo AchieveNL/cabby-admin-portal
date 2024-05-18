@@ -30,4 +30,9 @@ export type VehicleInput = {
   status: VehicleStatus;
   vin?: string;
   timeframes: number[][];
+  streetName?: string;
+  streetNumber?: string;
+  zipcodeNumber?: string;
+  zipcodeCharacter?: string;
+  state?: string;
 };

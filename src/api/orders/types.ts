@@ -83,6 +83,8 @@ export type Order = {
     profile: UserProfile;
   };
   vehicle: Vehicle;
+  stopRentDate?: Date;
+  overdueEmailSentDate?: Date;
 };
 
 export type OrderRejection = {

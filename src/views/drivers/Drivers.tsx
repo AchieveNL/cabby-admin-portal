@@ -1,16 +1,17 @@
 import React from 'react';
-import RejectedDriversTable from '@/components/tables/drivers/RejectedDriversTable';
+import RejectedDriversTable from '@/components/tables/drivers/DriversTab';
 import ActiveDriversTable from '@/components/tables/drivers/ActiveDriversTable';
 import { Modal, Tabs, TabsProps, message } from 'antd';
 import Link from 'next/link';
 import PendingDriversTable from '@/components/tables/drivers/PendingDriversTable';
 import BlockedDriversTable from '@/components/tables/drivers/BlockedDriversTable';
-import Moment from 'moment';
 import { DriverLicense, PermitDetails } from '@/api/orders/types';
 import { ReloadOutlined } from '@ant-design/icons';
 import DeleteModal from '@/components/modals/DeleteModal';
 import DefaultModal from '@/components/modals/DefautlModal';
 import { UserProfileStatus } from '@/api/drivers/types';
+import DriversTab from '@/components/tables/drivers/DriversTab';
+import dayjs from 'dayjs';
 
 export const driversColumns = ({
   showChangeStatus,
@@ -80,7 +81,7 @@ export const driversColumns = ({
     render: (driverLicense: DriverLicense) => (
       <span>
         {driverLicense && driverLicense.driverLicenseExpiry
-          ? Moment(driverLicense.driverLicenseExpiry).format('DD-MM-YYYY')
+          ? dayjs(driverLicense.driverLicenseExpiry).format('DD-MM-YYYY')
           : 'Not Available'}
       </span>
     ),
@@ -150,8 +151,38 @@ const Drivers = () => {
     setCurrentTab(key);
   };
 
+  const tabs: TabsProps['items'] = Object.values(UserProfileStatus)
+    .map((status, index) => ({
+      key: (index + 2).toString(),
+      label:
+        status === 'PENDING'
+          ? 'In behandeling'
+          : status === 'ACTIVE'
+          ? 'Actief'
+          : status === 'REJECTED'
+          ? 'Afgewezen'
+          : status === 'BLOCKED'
+          ? 'Geblokkeerd'
+          : status,
+      status,
+      children: <DriversTab status={status} />,
+    }))
+    .filter(
+      (el) => !['PENDING', 'INACTIVE'].some((status) => status === el.status),
+    );
+
+  const newTabs = [
+    {
+      children: <PendingDriversTable />,
+      key: '1',
+      label: 'In behandeling',
+      status: 'PENDING',
+    },
+    ...tabs,
+  ];
+
   return (
-    <Tabs defaultActiveKey={currentTab} items={items} onChange={onChange} />
+    <Tabs defaultActiveKey={currentTab} items={newTabs} onChange={onChange} />
   );
 };
 

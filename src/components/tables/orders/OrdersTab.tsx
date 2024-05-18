@@ -2,10 +2,12 @@ import React from 'react';
 import { Order, OrderStatus, UserProfile } from '@/api/orders/types';
 import {
   cancelOrder,
+  completeOrderAdmin,
   confirmOrder,
   createOrderRejectionReason,
   invalidateOrders,
   rejectOrder,
+  stopOrder,
 } from '@/api/orders/orders';
 import {
   Badge,
@@ -35,11 +37,19 @@ type Keys = keyof typeof OrderStatus;
 // type Status = (typeof OrderStatus)[Keys];
 const orderStatusArray = Object.values(OrderStatus);
 
-const items: MenuProps['items'] = orderStatusArray.map((el) => ({
-  key: el,
-  label: el,
-  // onClick: () => {},
-}));
+const items: ({ id }: { id: string }) => MenuProps['items'] = ({ id }) =>
+  orderStatusArray
+    .filter((el) => el === OrderStatus.COMPLETED)
+    .map((el) => ({
+      key: el,
+      label: el,
+      onClick: async () => {
+        if (el === OrderStatus.COMPLETED) {
+          await completeOrderAdmin(id);
+          message.success('Order completed successfully!');
+        }
+      },
+    }));
 
 const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
   const handleApprove = async (orderId: string) => {
@@ -63,6 +73,15 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
       message.success('Order cancelled successfully');
     } catch (err: any) {
       message.error(err.response.data.message);
+    }
+  };
+
+  const handleStop = async (orderId: string) => {
+    try {
+      await stopOrder(orderId);
+      message.success('Order cancelled successfully');
+    } catch (err: any) {
+      message.error(err.response?.data?.message);
     }
   };
 
@@ -136,13 +155,14 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
         </>
       ),
     },
-    // {
-    //   title: 'Created At',
-    //   dataIndex: 'createdAt',
-    //   key: 'createdAt',
-    //   className: 'table-bg-primary',
-    //   render: (date: string) => dayjs(date).format('DD/MM/YYYY • hh:mm'),
-    // },
+    {
+      title: 'Stoped At',
+      dataIndex: 'stopRentDate',
+      key: 'stopRentDate',
+      className: 'table-bg-primary',
+      render: (date: string) =>
+        date ? dayjs.utc(date).format('DD/MM/YYYY • hh:mm') : '',
+    },
     {
       title: 'Details',
       dataIndex: 'id',
@@ -157,44 +177,58 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
     {
       title: 'Actie',
       // align: 'center',
-      render: (value: any, record: Order) => (
-        <div className="flex items-center gap-2">
-          {status === 'PENDING' ? (
-            <ActionButtons
-              onApprove={handleApprove}
-              onRejectReason={onSubmitRejectReason}
-              onReject={handleReject}
-              recordId={record.id}
-              confirmationMessage="Als u deze order bevestigt gaat de order naar “Afwijzen“."
-            />
-          ) : status === 'CONFIRMED' ? (
-            <ActionButtons
-              onCancel={handleCancel}
-              recordId={record.id}
-              confirmationMessage="Are you sure you want to cancel this order?"
-            />
-          ) : status === 'UNPAID' ? (
-            <>
-              <Button type="text" danger className="flex items-center gap-1">
-                <CloseOutlined rev={undefined} /> Stop
-              </Button>
-              <Badge className="bg-danger-light-2 p-2 rounded-lg text-danger-base">
-                Onbetaald
-              </Badge>
-              <Dropdown className="hover:cursor-pointer" menu={{ items }}>
-                <Space>
-                  <MoreOutlined
-                    rev={undefined}
-                    className="text-primary-base text-3xl"
-                  />
-                </Space>
-              </Dropdown>
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
-      ),
+      render: (value: any, record: Order) => {
+        const isStopped = record.stopRentDate;
+        const id = record.id;
+        return (
+          <div className="flex items-center gap-2 justify-end">
+            {status === 'PENDING' ? (
+              <ActionButtons
+                onApprove={handleApprove}
+                onRejectReason={onSubmitRejectReason}
+                onReject={handleReject}
+                recordId={id}
+                confirmationMessage="Als u deze order bevestigt gaat de order naar “Afwijzen“."
+              />
+            ) : status === 'CONFIRMED' ? (
+              <ActionButtons
+                onCancel={handleCancel}
+                recordId={id}
+                confirmationMessage="Are you sure you want to cancel this order?"
+              />
+            ) : status === 'UNPAID' ? (
+              <>
+                {!isStopped && (
+                  <Button
+                    onClick={() => stopOrder(id)}
+                    type="text"
+                    danger
+                    className="flex items-center gap-1"
+                  >
+                    <CloseOutlined rev={undefined} /> Stop
+                  </Button>
+                )}
+                <Badge className="bg-danger-light-2 p-2 rounded-lg text-danger-base">
+                  Onbetaald
+                </Badge>
+                <Dropdown
+                  className="hover:cursor-pointer"
+                  menu={{ items: items({ id }) }}
+                >
+                  <Space>
+                    <MoreOutlined
+                      rev={undefined}
+                      className="text-primary-base text-3xl"
+                    />
+                  </Space>
+                </Dropdown>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+        );
+      },
     },
   ];
 };

@@ -64,7 +64,9 @@ export interface PermitDetails {
 export enum UserProfileStatus {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
-  BLOCKED = 'BLOCKED',
   REJECTED = 'REJECTED',
+  BLOCKED = 'BLOCKED',
   PENDING = 'PENDING',
 }
+
+export type DriverStatus = keyof typeof UserProfileStatus;
