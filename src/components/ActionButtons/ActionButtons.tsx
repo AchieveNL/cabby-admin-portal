@@ -34,7 +34,6 @@ export default function ActionButtons({
     if (onReject) {
       await onReject(recordId);
       setShowConfirm(false);
-      // await invalidateOrders();
       setShowRejectReason(true);
     } else if (onCancel) {
       onCancel(recordId);

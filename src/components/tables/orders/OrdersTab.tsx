@@ -51,7 +51,7 @@ const items: ({ id }: { id: string }) => MenuProps['items'] = ({ id }) =>
       },
     }));
 
-const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
+const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
   const handleApprove = async (orderId: string) => {
     await confirmOrder(orderId);
     await invalidateOrders();
@@ -87,7 +87,7 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
 
   return [
     {
-      title: 'Naam bestuurder',
+      title: 'Bestuurders',
       dataIndex: 'user',
       key: 'user',
       className: 'table-bg-primary',
@@ -115,7 +115,7 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
       ),
     },
     {
-      title: 'begin',
+      title: 'Begin',
       dataIndex: 'rentalStartDate',
       className: 'table-bg-primary',
       key: 'rentalStartDate',
@@ -124,7 +124,7 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
       ),
     },
     {
-      title: 'einde',
+      title: 'Einde',
       dataIndex: 'rentalStartDate',
       className: 'table-bg-primary',
       key: 'rentalStartDate',
@@ -135,7 +135,7 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
       ),
     },
     {
-      title: 'Price',
+      title: 'Prijs',
       dataIndex: 'totalAmount',
       className: 'table-bg-primary',
       key: 'totalAmount',
@@ -155,14 +155,18 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
         </>
       ),
     },
-    {
-      title: 'Stoped At',
-      dataIndex: 'stopRentDate',
-      key: 'stopRentDate',
-      className: 'table-bg-primary',
-      render: (date: string) =>
-        date ? dayjs.utc(date).format('DD/MM/YYYY • hh:mm') : '',
-    },
+    ...(['COMPLETED', 'UNPAID'].includes(status)
+      ? [
+          {
+            title: 'Stoped At',
+            dataIndex: 'stopRentDate',
+            key: 'stopRentDate',
+            className: 'table-bg-primary',
+            render: (date: string) =>
+              date ? dayjs.utc(date).format('DD/MM/YYYY • hh:mm') : '',
+          },
+        ]
+      : []),
     {
       title: 'Details',
       dataIndex: 'id',
@@ -175,8 +179,8 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
       ),
     },
     {
-      title: 'Actie',
-      // align: 'center',
+      title: 'Acties',
+      align: 'center',
       render: (value: any, record: Order) => {
         const isStopped = record.stopRentDate;
         const id = record.id;
@@ -233,7 +237,7 @@ const getColumns = ({ status }: { status?: Keys }): TableColumnsType<Order> => {
   ];
 };
 
-const OrdersTable = ({ status }: { status?: Keys }) => {
+const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
   const { data, isFetching, error } = useOrders(status);
 
   const columns = getColumns({ status });
@@ -247,10 +251,10 @@ const OrdersTable = ({ status }: { status?: Keys }) => {
       <div className="flex items-end flex-wrap gap-4 mb-5">
         <div className="mr-auto">
           <h4 className="mb-1 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
-            {status} Orders
+            {label} orders
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
-            Total {data?.length} {status} orders
+            Total {data?.length} {label} orders
           </h6>
         </div>
       </div>

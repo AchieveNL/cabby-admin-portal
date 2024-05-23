@@ -2,8 +2,10 @@
 import { useState } from 'react';
 import { Tabs } from 'antd';
 import OrdersTable from '@/components/tables/orders/OrdersTab';
+import { OrderStatus } from '@/api/orders/types';
 
 const { TabPane } = Tabs;
+type Keys = keyof typeof OrderStatus;
 
 const Orders = () => {
   const [currentTab, setCurrentTab] = useState('1');
@@ -11,26 +13,22 @@ const Orders = () => {
     setCurrentTab(key);
   };
 
+  const arr: { label: string; status: Keys }[] = [
+    { status: 'PENDING', label: 'In behandeling' },
+    { status: 'CONFIRMED', label: 'Bevestigd' },
+    { status: 'CANCELED', label: 'Geannuleerd' },
+    { status: 'REJECTED', label: 'Afgewezen' },
+    { status: 'COMPLETED', label: 'Voltooid' },
+    { status: 'UNPAID', label: 'Overtijd' },
+  ];
+
   return (
     <Tabs defaultActiveKey={currentTab} onChange={handleTabChange}>
-      <TabPane tab="In behandeling" key="1">
-        <OrdersTable status="PENDING" />
-      </TabPane>
-      <TabPane tab="Bevestigd" key="2">
-        <OrdersTable status="CONFIRMED" />
-      </TabPane>
-      <TabPane tab="Geannuleerd" key="3">
-        <OrdersTable status="CANCELED" />
-      </TabPane>
-      <TabPane tab="Afgewezen" key="4">
-        <OrdersTable status="REJECTED" />
-      </TabPane>
-      <TabPane tab="Voltooid" key="5">
-        <OrdersTable status="COMPLETED" />
-      </TabPane>
-      <TabPane tab="Overtijd" key="6">
-        <OrdersTable status="UNPAID" />
-      </TabPane>
+      {arr.map((el, index) => (
+        <TabPane tab={el.label} key={index + 1}>
+          <OrdersTable label={el.label} status={el.status} />
+        </TabPane>
+      ))}
     </Tabs>
   );
 };

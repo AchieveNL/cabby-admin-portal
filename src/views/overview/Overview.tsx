@@ -331,7 +331,7 @@ const Overview: React.FC = () => {
         </Col>
       </Row> */}
 
-      <div>
+      {/* <div>
         <div style={{ padding: '20px' }}>
           <h2 className="mt-2 mb-2 bold">Pending Drivers</h2>
           <Collapse accordion>
@@ -414,7 +414,7 @@ const Overview: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

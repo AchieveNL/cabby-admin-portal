@@ -1,16 +1,79 @@
-import React from 'react';
-import { Table, message } from 'antd';
+import React, { useState } from 'react';
+import { Modal, Radio, Table, message } from 'antd';
 import { Driver, DriverStatus, UserProfileStatus } from '@/api/drivers/types';
 import { useDriversByStatus, useUpdateDriverStatus } from '@/api/drivers/hooks';
 import { DriverLicense, PermitDetails } from '@/api/orders/types';
 import DefaultModal from '@/components/modals/DefautlModal';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ExportOutlined, ReloadOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { deleteDriver, updateDriverStatus } from '@/api/drivers/drivers';
 import DeleteIcon from '@/components/icons/DeleteIcon';
 import dayjs from 'dayjs';
+import ButtonWithIcon from '@/components/buttons/buttons';
+import ActionButtons from '@/components/ActionButtons/ActionButtons';
+import { useRouter } from 'next/router';
+import BlockIcon from '@/components/icons/BlockIcon';
 
-const driversColumns = ({ status }: { status: DriverStatus }) => {
+const useDriversColumns = ({ status }: { status: DriverStatus }) => {
+  const router = useRouter();
+  const { updateStatus } = useUpdateDriverStatus();
+  const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
+  const [blockReason, setBlockReason] = useState('');
+
+  const handleApprove = async (id: string) => {
+    try {
+      await updateStatus(id, UserProfileStatus.ACTIVE);
+      message.success('Driver approved successfully');
+    } catch (error) {
+      message.error('Failed to approve the driver');
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await updateStatus(id, UserProfileStatus.REJECTED);
+      message.success('Driver rejected successfully');
+    } catch (error) {
+      message.error('Failed to reject the driver');
+    }
+  };
+
+  const onSubmitRejectReason = async (id: string, reason: string) => {
+    // Depending on your API and how you handle rejections with reasons,
+    // this may differ. If you have a separate API call for submitting the
+    // rejection reason, call it here. For now, I'm just logging the reason.
+    console.log('Reason for rejection:', reason);
+    await handleReject(id); // You can choose to directly update status or perform additional operations based on the reason
+  };
+
+  const showBlockModal = () => {
+    setIsBlockModalVisible(true);
+  };
+
+  const handleBlockWithReason = async (reason: string, driverId: string) => {
+    try {
+      console.log('Blocking reason:', reason);
+      // Here, you can make an API call to submit the reason
+      await updateStatus(driverId, UserProfileStatus.BLOCKED, reason);
+      message.success('Driver blocked successfully');
+    } catch (error) {
+      message.error('Failed to block the driver');
+    }
+  };
+
+  const handleBlockModalOk = async (driverId: string) => {
+    setIsBlockModalVisible(false);
+    await handleBlockWithReason(blockReason, driverId);
+  };
+
+  const handleBlockModalCancel = () => {
+    setIsBlockModalVisible(false);
+  };
+
+  const handleBlock = () => {
+    showBlockModal();
+  };
+
   return [
     {
       title: "Driver's name",
@@ -72,18 +135,21 @@ const driversColumns = ({ status }: { status: DriverStatus }) => {
         </span>
       ),
     },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-    },
+    // {
+    //   title: 'Status',
+    //   dataIndex: 'status',
+    // },
     {
       title: 'Action',
       dataIndex: 'id',
       render: (id: string, record: Driver) => {
         const userId = record.userId;
+        const driverId = record.id;
         return (
           <div className="flex gap-2 items-center">
-            <Link href={`/dashboard/drivers/${id}`}>Details</Link>
+            {status !== 'PENDING' && (
+              <Link href={`/dashboard/drivers/${id}`}>Details</Link>
+            )}
             {['REJECTED', 'BLOCKED'].includes(status) && (
               <DefaultModal
                 title="Wil je zeker dat je deze bestuurder wilt deblokeren?"
@@ -112,13 +178,63 @@ const driversColumns = ({ status }: { status: DriverStatus }) => {
                 }
                 confirmPlaceholder="Verder"
                 fn={async () => {
-                  await deleteDriver(userId);
+                  await deleteDriver(driverId);
                   message.success('Driver deleted successfully!');
                 }}
               >
                 {/* Zodra je verdergaat, wordt de bestuurder gedeblokkeerd en kan
                 diegene de app weer gebruiken. */}
               </DefaultModal>
+            )}
+
+            {status === 'PENDING' && (
+              <>
+                <div className="flex gap-2 items-center">
+                  {true && (
+                    <ButtonWithIcon
+                      icon={<ExportOutlined rev={undefined} />}
+                      onClick={() =>
+                        router.push(`/dashboard/drivers/${driverId}`)
+                      }
+                      // className="whitespace-nowrap"
+                    >
+                      Open Profile
+                    </ButtonWithIcon>
+                  )}
+                  <ActionButtons
+                    onApprove={handleApprove}
+                    onRejectReason={onSubmitRejectReason}
+                    onReject={handleReject}
+                    recordId={driverId}
+                    confirmationMessage="Are you sure you want to reject this driver?"
+                  />
+                  <ButtonWithIcon icon={<BlockIcon />} onClick={handleBlock}>
+                    Block
+                  </ButtonWithIcon>
+                </div>
+                <Modal
+                  title="Block Driver"
+                  open={isBlockModalVisible}
+                  onOk={() => handleBlockModalOk(driverId)}
+                  onCancel={handleBlockModalCancel}
+                  okText="Block"
+                  cancelText="Cancel"
+                >
+                  <p>Please select the reason for blocking:</p>
+                  <Radio.Group
+                    onChange={(e) => setBlockReason(e.target.value)}
+                    value={blockReason}
+                  >
+                    <Radio value="Fraude">Fraude</Radio>
+                    <Radio value="Herhaalde">Herhaalde</Radio>
+                    <Radio value="Onacceptabel">Onacceptabel</Radio>
+                    <Radio value="Ongeldige">Ongeldige</Radio>
+                    <Radio value="Schending">Schending</Radio>
+                    <Radio value="Voertuigprobleme">Voertuigprobleme</Radio>
+                    <Radio value="Other">Other</Radio>
+                  </Radio.Group>
+                </Modal>
+              </>
             )}
           </div>
         );
@@ -132,9 +248,12 @@ interface Props {
 }
 
 const DriversTab = ({ status }: Props) => {
-  const { data: drivers, isFetching } = useDriversByStatus(status);
+  const { data: drivers, isLoading } = useDriversByStatus(status);
+  const columns = useDriversColumns({
+    status,
+  });
 
-  if (isFetching) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -150,12 +269,7 @@ const DriversTab = ({ status }: Props) => {
           </h6>
         </div>
       </div>
-      <Table
-        dataSource={drivers}
-        columns={driversColumns({
-          status,
-        })}
-      />
+      <Table dataSource={drivers} columns={columns} />
     </div>
   );
 };

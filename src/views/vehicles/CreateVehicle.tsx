@@ -367,7 +367,7 @@ const CreateVehicle: React.FC = () => {
             <h1 className="col-span-full text-xl">Ophaallocatie</h1>
             <div className="col-span-1 flex w-full gap-2">
               <Form.Item<any>
-                label="Straat name"
+                label="Straatnaam"
                 name="streetName"
                 className="w-full"
               >
@@ -379,7 +379,7 @@ const CreateVehicle: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item<any>
-                label="Straat nummer"
+                label="Huisnummer"
                 name="streetNumber"
                 className="flex flex-col justify-end"
               >

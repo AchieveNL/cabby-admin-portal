@@ -166,17 +166,15 @@ const Drivers = () => {
       status,
       children: <DriversTab status={status} />,
     }))
-    .filter(
-      (el) => !['PENDING', 'INACTIVE'].some((status) => status === el.status),
-    );
+    .filter((el) => !['INACTIVE'].some((status) => status === el.status));
 
   const newTabs = [
-    {
-      children: <PendingDriversTable />,
-      key: '1',
-      label: 'In behandeling',
-      status: 'PENDING',
-    },
+    // {
+    //   children: <PendingDriversTable />,
+    //   key: '1',
+    //   label: 'In behandeling',
+    //   status: 'PENDING',
+    // },
     ...tabs,
   ];
 
