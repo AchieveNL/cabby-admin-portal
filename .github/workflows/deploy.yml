@@ -105,6 +105,7 @@ jobs:
     environment:
       name: production
     name: Build and Deploy to Cloud Run (Production)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     needs: run-ci
     runs-on: ubuntu-latest
 
