@@ -4,7 +4,7 @@ import DamageReports from '@/views/damageReports/DamageReport';
 
 const DamageReportsPage = () => {
   return (
-    <DashboardLayout>
+    <DashboardLayout headerTitle="Schaderapporten">
       <DamageReports />
     </DashboardLayout>
   );

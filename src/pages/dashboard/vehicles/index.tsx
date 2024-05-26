@@ -5,7 +5,7 @@ import DashboardLayout from '@/layout/DashboardLayout';
 const VehiclesPage = () => {
   return (
     <>
-      <DashboardLayout>
+      <DashboardLayout headerTitle="Auto's">
         <Vehicles />
       </DashboardLayout>
     </>

@@ -76,7 +76,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
 
   return [
     {
-      title: "Driver's name",
+      title: 'Bestuurder(s)',
       dataIndex: 'fullName',
       render: (text: string) => <span>{text ? text : 'Not Available'}</span>,
     },
@@ -92,7 +92,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       ),
     },
     {
-      title: 'Taxi permit',
+      title: 'Chauffeurspas',
       dataIndex: 'permitDetails',
       render: (permitDetails: PermitDetails) => (
         <span className="uppercase">
@@ -103,7 +103,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       ),
     },
     {
-      title: 'Kiwa taxi vergunning',
+      title: 'KIWA taxivergunning',
       dataIndex: 'permitDetails',
       render: (permitDetails: PermitDetails) => (
         <span className="uppercase">
@@ -114,7 +114,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       ),
     },
     {
-      title: 'Driving licence',
+      title: 'Rijbewijs',
       dataIndex: 'driverLicense',
       render: (driverLicense: DriverLicense) => (
         <span>
@@ -125,7 +125,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       ),
     },
     {
-      title: 'Expired at',
+      title: 'Verlopen op',
       dataIndex: 'driverLicense',
       render: (driverLicense: DriverLicense) => (
         <span>
@@ -135,21 +135,21 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
         </span>
       ),
     },
-    // {
-    //   title: 'Status',
-    //   dataIndex: 'status',
-    // },
     {
-      title: 'Action',
+      title: 'Details',
+      dataIndex: 'id',
+      render: (id: string) => (
+        <Link href={`/dashboard/drivers/${id}`}>Details</Link>
+      ),
+    },
+    {
+      title: 'Actie',
       dataIndex: 'id',
       render: (id: string, record: Driver) => {
         const userId = record.userId;
         const driverId = record.id;
         return (
           <div className="flex gap-2 items-center">
-            {status !== 'PENDING' && (
-              <Link href={`/dashboard/drivers/${id}`}>Details</Link>
-            )}
             {['REJECTED', 'BLOCKED'].includes(status) && (
               <DefaultModal
                 title="Wil je zeker dat je deze bestuurder wilt deblokeren?"
@@ -190,7 +190,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
             {status === 'PENDING' && (
               <>
                 <div className="flex gap-2 items-center">
-                  {true && (
+                  {false && (
                     <ButtonWithIcon
                       icon={<ExportOutlined rev={undefined} />}
                       onClick={() =>
@@ -245,9 +245,10 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
 
 interface Props {
   status: DriverStatus;
+  label: string;
 }
 
-const DriversTab = ({ status }: Props) => {
+const DriversTab = ({ status, label }: Props) => {
   const { data: drivers, isLoading } = useDriversByStatus(status);
   const columns = useDriversColumns({
     status,
@@ -257,15 +258,18 @@ const DriversTab = ({ status }: Props) => {
     return <div>Loading...</div>;
   }
 
+  const isPending = status === 'PENDING';
   return (
     <div className="px-6">
       <div className="flex items-end flex-wrap gap-4 mb-5">
         <div className="mr-auto">
           <h4 className="mb-1 text-neutral-100 font-bold text-xl sm:text-2xl">
-            {status} drivers
+            {isPending ? `bestuurders ${label}` : `${label} bestuurders(s)`}
           </h4>
           <h6 className="font-medium text-base text-neutral-50">
-            Total {drivers?.length} {status} drivers
+            {isPending
+              ? `Totaal ${drivers?.length} bestuurders(s) ${label}`
+              : `Totaal ${drivers?.length} ${label} bestuurders(s)`}
           </h6>
         </div>
       </div>

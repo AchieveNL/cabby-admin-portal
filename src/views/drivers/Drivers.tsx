@@ -12,6 +12,7 @@ import DefaultModal from '@/components/modals/DefautlModal';
 import { UserProfileStatus } from '@/api/drivers/types';
 import DriversTab from '@/components/tables/drivers/DriversTab';
 import dayjs from 'dayjs';
+import { capitalizeFirstLetter } from '@/utils/text';
 
 export const driversColumns = ({
   showChangeStatus,
@@ -151,21 +152,25 @@ const Drivers = () => {
   };
 
   const tabs: TabsProps['items'] = Object.values(UserProfileStatus)
-    .map((status, index) => ({
-      key: (index + 2).toString(),
-      label:
+    .map((status, index) => {
+      const label =
         status === 'PENDING'
-          ? 'In behandeling'
+          ? 'in behandeling'
           : status === 'ACTIVE'
-          ? 'Actief'
+          ? 'bevestigde'
           : status === 'REJECTED'
-          ? 'Afgewezen'
+          ? 'afgewezen'
           : status === 'BLOCKED'
-          ? 'Geblokkeerd'
-          : status,
-      status,
-      children: <DriversTab status={status} />,
-    }))
+          ? 'geblokkeerde'
+          : status;
+
+      return {
+        key: (index + 2).toString(),
+        label: capitalizeFirstLetter(label),
+        status,
+        children: <DriversTab status={status} label={label} />,
+      };
+    })
     .filter((el) => !['INACTIVE'].some((status) => status === el.status));
 
   const newTabs = [

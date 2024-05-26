@@ -33,7 +33,7 @@ const Settings = () => {
             htmlType="submit"
             className="w-full bg-primary-base text-white mt-2"
           >
-            Save
+            Opslaan
           </Button>
         </form>
       </Card>

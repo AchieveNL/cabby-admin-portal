@@ -19,7 +19,10 @@ import {
 } from '@/api/vehicles/hooks';
 import DisplayImage from '@/components/image/DisplayImage';
 import styles from './CreateVehicle.module.scss';
-import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
+import {
+  createVehicle,
+  getVehicleByRDWLicencePlate,
+} from '@/api/vehicles/vehicles';
 import { ColumnsType } from 'antd/es/table';
 
 const timeframesTitles = [
@@ -54,13 +57,13 @@ const timeframesStructure = [
 ];
 
 const defaultTimeframes = [
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
 ];
 
 const dataSource: readonly object[] | undefined = [0, 1, 2, 3].map((el) => {
@@ -208,11 +211,27 @@ const CreateVehicle: React.FC = () => {
     }
   };
 
+  function validateForm(form: VehicleInput) {
+    let messageText = '';
+    const timeframes = form.timeframes;
+    const images = form.images;
+    if (timeframes.some((day) => day.some((frame) => !frame))) {
+      messageText = 'Pricing must not be empty or zero';
+      message.error(messageText);
+    } else if (!(images.length > 0)) {
+      messageText = 'Must upload at least one image';
+      message.error(messageText);
+    }
+    return messageText;
+  }
+
   const handleCreateVehicle = async () => {
+    const validate = validateForm(vehicleData);
+    if (!!validate) return;
     if (router.query.vehicleId) {
       // update
       vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
-      vehicleData.status = VehicleStatus.PENDING;
+      // vehicleData.status = VehicleStatus.PENDING;
       await update(router.query.vehicleId as string, vehicleData);
       message.success('Vehicle updated successfully');
       router.push('/dashboard/vehicles');
@@ -254,11 +273,22 @@ const CreateVehicle: React.FC = () => {
           <span className="font-bold">Search Vehicle</span>
         </button>
       </div>
-      <Form form={form} layout={'vertical'} initialValues={vehicleData}>
+      <Form
+        onFinish={handleCreateVehicle}
+        form={form}
+        layout={'vertical'}
+        initialValues={vehicleData}
+      >
         <div className="vehicle-form bg-white border border-gray-300 rounded-xl p-6">
           <h1 className="text-xl mb-6">Autodetails</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Form.Item<any> label="Nummerplaat" name="licensePlate">
+            <Form.Item<any>
+              label="Nummerplaat"
+              name="licensePlate"
+              // rules={[
+              //   { required: true, message: 'Please input your username!' },
+              // ]}
+            >
               <Input
                 name="licensePlate"
                 value={vehicleData?.licensePlate}
@@ -348,7 +378,7 @@ const CreateVehicle: React.FC = () => {
               />
             </Form.Item>
             <h1 className="col-span-full text-xl">Huurdetails</h1>
-            <Form.Item<any> label="Huurperiode" name="rentalDuration">
+            <Form.Item<any> label="Min. huurperiode" name="rentalDuration">
               <Input
                 name="rentalDuration"
                 value={vehicleData?.rentalDuration}
@@ -467,7 +497,8 @@ const CreateVehicle: React.FC = () => {
             </div>
             <div>
               <Button
-                onClick={handleCreateVehicle}
+                htmlType="submit"
+                // onClick={handleCreateVehicle}
                 loading={isCreating}
                 className="btn-outline-primary cursor-pointer block text-center font-bold h-12"
                 block

@@ -31,12 +31,12 @@ const navLinks: NavLinkData[] = [
   },
   {
     href: '/dashboard/drivers',
-    label: 'Drivers',
+    label: 'Bestuurders',
     iconPath: '/CarRental.png',
   },
   {
     href: '/dashboard/damage-reports',
-    label: 'Damage reports',
+    label: 'Schaderapporten',
     iconPath: '/Description.png',
   },
   {

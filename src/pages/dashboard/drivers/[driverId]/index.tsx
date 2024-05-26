@@ -4,7 +4,7 @@ import DriverDetails from '@/views/drivers/DriverDetails';
 
 const DriverDetailPage = () => {
   return (
-    <DashboardLayout>
+    <DashboardLayout headerTitle="Bestuurders">
       <DriverDetails />
     </DashboardLayout>
   );

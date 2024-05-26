@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function UsersPage() {
   return (
-    <DashboardLayout>
+    <DashboardLayout headerTitle="Instellingen">
       <Settings />
     </DashboardLayout>
   );

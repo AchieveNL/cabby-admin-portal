@@ -12,9 +12,10 @@ interface Props {
   breadcrumbItems?:
     | Partial<BreadcrumbItemType & BreadcrumbSeparatorType>[]
     | undefined;
+  headerTitle?: string;
 }
 
-const DashboardLayout = ({ children, breadcrumbItems }: Props) => {
+const DashboardLayout = ({ children, breadcrumbItems, headerTitle }: Props) => {
   const [showSidebar, setShowSidebar] = useState(false);
   return (
     <>
@@ -29,6 +30,7 @@ const DashboardLayout = ({ children, breadcrumbItems }: Props) => {
           <Header
             breadcrumbItems={breadcrumbItems}
             onMenu={() => setShowSidebar(!showSidebar)}
+            headerTitle={headerTitle}
           />
           <div className="bg-primary-light-4 h-full">{children}</div>
         </div>

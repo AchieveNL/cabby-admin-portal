@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function DriversPage() {
   return (
-    <DashboardLayout>
+    <DashboardLayout headerTitle="Bestuurders">
       <Drivers />
     </DashboardLayout>
   );

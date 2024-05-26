@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Tabs } from 'antd';
 import OrdersTable from '@/components/tables/orders/OrdersTab';
 import { OrderStatus } from '@/api/orders/types';
+import { capitalizeFirstLetter } from '@/utils/text';
 
 const { TabPane } = Tabs;
 type Keys = keyof typeof OrderStatus;
@@ -14,18 +15,18 @@ const Orders = () => {
   };
 
   const arr: { label: string; status: Keys }[] = [
-    { status: 'PENDING', label: 'In behandeling' },
-    { status: 'CONFIRMED', label: 'Bevestigd' },
-    { status: 'CANCELED', label: 'Geannuleerd' },
-    { status: 'REJECTED', label: 'Afgewezen' },
-    { status: 'COMPLETED', label: 'Voltooid' },
-    { status: 'UNPAID', label: 'Overtijd' },
+    { status: 'PENDING', label: 'in behandeling' },
+    { status: 'CONFIRMED', label: 'bevestigde' },
+    { status: 'CANCELED', label: 'geannuleerd' },
+    { status: 'REJECTED', label: 'afgewezen' },
+    { status: 'COMPLETED', label: 'voltooid' },
+    { status: 'UNPAID', label: 'overtijd' },
   ];
 
   return (
     <Tabs defaultActiveKey={currentTab} onChange={handleTabChange}>
       {arr.map((el, index) => (
-        <TabPane tab={el.label} key={index + 1}>
+        <TabPane tab={capitalizeFirstLetter(el.label)} key={index + 1}>
           <OrdersTable label={el.label} status={el.status} />
         </TabPane>
       ))}

@@ -53,7 +53,7 @@ export default function ActionButtons({
       {onApprove && (
         <DefaultModal
           confirmPlaceholder="Bevestigen"
-          title='Als u deze order bevestigt gaat de order naar “Bevestigd".'
+          title="Wilt u deze bestuurder bevestigen?"
           fn={() => onApprove(recordId)}
           button={
             <ButtonWithIcon
@@ -64,7 +64,10 @@ export default function ActionButtons({
             </ButtonWithIcon>
           }
         >
-          <></>
+          <>
+            Als u deze bestuurder bevestigt gaat de bestuurder naar
+            <strong className="ml-2">“Geaccepteerd”</strong>.
+          </>
         </DefaultModal>
       )}
       {onReject && (

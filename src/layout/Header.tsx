@@ -22,8 +22,9 @@ interface Props {
   breadcrumbItems:
     | Partial<BreadcrumbItemType & BreadcrumbSeparatorType>[]
     | undefined;
+  headerTitle?: string;
 }
-const Header = ({ onMenu, breadcrumbItems }: Props) => {
+const Header = ({ onMenu, breadcrumbItems, headerTitle }: Props) => {
   const router = useRouter();
   const logout = () => {
     deleteCookie('token');
@@ -35,6 +36,7 @@ const Header = ({ onMenu, breadcrumbItems }: Props) => {
   const openUsers = () => router.push('/dashboard/users');
 
   const getPageName = () => {
+    if (headerTitle) return headerTitle;
     const pathSegment = router.pathname.split('/')[2] || '';
     return (
       (pageNameMappings[pathSegment] as string | undefined) ||
@@ -85,7 +87,7 @@ const Header = ({ onMenu, breadcrumbItems }: Props) => {
               onClick={() => logout()}
               className="btn-outline-primary"
             >
-              <span className="text-base font-bold">Log out</span>
+              <span className="text-base font-bold">Uitloggen</span>
             </button>
           </div>
         </nav>

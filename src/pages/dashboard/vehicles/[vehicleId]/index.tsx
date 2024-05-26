@@ -4,7 +4,7 @@ import VehicleDetails from '@/views/vehicles/VehicleDetails';
 
 const VehicleDetailPage = () => {
   return (
-    <DashboardLayout>
+    <DashboardLayout headerTitle="Auto's">
       <VehicleDetails />
     </DashboardLayout>
   );

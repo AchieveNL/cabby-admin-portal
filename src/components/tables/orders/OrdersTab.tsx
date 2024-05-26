@@ -246,15 +246,18 @@ const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
     return <div>Error loading data</div>;
   }
 
+  const isPending = status === 'PENDING';
   return (
     <div className="px-6">
       <div className="flex items-end flex-wrap gap-4 mb-5">
         <div className="mr-auto">
-          <h4 className="mb-1 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
-            {label} orders
+          <h4 className="first-letter:capitalize mb-1 text-neutral-100 font-bold text-xl sm:text-2xl">
+            {isPending ? `Orders ${label}` : `${label} orders`}
           </h4>
           <h6 className="mb-4 font-medium text-base text-neutral-50">
-            Total {data?.length} {label} orders
+            {isPending
+              ? `Totaal ${data?.length} orders ${label}`
+              : `Totaal ${data?.length} ${label} orders`}
           </h6>
         </div>
       </div>

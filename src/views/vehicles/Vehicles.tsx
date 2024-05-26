@@ -8,6 +8,7 @@ import { RejectedVehiclesTable } from '@/components/tables/vehicles/RejectedVehi
 import { BlockedVehiclesTable } from '@/components/tables/vehicles/BlockedVehiclesTable';
 import Link from 'next/link';
 import { VehiclesTab } from '@/components/tables/vehicles/VehiclesTab';
+import { capitalizeFirstLetter } from '@/utils/text';
 
 export const vehiclesColumns = (action?: any): TableColumnsType<Vehicle> => [
   {
@@ -45,49 +46,30 @@ export const vehiclesColumns = (action?: any): TableColumnsType<Vehicle> => [
 
 const Vehicles = () => {
   const [currentTab, setCurrentTab] = useState('1');
-  const items: TabsProps['items'] = [
-    {
-      key: '1',
-      label: 'Pending',
-      children: <PendingVehiclesTable />,
-    },
-    {
-      key: '2',
-      label: 'Active',
-      children: <ActiveVehiclesTable />,
-    },
-    {
-      key: '3',
-      label: 'Rejected',
-      children: <RejectedVehiclesTable />,
-    },
-    {
-      key: '4',
-      label: 'Blocked',
-      children: <BlockedVehiclesTable />,
-    },
-  ];
 
   const onChange = (key: string) => {
     setCurrentTab(key);
   };
 
   const tabs: TabsProps['items'] = Object.values(VehicleStatus).map(
-    (status, index) => ({
-      key: (index + 1).toString(),
-      label:
+    (status, index) => {
+      const label =
         status === 'PENDING'
-          ? 'In behandeling'
+          ? 'in behandeling'
           : status === 'ACTIVE'
-          ? 'Actief'
+          ? 'bevestigde'
           : status === 'REJECTED'
-          ? 'Afgewezen'
+          ? 'afgewezen'
           : status === 'BLOCKED'
-          ? 'Geblokkeerd'
-          : '',
-      status,
-      children: <VehiclesTab status={status} />,
-    }),
+          ? 'geblokkeerde'
+          : '';
+      return {
+        key: (index + 1).toString(),
+        label: capitalizeFirstLetter(label),
+        status,
+        children: <VehiclesTab status={status} label={label} />,
+      };
+    },
   );
 
   return (

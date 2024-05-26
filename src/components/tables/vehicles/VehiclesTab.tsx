@@ -162,7 +162,13 @@ const useColumns = ({
   ];
 };
 
-export const VehiclesTab = ({ status }: { status: VehicleStatusType }) => {
+export const VehiclesTab = ({
+  status,
+  label,
+}: {
+  status: VehicleStatusType;
+  label: string;
+}) => {
   const router = useRouter();
   const {
     data: vehicles,
@@ -174,15 +180,18 @@ export const VehiclesTab = ({ status }: { status: VehicleStatusType }) => {
     router.push('/dashboard/vehicles/create-vehicle');
   };
 
+  const isPending = status === 'PENDING';
   return (
     <div className="px-6">
       <div className="flex items-end flex-wrap gap-4 mb-5">
         <div className="mr-auto">
-          <h4 className="mb-1 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
-            {status} Vehicles
+          <h4 className="mb-1 first-letter:capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
+            {isPending ? `Auto's ${label}` : `${label} auto('s)`}
           </h4>
           <h6 className="font-medium text-base text-neutral-50">
-            Total {vehicles?.length} {status} vehicles
+            {isPending
+              ? `Totaal ${vehicles?.length} auto's ${label}`
+              : `Totaal ${vehicles?.length} ${label} auto('s)`}
           </h6>
         </div>
         <Button
@@ -191,7 +200,7 @@ export const VehiclesTab = ({ status }: { status: VehicleStatusType }) => {
           onClick={onCreateNewVehicle}
           className="flex items-center"
         >
-          Create New Vehicle
+          Auto toevoegen
         </Button>
       </div>
       <Table

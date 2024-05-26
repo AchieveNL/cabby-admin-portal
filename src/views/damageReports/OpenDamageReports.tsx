@@ -8,6 +8,7 @@ import { CheckOutlined, PlusOutlined } from '@ant-design/icons';
 import { closeDamageReports } from '@/api/damage-reports/damage-reports';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { damageReportColumns } from './DamageReport';
 
 const OpenDamageReports = () => {
   const router = useRouter();
@@ -25,47 +26,9 @@ const OpenDamageReports = () => {
   };
 
   const columns = [
+    ...damageReportColumns,
     {
-      title: 'Reported At',
-      dataIndex: 'reportedAt',
-      key: 'reportedAt',
-      render: (date: string) => formatDate(date),
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
-    {
-      title: 'Repaired At',
-      dataIndex: 'repairedAt',
-      key: 'repairedAt',
-      render: (date: string) => (date ? formatDate(date) : 'N/A'),
-    },
-    {
-      title: 'User',
-      dataIndex: 'user',
-      key: 'user',
-      render: (user: any) => user.profile?.fullName || 'N/A',
-    },
-    {
-      title: 'Vehicle',
-      dataIndex: 'vehicle',
-      key: 'vehicle',
-      render: (vehicle: any) => `${vehicle.model} (${vehicle.companyName})`,
-    },
-    {
-      title: 'Action',
+      title: 'Actie',
       dataIndex: 'id',
       key: 'id',
       render: (value: any, row: any) => (
@@ -92,10 +55,10 @@ const OpenDamageReports = () => {
       <div className="flex items-end flex-wrap gap-4 mb-5">
         <div className="mr-auto">
           <h4 className="mb-1 capitalize text-neutral-100 font-bold text-xl sm:text-2xl">
-            Open Damage Reports
+            Open schaderapporten
           </h4>
           <h6 className="font-medium text-base text-neutral-50">
-            Total {data?.length} open reports
+            Totaal {data?.length} open schaderapporten
           </h6>
         </div>
         <Button
