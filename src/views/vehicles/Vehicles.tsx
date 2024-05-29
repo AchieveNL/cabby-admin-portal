@@ -65,7 +65,7 @@ const Vehicles = () => {
           : '';
       return {
         key: (index + 1).toString(),
-        label: capitalizeFirstLetter(label),
+        label: capitalizeFirstLetter(status === 'ACTIVE' ? 'bevestigd' : label),
         status,
         children: <VehiclesTab status={status} label={label} />,
       };

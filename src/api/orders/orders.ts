@@ -80,6 +80,34 @@ export const cancelOrder = async (orderId: string) => {
   }
 };
 
+export const deleteOrder = async (orderId: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/delete`, {
+      orderId,
+    });
+    await invalidateOrders();
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const changeOrderStatus = async (
+  orderId: string,
+  status: OrderStatus,
+) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/delete`, {
+      orderId,
+      status,
+    });
+    await invalidateOrders();
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const stopOrder = async (orderId: string) => {
   try {
     const response = await axios.post(`${BASE_URL}/stop`, {

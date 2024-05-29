@@ -14,11 +14,11 @@ const Orders = () => {
     setCurrentTab(key);
   };
 
-  const arr: { label: string; status: Keys }[] = [
+  const arr: { label: string; status: Keys; tabLabel?: string }[] = [
     { status: 'PENDING', label: 'in behandeling' },
-    { status: 'CONFIRMED', label: 'bevestigde' },
+    { status: 'CONFIRMED', label: 'bevestigde', tabLabel: 'bevestigd' },
     { status: 'CANCELED', label: 'geannuleerd' },
-    { status: 'REJECTED', label: 'afgewezen' },
+    // { status: 'REJECTED', label: 'afgewezen' },
     { status: 'COMPLETED', label: 'voltooid' },
     { status: 'UNPAID', label: 'overtijd' },
   ];
@@ -26,7 +26,10 @@ const Orders = () => {
   return (
     <Tabs defaultActiveKey={currentTab} onChange={handleTabChange}>
       {arr.map((el, index) => (
-        <TabPane tab={capitalizeFirstLetter(el.label)} key={index + 1}>
+        <TabPane
+          tab={capitalizeFirstLetter(el.tabLabel || el.label)}
+          key={index + 1}
+        >
           <OrdersTable label={el.label} status={el.status} />
         </TabPane>
       ))}
