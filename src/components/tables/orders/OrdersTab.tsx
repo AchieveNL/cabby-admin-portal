@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Order, OrderStatus, UserProfile } from '@/api/orders/types';
 import {
   cancelOrder,
+  changeOrderStatus,
   completeOrderAdmin,
   confirmOrder,
   createOrderRejectionReason,
+  deleteOrder,
   invalidateOrders,
   rejectOrder,
   stopOrder,
@@ -30,6 +32,9 @@ import { CheckOutlined, CloseOutlined, MoreOutlined } from '@ant-design/icons';
 import { dayjsExtended, netherlandsTimeNow } from '@/utils/date';
 import DefaultModal from '@/components/modals/DefautlModal';
 import ButtonWithIcon from '@/components/buttons/buttons';
+import DeleteIcon from '@/components/icons/DeleteIcon';
+import CheckIcon from '@/components/icons/CheckIcon';
+import { OrderDeleteModal, OrderRecoverModal } from './Modals';
 
 type Keys = keyof typeof OrderStatus;
 // type Status = (typeof OrderStatus)[Keys];
@@ -283,6 +288,12 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
                 <Badge className="bg-success-dark-1 p-2 rounded-lg text-success-light-2">
                   Betaald
                 </Badge>
+                <OrderDeleteModal id={id} />
+              </>
+            ) : status === 'CANCELED' ? (
+              <>
+                <OrderRecoverModal id={id} />
+                <OrderDeleteModal id={id} />
               </>
             ) : (
               <></>

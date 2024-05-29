@@ -1,5 +1,5 @@
 import { apiUrl } from '@/common/constants';
-import { Order, OrderStatus } from './types';
+import { Order, OrderStatus, OrderStatusKey } from './types';
 import axios from 'axios';
 import { queryClient } from '@/pages/_app';
 import { queryKey } from './hooks';
@@ -94,10 +94,10 @@ export const deleteOrder = async (orderId: string) => {
 
 export const changeOrderStatus = async (
   orderId: string,
-  status: OrderStatus,
+  status: OrderStatusKey,
 ) => {
   try {
-    const response = await axios.post(`${BASE_URL}/delete`, {
+    const response = await axios.post(`${BASE_URL}/change-status`, {
       orderId,
       status,
     });
