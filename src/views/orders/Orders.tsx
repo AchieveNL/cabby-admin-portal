@@ -19,7 +19,7 @@ const Orders = () => {
     { status: 'CONFIRMED', label: 'bevestigde', tabLabel: 'bevestigd' },
     { status: 'CANCELED', label: 'geannuleerd' },
     // { status: 'REJECTED', label: 'afgewezen' },
-    { status: 'COMPLETED', label: 'voltooid' },
+    { status: 'COMPLETED', label: 'voltooide', tabLabel: 'voltooid' },
     { status: 'UNPAID', label: 'overtijd' },
   ];
 
