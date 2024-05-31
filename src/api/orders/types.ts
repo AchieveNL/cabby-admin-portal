@@ -67,6 +67,8 @@ export enum OrderStatus {
   CANCELED = 'CANCELED',
 }
 
+export type OrderStatusKey = keyof typeof OrderStatus;
+
 export type Order = {
   id: string;
   vehicleId: string;

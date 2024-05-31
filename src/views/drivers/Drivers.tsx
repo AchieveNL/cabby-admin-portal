@@ -166,7 +166,7 @@ const Drivers = () => {
 
       return {
         key: (index + 2).toString(),
-        label: capitalizeFirstLetter(label),
+        label: capitalizeFirstLetter(status === 'ACTIVE' ? 'bevestigd' : label),
         status,
         children: <DriversTab status={status} label={label} />,
       };

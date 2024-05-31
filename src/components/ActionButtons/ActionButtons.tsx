@@ -16,6 +16,7 @@ interface Props {
   recordId: string;
   confirmationMessage: string;
   fullWidth?: boolean;
+  cancelPlaceholder?: string;
 }
 
 export default function ActionButtons({
@@ -26,6 +27,7 @@ export default function ActionButtons({
   onReject,
   onCancel,
   fullWidth,
+  cancelPlaceholder,
 }: Props) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showRejectReason, setShowRejectReason] = useState(false);
@@ -66,7 +68,7 @@ export default function ActionButtons({
         >
           <>
             Als u deze bestuurder bevestigt gaat de bestuurder naar
-            <strong className="ml-2">“Geaccepteerd”</strong>.
+            <strong className="ml-2">Bevestigd</strong>.
           </>
         </DefaultModal>
       )}
@@ -78,7 +80,7 @@ export default function ActionButtons({
             setShowConfirm(true);
           }}
         >
-          Afwijzen
+          {cancelPlaceholder ?? 'Afwijzen'}
         </ButtonWithIcon>
       )}
       {onCancel && (

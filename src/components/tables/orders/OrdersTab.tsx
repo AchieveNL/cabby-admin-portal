@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Order, OrderStatus, UserProfile } from '@/api/orders/types';
 import {
   cancelOrder,
+  changeOrderStatus,
   completeOrderAdmin,
   confirmOrder,
   createOrderRejectionReason,
+  deleteOrder,
   invalidateOrders,
   rejectOrder,
   stopOrder,
@@ -26,12 +28,13 @@ import { Vehicle } from '@/api/vehicles/types';
 import { currencyFormatter } from '@/common/utits';
 import Countdown from '@/components/CountDown/Countdown';
 import Image from 'next/image';
-import { CloseOutlined, MoreOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
-dayjs.extend(duration);
+import { CheckOutlined, CloseOutlined, MoreOutlined } from '@ant-design/icons';
+import { dayjsExtended, netherlandsTimeNow } from '@/utils/date';
+import DefaultModal from '@/components/modals/DefautlModal';
+import ButtonWithIcon from '@/components/buttons/buttons';
+import DeleteIcon from '@/components/icons/DeleteIcon';
+import CheckIcon from '@/components/icons/CheckIcon';
+import { OrderDeleteModal, OrderRecoverModal } from './Modals';
 
 type Keys = keyof typeof OrderStatus;
 // type Status = (typeof OrderStatus)[Keys];
@@ -42,7 +45,7 @@ const items: ({ id }: { id: string }) => MenuProps['items'] = ({ id }) =>
     .filter((el) => el === OrderStatus.COMPLETED)
     .map((el) => ({
       key: el,
-      label: el,
+      label: el === 'COMPLETED' ? 'Voltooid' : el,
       onClick: async () => {
         if (el === OrderStatus.COMPLETED) {
           await completeOrderAdmin(id);
@@ -51,7 +54,7 @@ const items: ({ id }: { id: string }) => MenuProps['items'] = ({ id }) =>
       },
     }));
 
-const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
+const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
   const handleApprove = async (orderId: string) => {
     await confirmOrder(orderId);
     await invalidateOrders();
@@ -120,7 +123,9 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       className: 'table-bg-primary',
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
-        <>{dayjs.utc(row.rentalStartDate).format('DD/MM/YYYY • hh:mm')}</>
+        <>
+          {dayjsExtended.utc(row.rentalStartDate).format('DD/MM/YYYY • HH:mm')}
+        </>
       ),
     },
     {
@@ -130,10 +135,60 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
         <>
-          <div>{dayjs.utc(row.rentalEndDate).format('DD/MM/YYYY • hh:mm')}</div>
+          <div>
+            {dayjsExtended.utc(row.rentalEndDate).format('DD/MM/YYYY • HH:mm')}
+          </div>
         </>
       ),
     },
+    {
+      title: 'Duur',
+      dataIndex: 'rentalStartDate',
+      className: 'table-bg-primary',
+      key: 'countdown',
+      render: (value: string, row) => (
+        <>
+          {/* <Countdown targetDate={value} /> */}
+          {dayjsExtended
+            .duration(
+              dayjsExtended(row.rentalEndDate).diff(
+                dayjsExtended(row.rentalStartDate),
+              ),
+            )
+            .format('D [days] HH:mm')}
+        </>
+      ),
+    },
+    ...(['COMPLETED', 'UNPAID'].includes(status)
+      ? [
+          {
+            title: 'Gestopt',
+            dataIndex: 'stopRentDate',
+            key: 'stopRentDate',
+            className: 'table-bg-primary',
+            render: (date: string) =>
+              date ? dayjsExtended.utc(date).format('DD/MM/YYYY • hh:mm') : '',
+          },
+          {
+            title: 'Overtijd',
+            dataIndex: 'id',
+            key: 'id',
+            className: 'table-bg-primary',
+            render: (id: string, order: Order) => {
+              const endDate = dayjsExtended.utc(order.rentalEndDate).toDate();
+              const overdue = dayjsExtended
+                .duration(
+                  dayjsExtended(netherlandsTimeNow).diff(
+                    dayjsExtended(endDate),
+                  ),
+                )
+                .format('D [days] HH:mm');
+
+              return <div>{endDate < netherlandsTimeNow ? overdue : ''}</div>;
+            },
+          },
+        ]
+      : []),
     {
       title: 'Prijs',
       dataIndex: 'totalAmount',
@@ -141,32 +196,6 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       key: 'totalAmount',
       render: (value: number) => currencyFormatter.format(value),
     },
-    {
-      title: 'Tijd',
-      dataIndex: 'rentalStartDate',
-      className: 'table-bg-primary',
-      key: 'countdown',
-      render: (value: string, row) => (
-        <>
-          {/* <Countdown targetDate={value} /> */}
-          {dayjs
-            .duration(dayjs(row.rentalEndDate).diff(dayjs(row.rentalStartDate)))
-            .format('HH:mm:ss')}
-        </>
-      ),
-    },
-    ...(['COMPLETED', 'UNPAID'].includes(status)
-      ? [
-          {
-            title: 'Stoped At',
-            dataIndex: 'stopRentDate',
-            key: 'stopRentDate',
-            className: 'table-bg-primary',
-            render: (date: string) =>
-              date ? dayjs.utc(date).format('DD/MM/YYYY • hh:mm') : '',
-          },
-        ]
-      : []),
     {
       title: 'Details',
       dataIndex: 'id',
@@ -187,18 +216,45 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
         return (
           <div className="flex items-center gap-2 justify-end">
             {status === 'PENDING' ? (
-              <ActionButtons
-                onApprove={handleApprove}
-                onRejectReason={onSubmitRejectReason}
-                onReject={handleReject}
-                recordId={id}
-                confirmationMessage="Als u deze order bevestigt gaat de order naar “Afwijzen“."
-              />
+              <>
+                {/* <ActionButtons
+                  onApprove={handleApprove}
+                  onRejectReason={onSubmitRejectReason}
+                  onReject={handleReject}
+                  recordId={id}
+                  confirmationMessage="Als u deze order bevestigt gaat de order naar “Afwijzen“."
+                /> */}
+                <DefaultModal
+                  confirmPlaceholder="Bevestigen"
+                  title="Wilt u deze bestuurder bevestigen?"
+                  fn={() => handleApprove(id)}
+                  button={
+                    <ButtonWithIcon
+                      icon={<CheckOutlined rev={undefined} />}
+                      className="text-success-base hover:text-success-light-2 hover:bg-success-base px-2 py-1 rounded-lg"
+                    >
+                      Bevestigen
+                    </ButtonWithIcon>
+                  }
+                >
+                  <>
+                    Als u deze bestuurder bevestigt gaat de bestuurder naar
+                    <strong className="ml-2">Bevestigd</strong>.
+                  </>
+                </DefaultModal>
+                <ActionButtons
+                  onCancel={handleCancel}
+                  recordId={id}
+                  confirmationMessage="Weet je zeker dat u deze order wilt annuleren?"
+                  cancelPlaceholder="Order annuleren"
+                />
+              </>
             ) : status === 'CONFIRMED' ? (
               <ActionButtons
                 onCancel={handleCancel}
                 recordId={id}
-                confirmationMessage="Are you sure you want to cancel this order?"
+                confirmationMessage="Weet je zeker dat u deze order wilt annuleren?"
+                cancelPlaceholder="Order annuleren"
               />
             ) : status === 'UNPAID' ? (
               <>
@@ -227,6 +283,18 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
                   </Space>
                 </Dropdown>
               </>
+            ) : status === 'COMPLETED' ? (
+              <>
+                <Badge className="bg-success-dark-1 p-2 rounded-lg text-success-light-2">
+                  Betaald
+                </Badge>
+                <OrderDeleteModal id={id} />
+              </>
+            ) : status === 'CANCELED' ? (
+              <>
+                <OrderRecoverModal id={id} />
+                <OrderDeleteModal id={id} />
+              </>
             ) : (
               <></>
             )}
@@ -240,7 +308,7 @@ const getColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
 const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
   const { data, isFetching, error } = useOrders(status);
 
-  const columns = getColumns({ status });
+  const columns = useColumns({ status });
 
   if (error) {
     return <div>Error loading data</div>;
