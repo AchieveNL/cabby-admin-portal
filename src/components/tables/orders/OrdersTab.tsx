@@ -99,7 +99,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       ),
     },
     {
-      title: 'Auto',
+      title: "Auto's",
       dataIndex: 'vehicle',
       className: 'table-bg-primary',
       key: 'vehicle',
