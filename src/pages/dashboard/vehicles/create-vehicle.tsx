@@ -4,7 +4,7 @@ import CreateVehicle from '@/views/vehicles/CreateVehicle';
 
 const CreateVehiclePage = () => {
   return (
-    <DashboardLayout>
+    <DashboardLayout headerTitle="Auto's">
       <CreateVehicle />
     </DashboardLayout>
   );

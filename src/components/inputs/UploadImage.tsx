@@ -5,16 +5,23 @@ import { uploadFile } from '@/api/upload/upload';
 
 interface UploadImageProps {
   setImageUrl: (url: string) => void;
+  placeholder?: string;
 }
 
-const UploadImage: React.FC<UploadImageProps> = ({ setImageUrl }) => {
+const UploadImage: React.FC<UploadImageProps> = ({
+  setImageUrl,
+  placeholder,
+}) => {
   const handleUpload = async (options: any) => {
     const { onSuccess, onError, file } = options;
+    const type = file?.type;
+
+    const fileType = type?.includes('image') ? 'IMAGE' : 'PDF';
 
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('type', 'IMAGE');
+      formData.append('type', fileType);
       const uploadedImageUrl = await uploadFile(formData);
 
       setImageUrl(uploadedImageUrl);
@@ -29,9 +36,10 @@ const UploadImage: React.FC<UploadImageProps> = ({ setImageUrl }) => {
   const beforeUploadHandler = (file: File): boolean => {
     const isPNG = file.type === 'image/png';
     const isJPEG = file.type === 'image/jpeg';
+    const isPDF = file.type === 'application/pdf';
 
-    if (!(isPNG || isJPEG)) {
-      message.error(`${file.name} is not a PNG or JPEG file`);
+    if (!(isPNG || isJPEG || isPDF)) {
+      message.error(`${file.name} is not a PNG, JPEG or PDF file`);
       return false;
     }
 
@@ -45,8 +53,11 @@ const UploadImage: React.FC<UploadImageProps> = ({ setImageUrl }) => {
       showUploadList={false}
       beforeUpload={beforeUploadHandler}
     >
-      <Button className="w-full" icon={<UploadOutlined rev={undefined} />}>
-        Upload Image Only
+      <Button
+        className="w-full flex items-center justify-center"
+        icon={<UploadOutlined rev={undefined} />}
+      >
+        {placeholder ?? ' Upload Image Only'}
       </Button>
     </Upload>
   );

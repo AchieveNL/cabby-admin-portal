@@ -1,15 +1,17 @@
 import React from 'react';
 import { Table } from 'antd';
 import { UserProfileStatus } from '@/api/drivers/types';
-import { useDriversByStatus } from '@/api/drivers/hooks';
+import { useDriversByStatus, useUpdateDriverStatus } from '@/api/drivers/hooks';
 import { driversColumns } from '@/views/drivers/Drivers';
 
 const RejectedDriversTable = () => {
-  const { data: drivers, loading } = useDriversByStatus(
+  const { data: drivers, isFetching } = useDriversByStatus(
     UserProfileStatus.REJECTED,
   );
 
-  if (loading) {
+  const { updateStatus } = useUpdateDriverStatus();
+
+  if (isFetching) {
     return <div>Loading...</div>;
   }
 
@@ -21,11 +23,17 @@ const RejectedDriversTable = () => {
             Rejected drivers
           </h4>
           <h6 className="font-medium text-base text-neutral-50">
-            Total {drivers.length} rejected drivers
+            Total {drivers?.length} rejected drivers
           </h6>
         </div>
       </div>
-      <Table dataSource={drivers} columns={driversColumns} />
+      <Table
+        dataSource={drivers}
+        columns={driversColumns({
+          showChangeStatus: true,
+          changeStatus: updateStatus,
+        })}
+      />
     </div>
   );
 };

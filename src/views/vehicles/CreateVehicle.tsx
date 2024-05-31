@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Input, Row, message } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Row,
+  Table,
+  message,
+} from 'antd';
 import UploadImage from '@/components/inputs/UploadImage';
 import { useRouter } from 'next/router'; // Fixed 'next/navigation' to 'next/router'
 import { VehicleInput, VehicleStatus } from '@/api/vehicles/types';
@@ -10,7 +19,65 @@ import {
 } from '@/api/vehicles/hooks';
 import DisplayImage from '@/components/image/DisplayImage';
 import styles from './CreateVehicle.module.scss';
-import { getVehicleByRDWLicencePlate } from '@/api/vehicles/vehicles';
+import {
+  createVehicle,
+  getVehicleByRDWLicencePlate,
+} from '@/api/vehicles/vehicles';
+import { ColumnsType } from 'antd/es/table';
+
+const timeframesTitles = [
+  '00:00 T/M 6:00',
+  '06:00 t/m 12:00',
+  '12:00 t/m 18:00',
+  '18:00 t/m 00:00',
+];
+
+const timeframesStructure = [
+  {
+    title: 'MA',
+  },
+  {
+    title: 'DI',
+  },
+  {
+    title: 'WO',
+  },
+  {
+    title: 'DO',
+  },
+  {
+    title: 'VR',
+  },
+  {
+    title: 'ZA',
+  },
+  {
+    title: 'ZO',
+  },
+];
+
+const defaultTimeframes = [
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+  [NaN, NaN, NaN, NaN],
+];
+
+const dataSource: readonly object[] | undefined = [0, 1, 2, 3].map((el) => {
+  return {
+    key: el,
+    monday: defaultTimeframes[0][el],
+    tuesday: defaultTimeframes[1][el],
+    wednesday: defaultTimeframes[2][el],
+    thursday: defaultTimeframes[3][el],
+    friday: defaultTimeframes[4][el],
+    saturday: defaultTimeframes[5][el],
+    sunday: defaultTimeframes[6][el],
+  };
+});
 
 const initialVehicleData: VehicleInput = {
   logo: '',
@@ -25,28 +92,79 @@ const initialVehicleData: VehicleInput = {
   batteryCapacity: '',
   uniqueFeature: '',
   images: [],
+  papers: [],
   availability: 'available',
   currency: 'EUR',
   pricePerDay: 0.0,
   status: VehicleStatus.PENDING,
   vin: '',
+  timeframes: defaultTimeframes,
+  streetName: '',
+  streetNumber: '',
+  zipcodeNumber: '',
+  zipcodeCharacter: '',
+  state: '',
 };
 
 const CreateVehicle: React.FC = () => {
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
-  const { create, loading: isCreating } = useCreateVehicle();
-  const { update, loading: isUpdating } = useUpdateVehicle();
+  const { mutate: create, isPending: isCreating } = useCreateVehicle();
+  const { update } = useUpdateVehicle();
   const router = useRouter();
   const [form] = Form.useForm();
-  const { data: vehicle, loading } = useVehicleById(
-    router.query.vehicleId as string,
+  const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
+
+  const columns: ColumnsType<object> | undefined = timeframesStructure.map(
+    (el, dayIndex) => ({
+      title: el.title,
+      key: el.title,
+      align: 'center',
+      render: (data) => {
+        const timeframeIndex = data.key;
+        const title = timeframesTitles[timeframeIndex];
+        const timeframes = vehicleData.timeframes;
+        const value = timeframes[dayIndex][timeframeIndex];
+        // console.log(timeframes);
+        return (
+          <div className="flex flex-col">
+            <label htmlFor="">{title}</label>
+            <InputNumber
+              min={0}
+              onChange={(val) => {
+                const newTimeFrames = timeframes?.map((el, index1) =>
+                  index1 !== dayIndex
+                    ? el
+                    : el?.map((element, index2) => {
+                        return index2 === timeframeIndex ? val || 0 : element;
+                      }),
+                );
+                setVehicleData((el) => ({
+                  ...el,
+                  timeframes: newTimeFrames,
+                }));
+              }}
+              value={value}
+              addonAfter="€"
+              className="w-full"
+            />
+          </div>
+        );
+      },
+    }),
   );
 
   useEffect(() => {
     if (vehicle) {
       form.setFieldsValue(vehicle);
-      setVehicleData(vehicle);
+      if (!vehicle.timeframes) {
+        return setVehicleData({
+          ...initialVehicleData,
+          ...vehicle,
+          timeframes: initialVehicleData.timeframes,
+        });
+      }
+      setVehicleData({ ...initialVehicleData, ...vehicle });
     }
   }, [vehicle]);
 
@@ -93,24 +211,46 @@ const CreateVehicle: React.FC = () => {
     }
   };
 
+  function validateForm(form: VehicleInput) {
+    let messageText = '';
+    const timeframes = form.timeframes;
+    const images = form.images;
+    if (timeframes.some((day) => day.some((frame) => !frame))) {
+      messageText = 'Pricing must not be empty or zero';
+      message.error(messageText);
+    } else if (!(images.length > 0)) {
+      messageText = 'Must upload at least one image';
+      message.error(messageText);
+    }
+    return messageText;
+  }
+
   const handleCreateVehicle = async () => {
+    const validate = validateForm(vehicleData);
+    if (!!validate) return;
     if (router.query.vehicleId) {
       // update
       vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
-      vehicleData.status = VehicleStatus.PENDING;
+      // vehicleData.status = VehicleStatus.PENDING;
       await update(router.query.vehicleId as string, vehicleData);
       message.success('Vehicle updated successfully');
       router.push('/dashboard/vehicles');
     } else {
       const data = await create(vehicleData);
-      if (data) {
-        message.success('Vehicle added successfully');
-        router.push('/dashboard/vehicles');
-      }
+      // if (data) {
+      message.success('Vehicle added successfully');
+      router.push('/dashboard/vehicles');
+      // }
     }
   };
 
-  const onSetImageUrl = (url: string) => {
+  const onSetPaperImageUrl = (url: string) => {
+    setVehicleData((prevData) => ({
+      ...prevData,
+      papers: [...prevData.papers, url],
+    }));
+  };
+  const onSetCarImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
       images: [...prevData.images, url],
@@ -133,10 +273,22 @@ const CreateVehicle: React.FC = () => {
           <span className="font-bold">Search Vehicle</span>
         </button>
       </div>
-      <Form form={form} layout={'vertical'} initialValues={vehicleData}>
+      <Form
+        onFinish={handleCreateVehicle}
+        form={form}
+        layout={'vertical'}
+        initialValues={vehicleData}
+      >
         <div className="vehicle-form bg-white border border-gray-300 rounded-xl p-6">
+          <h1 className="text-xl mb-6">Autodetails</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Form.Item<any> label="Plate Number" name="licensePlate">
+            <Form.Item<any>
+              label="Nummerplaat"
+              name="licensePlate"
+              // rules={[
+              //   { required: true, message: 'Please input your username!' },
+              // ]}
+            >
               <Input
                 name="licensePlate"
                 value={vehicleData?.licensePlate}
@@ -152,7 +304,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., Toyota"
               />
             </Form.Item>
-            <Form.Item<any> label="Model Name" name="model">
+            <Form.Item<any> label="Modelnaam" name="model">
               <Input
                 name="model"
                 value={vehicleData?.model}
@@ -168,7 +320,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., Available"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Year" name="manufactureYear">
+            <Form.Item<any> label="Jaar" name="manufactureYear">
               <Input
                 name="manufactureYear"
                 value={vehicleData?.manufactureYear}
@@ -176,7 +328,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., 2022"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Engine" name="engineType">
+            <Form.Item<any> label="Motor" name="engineType">
               <Input
                 name="engineType"
                 value={vehicleData?.engineType}
@@ -184,7 +336,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., V8"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Total Seats/Doors" name="seatingCapacity">
+            <Form.Item<any> label="Zitplaatsen" name="seatingCapacity">
               <Input
                 name="seatingCapacity"
                 value={vehicleData?.seatingCapacity}
@@ -192,7 +344,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., 5"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Battery Capacity" name="batteryCapacity">
+            <Form.Item<any> label="Batterij capaciteit" name="batteryCapacity">
               <Input
                 name="batteryCapacity"
                 value={vehicleData?.batteryCapacity}
@@ -200,15 +352,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., 4000mAh"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Rental Period" name="rentalDuration">
-              <Input
-                name="rentalDuration"
-                value={vehicleData?.rentalDuration}
-                onChange={handleInputChange}
-                placeholder="e.g., 7 days"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Price From" name="pricePerDay">
+            {/* <Form.Item<any> label="Price From" name="pricePerDay">
               <Input
                 type="number"
                 name="pricePerDay"
@@ -216,15 +360,7 @@ const CreateVehicle: React.FC = () => {
                 onChange={handleInputChange}
                 placeholder="e.g., 100"
               />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Currency" name="currency">
-              <Input
-                name="currency"
-                value={vehicleData?.currency}
-                onChange={handleInputChange}
-                placeholder="e.g., EUR"
-              />
-            </Form.Item>
+            </Form.Item>{' '} */}
             <Form.Item<any> label="Unique Feature" name="uniqueFeature">
               <Input
                 name="uniqueFeature"
@@ -233,7 +369,7 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., Self-parking feature"
               />
             </Form.Item>
-            <Form.Item<any> label="VIN number" name="vin">
+            <Form.Item<any> label="VIN nummer" name="vin">
               <Input
                 name="vin"
                 value={vehicleData?.vin}
@@ -241,9 +377,93 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., VIN number of the tesla"
               />
             </Form.Item>
+            <h1 className="col-span-full text-xl">Huurdetails</h1>
+            <Form.Item<any> label="Min. huurperiode" name="rentalDuration">
+              <Input
+                name="rentalDuration"
+                value={vehicleData?.rentalDuration}
+                onChange={handleInputChange}
+                placeholder="e.g., 7 days"
+              />
+            </Form.Item>{' '}
+            <Form.Item<any> label="Munteenheid" name="currency">
+              <Input
+                name="currency"
+                value={vehicleData?.currency}
+                onChange={handleInputChange}
+                placeholder="e.g., EUR"
+              />
+            </Form.Item>
+            <h1 className="col-span-full text-xl">Ophaallocatie</h1>
+            <div className="col-span-1 flex w-full gap-2">
+              <Form.Item<any>
+                label="Straatnaam"
+                name="streetName"
+                className="w-full"
+              >
+                <Input
+                  name="streetName"
+                  value={vehicleData?.streetName}
+                  onChange={handleInputChange}
+                  placeholder="Damstraat"
+                />
+              </Form.Item>
+              <Form.Item<any>
+                label="Huisnummer"
+                name="streetNumber"
+                className="flex flex-col justify-end"
+              >
+                <Input
+                  name="streetNumber"
+                  value={vehicleData?.streetNumber}
+                  onChange={handleInputChange}
+                  placeholder="34"
+                />
+              </Form.Item>
+            </div>
+            <div className="col-span-1 flex w-full gap-2">
+              <Form.Item<any>
+                label="Postcode"
+                name="zipcodeNumber"
+                className="w-full"
+              >
+                <Input
+                  name="zipcodeNumber"
+                  value={vehicleData?.zipcodeNumber}
+                  onChange={handleInputChange}
+                  placeholder="1234"
+                />
+              </Form.Item>
+              <Form.Item<any>
+                label=""
+                name="zipcodeCharacter"
+                className="flex flex-col justify-end"
+              >
+                <Input
+                  name="zipcodeCharacter"
+                  value={vehicleData?.zipcodeCharacter}
+                  onChange={handleInputChange}
+                  placeholder="AB"
+                />
+              </Form.Item>
+              <Form.Item<any> label="Plaats" name="state" className="w-full">
+                <Input
+                  name="state"
+                  value={vehicleData?.state}
+                  onChange={handleInputChange}
+                  placeholder="Amsterdam"
+                />
+              </Form.Item>
+            </div>
           </div>
-
+          <Table
+            rowClassName="bg-primary-light-2"
+            dataSource={dataSource}
+            columns={columns}
+            pagination={false}
+          />
           <div className={styles.columns}>
+            <h3 className="text-lg">Car images</h3>
             <div>
               <Row gutter={16}>
                 {vehicleData.images.map((image) => (
@@ -254,11 +474,31 @@ const CreateVehicle: React.FC = () => {
               </Row>
             </div>
             <div>
-              <UploadImage setImageUrl={onSetImageUrl} />
+              <UploadImage
+                placeholder="Upload car images"
+                setImageUrl={onSetCarImageUrl}
+              />
+            </div>
+            <h3 className="text-lg">Paper images</h3>
+            <div>
+              <Row gutter={16}>
+                {vehicleData.papers.map((image) => (
+                  <Col span={6} key={image}>
+                    <DisplayImage imageUrl={image} onImageDelete={() => null} />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+            <div>
+              <UploadImage
+                placeholder="Upload paper images"
+                setImageUrl={onSetPaperImageUrl}
+              />
             </div>
             <div>
               <Button
-                onClick={handleCreateVehicle}
+                htmlType="submit"
+                // onClick={handleCreateVehicle}
                 loading={isCreating}
                 className="btn-outline-primary cursor-pointer block text-center font-bold h-12"
                 block

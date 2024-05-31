@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { TableColumnsType, Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import { PendingVehiclesTable } from '@/components/tables/vehicles/PendingVehiclesTable';
-import { Vehicle } from '@/api/vehicles/types';
+import { Vehicle, VehicleStatus } from '@/api/vehicles/types';
 import { ActiveVehiclesTable } from '@/components/tables/vehicles/ActiveVehiclesTable';
 import { RejectedVehiclesTable } from '@/components/tables/vehicles/RejectedVehiclesTable';
 import { BlockedVehiclesTable } from '@/components/tables/vehicles/BlockedVehiclesTable';
 import Link from 'next/link';
+import { VehiclesTab } from '@/components/tables/vehicles/VehiclesTab';
+import { capitalizeFirstLetter } from '@/utils/text';
 
 export const vehiclesColumns = (action?: any): TableColumnsType<Vehicle> => [
   {
@@ -44,36 +46,35 @@ export const vehiclesColumns = (action?: any): TableColumnsType<Vehicle> => [
 
 const Vehicles = () => {
   const [currentTab, setCurrentTab] = useState('1');
-  const items: TabsProps['items'] = [
-    {
-      key: '1',
-      label: 'Pending',
-      children: <PendingVehiclesTable />,
-    },
-    {
-      key: '2',
-      label: 'Active',
-      children: <ActiveVehiclesTable />,
-    },
-    {
-      key: '3',
-      label: 'Rejected',
-      children: <RejectedVehiclesTable />,
-    },
-    {
-      key: '4',
-      label: 'Blocked',
-      children: <BlockedVehiclesTable />,
-    },
-  ];
 
   const onChange = (key: string) => {
     setCurrentTab(key);
   };
 
+  const tabs: TabsProps['items'] = Object.values(VehicleStatus).map(
+    (status, index) => {
+      const label =
+        status === 'PENDING'
+          ? 'in behandeling'
+          : status === 'ACTIVE'
+          ? 'bevestigde'
+          : status === 'REJECTED'
+          ? 'afgewezen'
+          : status === 'BLOCKED'
+          ? 'geblokkeerde'
+          : '';
+      return {
+        key: (index + 1).toString(),
+        label: capitalizeFirstLetter(label),
+        status,
+        children: <VehiclesTab status={status} label={label} />,
+      };
+    },
+  );
+
   return (
     <div>
-      <Tabs defaultActiveKey={currentTab} items={items} onChange={onChange} />
+      <Tabs defaultActiveKey={currentTab} items={tabs} onChange={onChange} />
     </div>
   );
 };

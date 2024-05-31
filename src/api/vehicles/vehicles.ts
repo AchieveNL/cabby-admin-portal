@@ -2,6 +2,9 @@
 import axios from 'axios';
 import { Vehicle, VehicleInput, VehicleStatus } from './types';
 import { apiUrl } from '@/common/constants';
+import { VehicleStatusType } from '@/components/tables/vehicles/VehiclesTab';
+import { invalidateVehicles } from './hooks';
+import { queryClient } from '@/pages/_app';
 
 const VEHICLES_URL = apiUrl + '/vehicles';
 
@@ -26,7 +29,7 @@ export const getAllVehicles = async (): Promise<Vehicle[]> => {
 };
 
 export const getVehiclesByStatus = async (
-  status: VehicleStatus,
+  status: VehicleStatusType,
 ): Promise<Vehicle[]> => {
   const response = await axios.get(`${VEHICLES_URL}/status/${status}`);
   return response.data.payload;
@@ -82,6 +85,7 @@ export const updateVehicleStatus = async (
 
 export const deleteVehicle = async (id: string): Promise<Vehicle> => {
   const response = await axios.delete<Vehicle>(`${VEHICLES_URL}/${id}`);
+  await invalidateVehicles();
   return response.data;
 };
 
@@ -120,5 +124,20 @@ export const saveVehicleRejection = async (
     vehicleId,
     reason,
   });
+  return response.data;
+};
+
+export const getDeposit = async (): Promise<string> => {
+  const response = await axios.get(`${VEHICLES_URL}/deposit`);
+  return response.data.payload;
+};
+
+export const upsertDeposit = async ({
+  value,
+}: {
+  value: number;
+}): Promise<any> => {
+  const response = await axios.post(`${VEHICLES_URL}/deposit`, { value });
+  await queryClient.invalidateQueries({ queryKey: ['deposit'] });
   return response.data;
 };

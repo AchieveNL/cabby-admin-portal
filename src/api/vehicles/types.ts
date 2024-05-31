@@ -22,10 +22,17 @@ export type VehicleInput = {
   batteryCapacity: string;
   uniqueFeature: string;
   images: string[];
+  papers: string[];
   availability?: string;
   unavailabilityReason?: string;
   currency?: string;
   pricePerDay?: number;
   status: VehicleStatus;
   vin?: string;
+  timeframes: number[][];
+  streetName?: string;
+  streetNumber?: string;
+  zipcodeNumber?: string;
+  zipcodeCharacter?: string;
+  state?: string;
 };

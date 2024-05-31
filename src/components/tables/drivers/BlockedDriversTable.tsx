@@ -5,11 +5,11 @@ import { useDriversByStatus } from '@/api/drivers/hooks';
 import { driversColumns } from '@/views/drivers/Drivers';
 
 const BlockedDriversTable = () => {
-  const { data: drivers, loading } = useDriversByStatus(
+  const { data: drivers, isFetching } = useDriversByStatus(
     UserProfileStatus.BLOCKED,
   );
 
-  if (loading) {
+  if (isFetching) {
     return <div>Loading...</div>;
   }
 
@@ -21,11 +21,11 @@ const BlockedDriversTable = () => {
             Blocked drivers
           </h4>
           <h6 className="font-medium text-base text-neutral-50">
-            Total {drivers.length} blocked drivers
+            Total {drivers?.length} blocked drivers
           </h6>
         </div>
       </div>
-      <Table dataSource={drivers} columns={driversColumns} />
+      <Table dataSource={drivers} columns={driversColumns({})} />
     </div>
   );
 };

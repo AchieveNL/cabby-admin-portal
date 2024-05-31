@@ -5,14 +5,26 @@ import ManageAccountIcon from '@/components/icons/ManageAccountIcon';
 import SmsIcon from '@/components/icons/SmsIcon';
 import MenuIcon from '@/components/icons/MenuIcon';
 import { useRouter } from 'next/router';
+import { Breadcrumb } from 'antd';
+import Link from 'next/link';
+import {
+  BreadcrumbItemType,
+  BreadcrumbSeparatorType,
+} from 'antd/es/breadcrumb/Breadcrumb';
 
 const pageNameMappings: Record<string, string> = {
   notifications: 'Notifications',
   messages: 'Messages',
   users: 'Manage Users',
 };
-
-const Header = ({ onMenu }: { onMenu: React.MouseEventHandler }) => {
+interface Props {
+  onMenu: React.MouseEventHandler;
+  breadcrumbItems:
+    | Partial<BreadcrumbItemType & BreadcrumbSeparatorType>[]
+    | undefined;
+  headerTitle?: string;
+}
+const Header = ({ onMenu, breadcrumbItems, headerTitle }: Props) => {
   const router = useRouter();
   const logout = () => {
     deleteCookie('token');
@@ -24,6 +36,7 @@ const Header = ({ onMenu }: { onMenu: React.MouseEventHandler }) => {
   const openUsers = () => router.push('/dashboard/users');
 
   const getPageName = () => {
+    if (headerTitle) return headerTitle;
     const pathSegment = router.pathname.split('/')[2] || '';
     return (
       (pageNameMappings[pathSegment] as string | undefined) ||
@@ -47,6 +60,7 @@ const Header = ({ onMenu }: { onMenu: React.MouseEventHandler }) => {
             <h6 className="mb-2 text-primary-base text-base font-bold">
               {getPageName()}
             </h6>
+            <Breadcrumb items={breadcrumbItems} />
           </div>
           <div className="flex gap-6 lg:gap-8">
             <div className="flex items-center gap-3 lg:gap-6">
@@ -73,7 +87,7 @@ const Header = ({ onMenu }: { onMenu: React.MouseEventHandler }) => {
               onClick={() => logout()}
               className="btn-outline-primary"
             >
-              <span className="text-base font-bold">Log out</span>
+              <span className="text-base font-bold">Uitloggen</span>
             </button>
           </div>
         </nav>

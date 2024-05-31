@@ -5,6 +5,8 @@ import CheckOutlined from '@ant-design/icons/CheckOutlined';
 import { CloseOutlined } from '@ant-design/icons';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import RejectionModal from '../modals/RejectionModal';
+import { invalidateOrders } from '@/api/orders/orders';
+import DefaultModal from '../modals/DefautlModal';
 
 interface Props {
   onApprove?: (id: string) => void;
@@ -28,9 +30,9 @@ export default function ActionButtons({
   const [showConfirm, setShowConfirm] = useState(false);
   const [showRejectReason, setShowRejectReason] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (onReject) {
-      onReject(recordId);
+      await onReject(recordId);
       setShowConfirm(false);
       setShowRejectReason(true);
     } else if (onCancel) {
@@ -39,45 +41,53 @@ export default function ActionButtons({
     }
   };
 
-  const handleRejectReasonSubmit = (reason: string) => {
+  const handleRejectReasonSubmit = async (reason: string) => {
     if (onRejectReason) {
-      onRejectReason(recordId, reason);
+      await onRejectReason(recordId, reason);
       setShowRejectReason(false);
     }
   };
 
   return (
-    <Space size="middle">
+    <>
       {onApprove && (
-        <ButtonWithIcon
-          icon={<CheckOutlined rev={undefined} />}
-          style={{ color: 'green' }}
-          onClick={() => onApprove(recordId)}
-          block={fullWidth}
+        <DefaultModal
+          confirmPlaceholder="Bevestigen"
+          title="Wilt u deze bestuurder bevestigen?"
+          fn={() => onApprove(recordId)}
+          button={
+            <ButtonWithIcon
+              icon={<CheckOutlined rev={undefined} />}
+              className="text-success-base hover:text-success-light-2 hover:bg-success-base px-2 py-1 rounded-lg"
+            >
+              Bevestigen
+            </ButtonWithIcon>
+          }
         >
-          Approve
-        </ButtonWithIcon>
+          <>
+            Als u deze bestuurder bevestigt gaat de bestuurder naar
+            <strong className="ml-2">“Geaccepteerd”</strong>.
+          </>
+        </DefaultModal>
       )}
       {onReject && (
         <ButtonWithIcon
           icon={<CloseOutlined rev={undefined} />}
-          danger
+          className="text-danger-base hover:text-danger-light-2 hover:bg-danger-base px-2 py-1 rounded-lg"
           onClick={() => {
             setShowConfirm(true);
           }}
-          block={fullWidth}
         >
-          Reject
+          Afwijzen
         </ButtonWithIcon>
       )}
       {onCancel && (
         <ButtonWithIcon
           icon={<CloseOutlined rev={undefined} />}
-          danger
+          className="text-danger-base hover:text-danger-light-2 hover:bg-danger-base px-2 py-1 rounded-lg"
           onClick={() => {
             setShowConfirm(true);
           }}
-          block={fullWidth}
         >
           Cancel
         </ButtonWithIcon>
@@ -94,8 +104,8 @@ export default function ActionButtons({
         open={showRejectReason}
         hideModal={() => setShowRejectReason(false)}
         onSubmit={handleRejectReasonSubmit}
-        title="Please provide the reason for rejection."
+        title='Geef redenen waarom u het verzoek afwijst. Als u dat gedaan heeft gaat de order naar "Afgewezen".'
       />
-    </Space>
+    </>
   );
 }

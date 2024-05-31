@@ -2,8 +2,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AxiosError } from 'axios';
 import * as DriverAPI from './drivers';
-import { Driver, UserProfileStatus } from './types';
+import { Driver, DriverStatus, UserProfileStatus } from './types';
 import { message } from 'antd';
+import { useQuery } from '@tanstack/react-query';
+
+const key = 'drivers';
 
 export const useAllDrivers = () => {
   const [data, setData] = useState<Driver[]>([]);
@@ -28,26 +31,30 @@ export const useAllDrivers = () => {
   return { data, loading, error };
 };
 
-export const useDriversByStatus = (status: UserProfileStatus) => {
-  const [data, setData] = useState<Driver[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+export const useDriversByStatus = (status: DriverStatus) => {
+  return useQuery({
+    queryKey: [key, status],
+    queryFn: () => DriverAPI.getDriverByStatus(status),
+  });
+  // const [data, setData] = useState<Driver[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const drivers = await DriverAPI.getDriverByStatus(status);
-      setData(drivers);
-    } catch (error) {
-      message.error((error as AxiosError).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [status]);
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const drivers = await DriverAPI.getDriverByStatus(status);
+  //     setData(drivers);
+  //   } catch (error) {
+  //     message.error((error as AxiosError).message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchData();
+  // }, [status]);
 
-  return { data, loading, refresh: fetchData };
+  // return { data, loading, refresh: fetchData };
 };
 
 export const useDriverById = (id: string) => {

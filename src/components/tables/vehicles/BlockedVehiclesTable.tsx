@@ -5,7 +5,7 @@ import { useVehiclesByStatus } from '@/api/vehicles/hooks';
 import { VehicleStatus } from '@/api/vehicles/types';
 
 export const BlockedVehiclesTable = () => {
-  const { data: vehicles, loading } = useVehiclesByStatus(
+  const { data: vehicles, isLoading } = useVehiclesByStatus(
     VehicleStatus.BLOCKED,
   );
 
@@ -24,7 +24,7 @@ export const BlockedVehiclesTable = () => {
       <Table
         columns={vehiclesColumns()}
         dataSource={vehicles}
-        loading={loading}
+        loading={isLoading}
       />
     </div>
   );

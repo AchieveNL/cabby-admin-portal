@@ -129,6 +129,7 @@ const Overview: React.FC = () => {
           title: 'Alle orders',
           value: overview?.totals.orders,
           icon: '/doc.svg',
+          link: '/dashboard/orders',
         },
         { title: 'Actieve orders', value: 0, icon: '/car-key.svg' },
         {
@@ -146,6 +147,7 @@ const Overview: React.FC = () => {
           title: 'Alle auto’s',
           value: overview?.totals.vehicles,
           icon: '/car2.svg',
+          link: '/dashboard/vehicles',
         },
         { title: 'Auto’s te huur', value: 0, icon: '/clock.svg' },
         { title: 'Actieve auto’s', value: 0, icon: '/car-key.svg' },
@@ -226,16 +228,25 @@ const Overview: React.FC = () => {
           <div key={index}>
             <h1 className="mb-2 font-semibold">{el.title}</h1>
             <div className="flex gap-3">
-              {rows.map((row) => (
-                <div className="min-w-[250px]" key={row.title}>
-                  <StatisticCard
-                    title={row.title}
-                    value={row.value}
-                    isLoading={loading}
-                    icon={row.icon}
-                  />
-                </div>
-              ))}
+              {rows.map((row) => {
+                const card = (
+                  <div className="min-w-[250px]" key={row.title}>
+                    <StatisticCard
+                      title={row.title}
+                      value={row.value}
+                      isLoading={loading}
+                      icon={row.icon}
+                    />
+                  </div>
+                );
+                const link = row.link;
+                if (!link) return card;
+                return (
+                  <Link key={row.title} href={link}>
+                    {card}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         );
@@ -320,7 +331,7 @@ const Overview: React.FC = () => {
         </Col>
       </Row> */}
 
-      <div>
+      {/* <div>
         <div style={{ padding: '20px' }}>
           <h2 className="mt-2 mb-2 bold">Pending Drivers</h2>
           <Collapse accordion>
@@ -403,7 +414,7 @@ const Overview: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

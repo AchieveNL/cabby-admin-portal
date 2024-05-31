@@ -1,31 +1,40 @@
 import { useEffect, useState } from 'react';
+
 import { Order, OrderStatus } from './types';
 import { getOrderDetails, getOrders } from './orders';
 import { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/react-query';
+type Keys = keyof typeof OrderStatus;
 
-export const useOrders = (status: OrderStatus) => {
-  const [data, setData] = useState<Order[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError | null>(null);
+export const queryKey = ['orders'];
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const orders = await getOrders(status);
-      setData(orders);
-    } catch (error) {
-      setError(error as unknown as AxiosError);
-    } finally {
-      setLoading(false);
-    }
-  };
+export const useOrders = (status?: Keys) => {
+  return useQuery({
+    queryKey: ['orders', status],
+    queryFn: () => getOrders(status),
+  });
+  // const [data, setData] = useState<Order[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<AxiosError | null>(null);
 
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const orders = await getOrders(status);
+  //     setData(orders);
+  //   } catch (error) {
+  //     setError(error as unknown as AxiosError);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  return { data, loading, error, refetch: fetchData };
+  // useEffect(() => {
+  //   fetchData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [status]);
+
+  // return { data, loading, error, refetch: fetchData };
 };
 
 export const useOrderDetails = (orderId: string | undefined) => {

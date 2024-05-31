@@ -60,6 +60,7 @@ export type Payment = {
 
 export enum OrderStatus {
   PENDING = 'PENDING',
+  UNPAID = 'UNPAID',
   CONFIRMED = 'CONFIRMED',
   REJECTED = 'REJECTED',
   COMPLETED = 'COMPLETED',
@@ -82,6 +83,8 @@ export type Order = {
     profile: UserProfile;
   };
   vehicle: Vehicle;
+  stopRentDate?: Date;
+  overdueEmailSentDate?: Date;
 };
 
 export type OrderRejection = {

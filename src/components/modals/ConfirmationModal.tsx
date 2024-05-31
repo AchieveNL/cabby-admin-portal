@@ -39,14 +39,14 @@ const ConfirmationModal: React.FC<Props> = ({
           type="button"
           className="btn-outline-primary w-full"
         >
-          <span className="text-base font-bold">Cancel</span>
+          <span className="text-base font-bold">Annuleren</span>
         </button>
         <button
           onClick={onConfirm}
           type="button"
           className="btn-primary w-full"
         >
-          <span className="text-base font-bold">Confirm</span>
+          <span className="text-base font-bold">Afwijzen</span>
         </button>
       </div>
     </div>

@@ -2,16 +2,26 @@ import { Button, ButtonProps } from 'antd';
 import React, { ReactNode } from 'react';
 import styles from './buttons.module.css';
 
-interface Props extends ButtonProps {
+interface Props
+  extends React.DetailedHTMLProps<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
   icon: ReactNode;
+  className?: string;
 }
-export default function ButtonWithIcon({ icon, ...rest }: Props) {
+export default function ButtonWithIcon({
+  icon,
+  className,
+  children,
+  ...rest
+}: Props) {
   return (
-    <Button type="text" danger {...rest}>
+    <button className={className} {...rest}>
       <div className={styles.button_content}>
         <div>{icon}</div>
-        <div>{rest.children}</div>
+        <div>{children}</div>
       </div>
-    </Button>
+    </button>
   );
 }

@@ -1,5 +1,8 @@
 {
   "editor.tabSize": 2,
   "prettier.useTabs": true,
-  "workbench.editor.pinnedTabSizing": "shrink"
+  "workbench.editor.pinnedTabSizing": "shrink",
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "file:///Users/macc/Desktop/work/cabby-admin-portal/.github/workflows/deploy.yml"
+  }
 }

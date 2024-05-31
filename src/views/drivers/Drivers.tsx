@@ -1,14 +1,32 @@
 import React from 'react';
-import RejectedDriversTable from '@/components/tables/drivers/RejectedDriversTable';
+import RejectedDriversTable from '@/components/tables/drivers/DriversTab';
 import ActiveDriversTable from '@/components/tables/drivers/ActiveDriversTable';
-import { Tabs, TabsProps } from 'antd';
+import { Modal, Tabs, TabsProps, message } from 'antd';
 import Link from 'next/link';
 import PendingDriversTable from '@/components/tables/drivers/PendingDriversTable';
 import BlockedDriversTable from '@/components/tables/drivers/BlockedDriversTable';
-import Moment from 'moment';
 import { DriverLicense, PermitDetails } from '@/api/orders/types';
+import { ReloadOutlined } from '@ant-design/icons';
+import DeleteModal from '@/components/modals/DeleteModal';
+import DefaultModal from '@/components/modals/DefautlModal';
+import { UserProfileStatus } from '@/api/drivers/types';
+import DriversTab from '@/components/tables/drivers/DriversTab';
+import dayjs from 'dayjs';
+import { capitalizeFirstLetter } from '@/utils/text';
 
-export const driversColumns = [
+export const driversColumns = ({
+  showChangeStatus,
+  changeStatus,
+  refresh,
+}: {
+  showChangeStatus?: boolean;
+  refresh?: () => void;
+  changeStatus?: (
+    id: string,
+    status: UserProfileStatus,
+    reason?: string | undefined,
+  ) => Promise<void>;
+}) => [
   {
     title: "Driver's name",
     dataIndex: 'fullName',
@@ -64,7 +82,7 @@ export const driversColumns = [
     render: (driverLicense: DriverLicense) => (
       <span>
         {driverLicense && driverLicense.driverLicenseExpiry
-          ? Moment(driverLicense.driverLicenseExpiry).format('DD-MM-YYYY')
+          ? dayjs(driverLicense.driverLicenseExpiry).format('DD-MM-YYYY')
           : 'Not Available'}
       </span>
     ),
@@ -76,43 +94,97 @@ export const driversColumns = [
   {
     title: 'Action',
     dataIndex: 'id',
-    render: (id: string) => (
-      <Link href={`/dashboard/drivers/${id}`}>Details</Link>
-    ),
+    render: (id: string) => {
+      return (
+        <div className="flex gap-2 items-center">
+          {showChangeStatus && changeStatus && (
+            <DefaultModal
+              title="Wil je zeker dat je deze bestuurder wilt deblokeren?"
+              button={
+                <button className="flex items-center gap-1 text-success-base">
+                  <ReloadOutlined rev={undefined} /> herstellen
+                </button>
+              }
+              confirmPlaceholder="Verder"
+              fn={async () => {
+                await changeStatus(id, UserProfileStatus.PENDING);
+                message.success('Driver on pending successfully');
+              }}
+            >
+              Zodra je verdergaat, wordt de bestuurder gedeblokkeerd en kan
+              diegene de app weer gebruiken.
+            </DefaultModal>
+          )}
+          <Link href={`/dashboard/drivers/${id}`}>Details</Link>
+        </div>
+      );
+    },
   },
 ];
 
 const Drivers = () => {
   const [currentTab, setCurrentTab] = React.useState('1');
-  const items: TabsProps['items'] = [
-    {
-      key: '1',
-      label: 'Pending',
-      children: <PendingDriversTable />,
-    },
-    {
-      key: '2',
-      label: 'Active',
-      children: <ActiveDriversTable />,
-    },
-    {
-      key: '3',
-      label: 'Rejected',
-      children: <RejectedDriversTable />,
-    },
-    {
-      key: '4',
-      label: 'Block',
-      children: <BlockedDriversTable />,
-    },
-  ];
+  // const items: TabsProps['items'] = [
+  //   {
+  //     key: '1',
+  //     label: 'Pending',
+  //     children: <PendingDriversTable />,
+  //   },
+  //   {
+  //     key: '2',
+  //     label: 'Active',
+  //     children: <ActiveDriversTable />,
+  //   },
+  //   {
+  //     key: '3',
+  //     label: 'Rejected',
+  //     children: <RejectedDriversTable />,
+  //   },
+  //   {
+  //     key: '4',
+  //     label: 'Block',
+  //     children: <BlockedDriversTable />,
+  //   },
+  // ];
 
   const onChange = (key: string) => {
     setCurrentTab(key);
   };
 
+  const tabs: TabsProps['items'] = Object.values(UserProfileStatus)
+    .map((status, index) => {
+      const label =
+        status === 'PENDING'
+          ? 'in behandeling'
+          : status === 'ACTIVE'
+          ? 'bevestigde'
+          : status === 'REJECTED'
+          ? 'afgewezen'
+          : status === 'BLOCKED'
+          ? 'geblokkeerde'
+          : status;
+
+      return {
+        key: (index + 2).toString(),
+        label: capitalizeFirstLetter(label),
+        status,
+        children: <DriversTab status={status} label={label} />,
+      };
+    })
+    .filter((el) => !['INACTIVE'].some((status) => status === el.status));
+
+  const newTabs = [
+    // {
+    //   children: <PendingDriversTable />,
+    //   key: '1',
+    //   label: 'In behandeling',
+    //   status: 'PENDING',
+    // },
+    ...tabs,
+  ];
+
   return (
-    <Tabs defaultActiveKey={currentTab} items={items} onChange={onChange} />
+    <Tabs defaultActiveKey={currentTab} items={newTabs} onChange={onChange} />
   );
 };
 

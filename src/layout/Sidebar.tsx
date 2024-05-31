@@ -25,25 +25,30 @@ const navLinks: NavLinkData[] = [
   },
   {
     href: '/dashboard/vehicles',
-    label: 'Vehicles',
+    label: "Auto's",
     iconPath: '/DirectionsCarFilled.png',
     // numberList: 4,
   },
   {
     href: '/dashboard/drivers',
-    label: 'Drivers',
+    label: 'Bestuurders',
     iconPath: '/CarRental.png',
   },
   {
     href: '/dashboard/damage-reports',
-    label: 'Damage reports',
+    label: 'Schaderapporten',
     iconPath: '/Description.png',
   },
   {
-    href: '/dashboard/refunds',
-    label: 'Refunds',
-    iconPath: '/Money.png',
+    href: '/dashboard/settings',
+    label: 'Instellingen',
+    iconPath: '/settings.svg',
   },
+  // {
+  //   href: '/dashboard/refunds',
+  //   label: 'Refunds',
+  //   iconPath: '/Money.png',
+  // },
 ];
 
 const Sidebar = ({

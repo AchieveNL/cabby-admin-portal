@@ -67,9 +67,9 @@ const LoginForm: React.FC = () => {
 
   return (
     <>
-      <h3 className={styles.loginHeading}>Login</h3>
+      <h3 className={styles.loginHeading}>Inloggen</h3>
       <p className={styles.loginSubHeading}>
-        Enter your account credentials to sign in to your cabby account
+        Voer je accountgegevens in om je aan te melden bij je cabby-account
       </p>
       <Form
         className={styles.form}
@@ -78,15 +78,15 @@ const LoginForm: React.FC = () => {
         onFinish={onFinish}
       >
         <MyFormItemGroup prefix={['user']}>
-          <MyFormItem name="email" label="Email Address">
+          <MyFormItem name="email" label="E-mailadres">
             <Input
               type="text"
               required
-              placeholder="Type here"
+              placeholder="Jouw e-mailadres"
               onChange={(e) => setEmail(e.target.value)}
             />
           </MyFormItem>
-          <MyFormItem name="password" label="Password" className="pwdBox">
+          <MyFormItem name="password" label="Wachtwoord" className="pwdBox">
             <Input
               type={isPwdVisible ? 'text' : 'password'}
               required
@@ -110,7 +110,7 @@ const LoginForm: React.FC = () => {
             className={styles.externalLink}
             onClick={() => router.push('/auth/forgot-password')}
           >
-            Forgot Password?
+            Wachtwoord vergeten?
           </span>
         </p>
         <Button
@@ -119,7 +119,7 @@ const LoginForm: React.FC = () => {
           htmlType="submit"
           disabled={loading}
         >
-          {loading ? <Spin /> : 'Sign In'}
+          {loading ? <Spin /> : 'Inloggen'}
         </Button>
       </Form>
     </>
