@@ -80,6 +80,7 @@ export const updateVehicleStatus = async (
     id,
     status,
   });
+  await invalidateVehicles();
   return response.data;
 };
 

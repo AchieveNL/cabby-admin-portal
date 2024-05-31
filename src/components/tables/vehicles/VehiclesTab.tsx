@@ -17,6 +17,11 @@ import { useRouter } from 'next/router';
 import DefaultModal from '@/components/modals/DefautlModal';
 import DeleteIcon from '@/components/icons/DeleteIcon';
 import { dayjsExtended, netherlandsTimeNow } from '@/utils/date';
+import {
+  VehicleConfirmModal,
+  VehicleDeleteModal,
+  VehicleRecoverModal,
+} from './Modals';
 
 export type VehicleStatusType = keyof typeof VehicleStatus;
 
@@ -92,73 +97,28 @@ const useColumns = ({
         <Link href={`/dashboard/vehicles/${record.id}`}>Details</Link>
       ),
     },
-    ...(status === 'PENDING' || status === 'REJECTED'
-      ? [
-          {
-            title: 'Action',
-            key: 'action',
-            render: (text: any, record: any) => (
-              <div className="flex items-center">
-                {status === 'PENDING' ? (
-                  <ActionButtons
-                    onApprove={handleApprove}
-                    onRejectReason={onSubmitRejectReason}
-                    onReject={handleReject}
-                    recordId={record.id}
-                    confirmationMessage="Are you sure you want to reject this vehicle?"
-                  />
-                ) : (
-                  <>
-                    <DefaultModal
-                      title="Wil je zeker dat je deze bestuurder wilt deblokeren?"
-                      button={
-                        <Button
-                          type="text"
-                          color="green"
-                          className="flex items-center text-success-base hover:bg-success-base"
-                        >
-                          <ReloadOutlined rev={undefined} /> herstellen
-                        </Button>
-                      }
-                      confirmPlaceholder="Verder"
-                      fn={async () => {
-                        await updateStatus({
-                          id: record.id,
-                          status: VehicleStatus.PENDING,
-                        });
-                        message.success('Driver on pending successfully');
-                      }}
-                    >
-                      Zodra je verdergaat, wordt de bestuurder gedeblokkeerd en
-                      kan diegene de app weer gebruiken.
-                    </DefaultModal>
-                    <DefaultModal
-                      title="Weet je het zeker dat u de auto wilt verwijderen?"
-                      button={
-                        <Button
-                          type="text"
-                          danger
-                          className="flex items-center gap-1"
-                        >
-                          <DeleteIcon /> Verwijderen
-                        </Button>
-                      }
-                      confirmPlaceholder="Verwijder"
-                      fn={async () => {
-                        await deleteVehicle(record.id);
-                        message.success('Vehicle deleted successfully');
-                      }}
-                    >
-                      {/* Zodra je verdergaat, wordt de bestuurder gedeblokkeerd en
-                      kan diegene de app weer gebruiken. */}
-                    </DefaultModal>
-                  </>
-                )}
-              </div>
-            ),
-          },
-        ]
-      : []),
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text: any, record: Vehicle) => {
+        const id = record.id;
+        return (
+          <div className="flex items-center gap-2">
+            {status === 'PENDING' ? (
+              <>
+                <VehicleConfirmModal id={id} />
+                <VehicleDeleteModal id={id} />
+              </>
+            ) : (
+              <>
+                <VehicleRecoverModal id={id} />
+                <VehicleDeleteModal id={id} />
+              </>
+            )}
+          </div>
+        );
+      },
+    },
   ];
 };
 

@@ -99,7 +99,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       ),
     },
     {
-      title: 'Auto',
+      title: "Auto's",
       dataIndex: 'vehicle',
       className: 'table-bg-primary',
       key: 'vehicle',
@@ -325,7 +325,7 @@ const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
           <h6 className="mb-4 font-medium text-base text-neutral-50">
             {isPending
               ? `Totaal ${data?.length} orders ${label}`
-              : `Totaal ${data?.length} ${label} orders`}
+              : `Totaal ${data?.length} ${label} order(s)`}
           </h6>
         </div>
       </div>

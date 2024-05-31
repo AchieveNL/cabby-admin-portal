@@ -27,7 +27,7 @@ export const OrderRecoverModal = ({ id }: { id: string }) => {
     <DefaultModal
       fn={() => changeOrderStatus(id, 'PENDING')}
       // confirmPlaceholder="Verwijderen"
-      title="Verwijderen"
+      title="Herstellen"
       button={
         <ButtonWithIcon
           icon={<CheckIcon />}

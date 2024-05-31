@@ -16,6 +16,11 @@ import {
   saveVehicleRejection,
   updateVehicleStatus,
 } from '@/api/vehicles/vehicles';
+import {
+  VehicleConfirmModal,
+  VehicleDeleteModal,
+  VehicleRecoverModal,
+} from '@/components/tables/vehicles/Modals';
 
 const reports = [{}, {}, {}];
 
@@ -85,14 +90,16 @@ const VehicleDetails = () => {
           <span className="text-base font-bold">Edit</span>
         </Link>
         <div className="flex gap-4 items-center">
-          {vehicle?.status === VehicleStatus.PENDING && (
-            <ActionButtons
-              onApprove={handleApprove}
-              onRejectReason={onSubmitRejectReason}
-              onReject={handleReject}
-              recordId={vehicleId}
-              confirmationMessage="Are you sure you want to reject this vehicle?"
-            />
+          {vehicle?.status === VehicleStatus.PENDING ? (
+            <>
+              <VehicleConfirmModal id={vehicleId} />
+              <VehicleDeleteModal id={vehicleId} />
+            </>
+          ) : (
+            <>
+              <VehicleRecoverModal id={vehicleId} />
+              <VehicleDeleteModal id={vehicleId} />
+            </>
           )}
         </div>
       </header>

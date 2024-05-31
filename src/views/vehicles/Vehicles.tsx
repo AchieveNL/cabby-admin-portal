@@ -51,8 +51,9 @@ const Vehicles = () => {
     setCurrentTab(key);
   };
 
-  const tabs: TabsProps['items'] = Object.values(VehicleStatus).map(
-    (status, index) => {
+  const tabs: TabsProps['items'] = Object.values(VehicleStatus)
+    .filter((el) => ['PENDING', 'ACTIVE'].includes(el))
+    .map((status, index) => {
       const label =
         status === 'PENDING'
           ? 'in behandeling'
@@ -69,8 +70,7 @@ const Vehicles = () => {
         status,
         children: <VehiclesTab status={status} label={label} />,
       };
-    },
-  );
+    });
 
   return (
     <div>
