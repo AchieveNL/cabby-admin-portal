@@ -123,9 +123,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       className: 'table-bg-primary',
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
-        <>
-          {dayjsExtended.utc(row.rentalStartDate).format('DD/MM/YYYY • HH:mm')}
-        </>
+        <>{dayjsExtended(row.rentalStartDate).format('DD/MM/YYYY • HH:mm')}</>
       ),
     },
     {
@@ -136,7 +134,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
       render: (value: string, row: Order) => (
         <>
           <div>
-            {dayjsExtended.utc(row.rentalEndDate).format('DD/MM/YYYY • HH:mm')}
+            {dayjsExtended(row.rentalEndDate).format('DD/MM/YYYY • HH:mm')}
           </div>
         </>
       ),
@@ -167,7 +165,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
             key: 'stopRentDate',
             className: 'table-bg-primary',
             render: (date: string) =>
-              date ? dayjsExtended.utc(date).format('DD/MM/YYYY • hh:mm') : '',
+              date ? dayjsExtended(date).format('DD/MM/YYYY • HH:mm') : '',
           },
           {
             title: 'Overtijd',
@@ -175,13 +173,9 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
             key: 'id',
             className: 'table-bg-primary',
             render: (id: string, order: Order) => {
-              const endDate = dayjsExtended.utc(order.rentalEndDate).toDate();
+              const endDate = dayjsExtended(order.rentalEndDate).toDate();
               const overdue = dayjsExtended
-                .duration(
-                  dayjsExtended(netherlandsTimeNow).diff(
-                    dayjsExtended(endDate),
-                  ),
-                )
+                .duration(dayjsExtended().diff(dayjsExtended(endDate)))
                 .format('D [days] HH:mm');
 
               return <div>{endDate < netherlandsTimeNow ? overdue : ''}</div>;
