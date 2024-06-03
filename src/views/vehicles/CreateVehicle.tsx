@@ -226,8 +226,8 @@ const CreateVehicle: React.FC = () => {
   }
 
   const handleCreateVehicle = async () => {
-    // const validate = validateForm(vehicleData);
-    // if (!!validate) return;
+    const validate = validateForm(vehicleData);
+    if (!!validate) return;
     if (router.query.vehicleId) {
       // update
       vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
