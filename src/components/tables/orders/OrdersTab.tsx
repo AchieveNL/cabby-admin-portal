@@ -192,7 +192,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
             key: 'id',
             className: 'table-bg-primary',
             render: (id: string, order: Order) => {
-              const endDate = dayjsExtended.utc(order.rentalEndDate).toDate();
+              const endDate = dayjsExtended(order.rentalEndDate).toDate();
               const overdue = dayjsExtended
                 .duration(
                   dayjsExtended(new Date()).diff(dayjsExtended(endDate)),
