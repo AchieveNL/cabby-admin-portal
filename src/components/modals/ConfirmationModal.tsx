@@ -7,6 +7,7 @@ interface Props {
   hideModal: () => void;
   onConfirm: () => void;
   confirmationMessage: string;
+  confirmationPlaceholder?: string;
 }
 
 const ConfirmationModal: React.FC<Props> = ({
@@ -14,6 +15,7 @@ const ConfirmationModal: React.FC<Props> = ({
   hideModal,
   onConfirm,
   confirmationMessage,
+  confirmationPlaceholder,
 }) => (
   <Modal
     onCancel={hideModal}
@@ -44,9 +46,11 @@ const ConfirmationModal: React.FC<Props> = ({
         <button
           onClick={onConfirm}
           type="button"
-          className="btn-primary w-full"
+          className="btn-primary w-full whitespace-nowrap"
         >
-          <span className="text-base font-bold">Afwijzen</span>
+          <span className="text-base font-bold">
+            {confirmationPlaceholder ?? 'Afwijzen'}
+          </span>
         </button>
       </div>
     </div>
