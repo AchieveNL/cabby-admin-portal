@@ -250,6 +250,18 @@ const CreateVehicle: React.FC = () => {
       papers: [...prevData.papers, url],
     }));
   };
+  const onRemoveCarImage = (url: string) => {
+    setVehicleData((prevData) => ({
+      ...prevData,
+      images: prevData.images.filter((el) => el !== url),
+    }));
+  };
+  const onRemovePaperImage = (url: string) => {
+    setVehicleData((prevData) => ({
+      ...prevData,
+      papers: prevData.papers.filter((el) => el !== url),
+    }));
+  };
   const onSetCarImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
@@ -454,7 +466,10 @@ const CreateVehicle: React.FC = () => {
               <Row gutter={16}>
                 {vehicleData.images.map((image) => (
                   <Col span={6} key={image}>
-                    <DisplayImage imageUrl={image} onImageDelete={() => null} />
+                    <DisplayImage
+                      imageUrl={image}
+                      onImageDelete={onRemoveCarImage}
+                    />
                   </Col>
                 ))}
               </Row>
@@ -470,7 +485,10 @@ const CreateVehicle: React.FC = () => {
               <Row gutter={16}>
                 {vehicleData.papers.map((image) => (
                   <Col span={6} key={image}>
-                    <DisplayImage imageUrl={image} onImageDelete={() => null} />
+                    <DisplayImage
+                      imageUrl={image}
+                      onImageDelete={onRemovePaperImage}
+                    />
                   </Col>
                 ))}
               </Row>
