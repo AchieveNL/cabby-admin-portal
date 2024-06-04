@@ -211,13 +211,6 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
           <div className="flex items-center gap-2 justify-end">
             {status === 'PENDING' ? (
               <>
-                {/* <ActionButtons
-                  onApprove={handleApprove}
-                  onRejectReason={onSubmitRejectReason}
-                  onReject={handleReject}
-                  recordId={id}
-                  confirmationMessage="Als u deze order bevestigt gaat de order naar “Afwijzen“."
-                /> */}
                 <DefaultModal
                   confirmPlaceholder="Bevestigen"
                   title="Wilt u deze bestuurder bevestigen?"

@@ -80,7 +80,7 @@ export default function ActionButtons({
             setShowConfirm(true);
           }}
         >
-          {cancelPlaceholder ?? 'Afwijzen'}
+          Afwijzen
         </ButtonWithIcon>
       )}
       {onCancel && (
@@ -96,6 +96,7 @@ export default function ActionButtons({
       )}
 
       <ConfirmationModal
+        confirmationPlaceholder="Order annuleren"
         open={showConfirm}
         hideModal={() => setShowConfirm(false)}
         onConfirm={handleConfirm}
