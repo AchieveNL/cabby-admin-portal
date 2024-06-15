@@ -42,7 +42,7 @@ export default function OrderDetails() {
   } = useOrderDetails(orderId as string | undefined);
 
   const formatDate = (date: string) =>
-    dayjsExtended(date).format('DD/MM/YYYY • hh:mm');
+    dayjsExtended(date).format('DD/MM/YYYY • HH:mm');
 
   return (
     <div>
