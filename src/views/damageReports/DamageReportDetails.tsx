@@ -34,16 +34,17 @@ const DamageReportDetails = () => {
 
   const imageCarousel =
     report.images && report.images.length > 0 ? (
-      <Carousel autoplay>
+      <Carousel autoplay className="w-1/2 mx-auto">
         {report.images.map((imgUrl, idx) => (
-          <div key={idx}>
+          <div className="aspect-video" key={idx}>
             <Image
               src={imgUrl}
               alt={`Damage report image ${idx + 1}`}
+              fill
               style={{
                 width: '100%',
-                maxHeight: '400px',
-                objectFit: 'contain',
+                // maxHeight: '400px',
+                objectFit: 'cover',
               }}
             />
           </div>
