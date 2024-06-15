@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { OrderStatus } from '@/api/orders/types';
 import dayjs from 'dayjs';
 import { currencyFormatter } from '@/common/utits';
+import { dayjsExtended } from '@/utils/date';
 
 const getStatusColor = (status: OrderStatus): string => {
   switch (status) {
@@ -40,7 +41,8 @@ export default function OrderDetails() {
     error,
   } = useOrderDetails(orderId as string | undefined);
 
-  const formatDate = (date: string) => dayjs(date).format('DD/MM/YYYY • hh:mm');
+  const formatDate = (date: string) =>
+    dayjsExtended(date).format('DD/MM/YYYY • hh:mm');
 
   return (
     <div>
@@ -129,19 +131,19 @@ export default function OrderDetails() {
               {currencyFormatter.format(order.totalAmount)}
             </Descriptions.Item>
             <Descriptions.Item label="Rental Start Date">
-              {order.rentalStartDate}
+              {formatDate(order.rentalStartDate)}
             </Descriptions.Item>
             <Descriptions.Item label="Rental End Date">
-              {order.rentalEndDate}
+              {formatDate(order.rentalEndDate)}
             </Descriptions.Item>
             <Descriptions.Item label="Note">
               {order.note || 'N/A'}
             </Descriptions.Item>
             <Descriptions.Item label="Created At">
-              {order.createdAt}
+              {formatDate(order.createdAt)}
             </Descriptions.Item>
             <Descriptions.Item label="Updated At">
-              {order.updatedAt}
+              {formatDate(order.updatedAt)}
             </Descriptions.Item>
           </Descriptions>
 
