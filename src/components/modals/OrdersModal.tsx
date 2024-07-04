@@ -39,7 +39,9 @@ const OrdersModal = ({ actions, orderId, mollieId, isPaid }: Props) => {
   let children = 'children';
   let button;
   let icon = '/assets/modal/success.svg';
-  let fn = async () => {};
+  let fn = async () => {
+    return;
+  };
   switch (actions) {
     case 'CONFIRM':
       tooltip = '';

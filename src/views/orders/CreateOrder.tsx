@@ -5,7 +5,7 @@ import { dayjsExtended } from '@/utils/date';
 import { Button, DatePicker, Form, FormProps, Input, Select } from 'antd';
 import React from 'react';
 
-type Props = {};
+type Props = any;
 
 type FieldType = {
   vehicleId: string;

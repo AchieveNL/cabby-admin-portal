@@ -52,12 +52,7 @@ import CheckIcon from '@/components/icons/CheckIcon';
 import { OrderDeleteModal, OrderRecoverModal } from './Modals';
 import OrderPopover from '@/components/popover/orderPopover';
 import { refundPayment } from '@/api/payment/payment';
-import {
-  downloadAllFiles,
-  downloadFile,
-  downloadFile2,
-  multipleDownloadsZip,
-} from '@/utils/file';
+import { downloadAllFiles, downloadFile } from '@/utils/file';
 
 type Keys = keyof typeof OrderStatus;
 // type Status = (typeof OrderStatus)[Keys];
@@ -305,11 +300,12 @@ const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
 
   const columns = useColumns({ status });
 
+  const [rangePickerValue, setRangePickerValue] = useState([null, null]);
+
   if (error) {
     return <div>Error loading data</div>;
   }
 
-  const [rangePickerValue, setRangePickerValue] = useState([null, null]);
   // const [start, end] = rangePickerValue;
   const start = rangePickerValue?.[0];
   const end = rangePickerValue?.[1];
