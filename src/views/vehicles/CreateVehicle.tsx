@@ -119,9 +119,9 @@ const CreateVehicle: React.FC = () => {
   const isCreate = !router.query.vehicleId;
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
-  const { mutateAsync: create, isPending: isCreating } = useCreateVehicle();
-  const { mutateAsync: update } = useUpdateVehicle();
-  const router = useRouter();
+  const { mutate: create, isPending: isCreating } = useCreateVehicle();
+  const { update } = useUpdateVehicle();
+
   const [form] = Form.useForm();
   const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
   const { data: lastVehicleDetails } = useGetLastVehicleDetails();
@@ -188,6 +188,7 @@ const CreateVehicle: React.FC = () => {
   }, [vehicle]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event);
     const { name, value } = event.target;
     setVehicleData((prevData) => ({
       ...prevData,
@@ -392,11 +393,88 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., ABC 1234"
               />
             </Form.Item>{' '}
+            <Form.Item<any> label="Company" name="companyName">
+              <Input
+                name="companyName"
+                value={vehicleData?.companyName}
+                onChange={handleInputChange}
+                placeholder="e.g., Toyota"
+              />
+            </Form.Item>
+            <Form.Item<any> label="Modelnaam" name="model">
+              <Input
+                name="model"
+                value={vehicleData?.model}
+                onChange={handleInputChange}
+                placeholder="e.g., Camry"
+              />
+            </Form.Item>
+            <Form.Item<any> label="Type" name="availability">
+              <Input
+                name="availability"
+                value={vehicleData?.availability}
+                onChange={handleInputChange}
+                placeholder="e.g., Available"
+              />
+            </Form.Item>{' '}
+            <Form.Item<any> label="Jaar" name="manufactureYear">
+              <Input
+                name="manufactureYear"
+                value={vehicleData?.manufactureYear}
+                onChange={handleInputChange}
+                placeholder="e.g., 2022"
+              />
+            </Form.Item>{' '}
+            <Form.Item<any> label="Motor" name="engineType">
+              <Select
+                size="large"
+                options={engineTypeOptions}
+                name="engineType"
+                value={vehicleData?.engineType}
+                onChange={onSelectChange('engineType')}
+                placeholder="e.g., V8"
+              />
+            </Form.Item>{' '}
+            <Form.Item<any> label="Zitplaatsen" name="seatingCapacity">
+              <Input
+                name="seatingCapacity"
+                value={vehicleData?.seatingCapacity}
+                onChange={handleInputChange}
+                placeholder="e.g., 5"
+              />
+            </Form.Item>{' '}
             <Form.Item<any>
-              rules={[{ required: true, message: 'VIN nummer is required!' }]}
-              label="VIN nummer"
-              name="vin"
+              label="Actieradius"
+              name="batteryCapacity"
+              // rules={[{ required: true, message: '' }]}
             >
+              <InputNumber
+                className="w-full"
+                addonAfter="KM"
+                name="batteryCapacity"
+                value={vehicleData?.batteryCapacity}
+                onChange={onSelectChange('batteryCapacity')}
+                placeholder="e.g., 4000mAh"
+              />
+            </Form.Item>{' '}
+            {/* <Form.Item<any> label="Price From" name="pricePerDay">
+              <Input
+                type="number"
+                name="pricePerDay"
+                value={vehicleData?.pricePerDay}
+                onChange={handleInputChange}
+                placeholder="e.g., 100"
+              />
+            </Form.Item>{' '} */}
+            <Form.Item<any> label="Unique Feature" name="uniqueFeature">
+              <Input
+                name="uniqueFeature"
+                value={vehicleData?.uniqueFeature}
+                onChange={handleInputChange}
+                placeholder="e.g., Self-parking feature"
+              />
+            </Form.Item>
+            <Form.Item<any> label="VIN nummer" name="vin">
               <Input
                 required
                 name="vin"

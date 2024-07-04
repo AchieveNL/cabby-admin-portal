@@ -52,7 +52,12 @@ import CheckIcon from '@/components/icons/CheckIcon';
 import { OrderDeleteModal, OrderRecoverModal } from './Modals';
 import OrderPopover from '@/components/popover/orderPopover';
 import { refundPayment } from '@/api/payment/payment';
-import { downloadAllFiles, downloadFile } from '@/utils/file';
+import {
+  downloadAllFiles,
+  downloadFile,
+  downloadFile2,
+  multipleDownloadsZip,
+} from '@/utils/file';
 
 type Keys = keyof typeof OrderStatus;
 // type Status = (typeof OrderStatus)[Keys];
@@ -257,7 +262,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
         const mollieId = record?.payment?.mollieId;
         const isPaid = record.payment?.status === PaymentStatus.PAID;
         return (
-          <div className="flex gap-1 justify-end">
+          <div className="flex gap-1">
             {status === 'UNPAID' ? (
               <>
                 {!isStopped && (
@@ -303,6 +308,7 @@ const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
     return <div>Error loading data</div>;
   }
 
+  const [rangePickerValue, setRangePickerValue] = useState([null, null]);
   // const [start, end] = rangePickerValue;
   const start = rangePickerValue?.[0];
   const end = rangePickerValue?.[1];
