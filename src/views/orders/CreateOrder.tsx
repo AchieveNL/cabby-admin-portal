@@ -2,7 +2,16 @@ import { useAllDrivers } from '@/api/drivers/hooks';
 import { createOrderAdmin } from '@/api/orders/orders';
 import { useAllVehicles } from '@/api/vehicles/hooks';
 import { dayjsExtended } from '@/utils/date';
-import { Button, DatePicker, Form, FormProps, Input, Select } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Form,
+  FormProps,
+  Input,
+  Select,
+  message,
+} from 'antd';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 type Props = any;
@@ -14,6 +23,7 @@ type FieldType = {
 };
 
 const CreateOrder = (props: Props) => {
+  const router = useRouter();
   const { data: drivers = [] } = useAllDrivers();
   const driversOptions = drivers.map((el) => ({
     label: el.fullName,
@@ -32,6 +42,8 @@ const CreateOrder = (props: Props) => {
       rentalEndDate: values.range[1],
     };
     await createOrderAdmin(data);
+    router.push('/dashboard/orders');
+    message.success('Order created!');
   };
 
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
