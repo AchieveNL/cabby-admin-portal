@@ -131,3 +131,24 @@ export const completeOrderAdmin = async (orderId: string) => {
     throw error;
   }
 };
+
+export const createOrderAdmin = async (data: any) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/create-admin`, data);
+    await invalidateOrders();
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getRangeInvoices = async (start: string, end: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/range-invoices`, {
+      params: { start, end },
+    });
+    return response.data.payload;
+  } catch (error) {
+    throw error;
+  }
+};

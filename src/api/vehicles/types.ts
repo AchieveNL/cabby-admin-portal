@@ -9,6 +9,14 @@ export interface Vehicle extends VehicleInput {
   id: string;
 }
 
+export enum VehicleEngineType {
+  BENZINE = 'BENZINE',
+  HYBRIDE_BENZINE = 'HYBRIDE_BENZINE',
+  DIESEL = 'DIESEL',
+  HYBRIDE_DIESEL = 'HYBRIDE_DIESEL',
+  ELEKTRISCH = 'ELEKTRISCH',
+}
+
 export type VehicleInput = {
   logo?: string;
   companyName: string;
@@ -17,9 +25,9 @@ export type VehicleInput = {
   licensePlate?: string;
   category?: string;
   manufactureYear: string;
-  engineType: string;
+  engineType?: VehicleEngineType;
   seatingCapacity: string;
-  batteryCapacity: string;
+  batteryCapacity?: number;
   uniqueFeature: string;
   images: string[];
   papers: string[];

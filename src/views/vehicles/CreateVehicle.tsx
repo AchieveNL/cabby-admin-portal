@@ -6,14 +6,20 @@ import {
   Input,
   InputNumber,
   Row,
+  Select,
   Table,
   message,
 } from 'antd';
 import UploadImage from '@/components/inputs/UploadImage';
 import { useRouter } from 'next/router'; // Fixed 'next/navigation' to 'next/router'
-import { VehicleInput, VehicleStatus } from '@/api/vehicles/types';
+import {
+  VehicleEngineType,
+  VehicleInput,
+  VehicleStatus,
+} from '@/api/vehicles/types';
 import {
   useCreateVehicle,
+  useGetLastVehicleDetails,
   useUpdateVehicle,
   useVehicleById,
 } from '@/api/vehicles/hooks';
@@ -107,13 +113,24 @@ const initialVehicleData: VehicleInput = {
 };
 
 const CreateVehicle: React.FC = () => {
+  const router = useRouter();
+  const isCreate = !router.query.vehicleId;
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
   const { mutate: create, isPending: isCreating } = useCreateVehicle();
   const { update } = useUpdateVehicle();
-  const router = useRouter();
+
   const [form] = Form.useForm();
   const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
+  const { data: lastVehicleDetails } = useGetLastVehicleDetails();
+  useEffect(() => {
+    if (lastVehicleDetails && isCreate) {
+      setVehicleData((el) => ({
+        ...el,
+        timeframes: lastVehicleDetails.timeframes,
+      }));
+    }
+  }, [lastVehicleDetails]);
 
   const columns: ColumnsType<object> | undefined = timeframesStructure.map(
     (el, dayIndex) => ({
@@ -169,6 +186,7 @@ const CreateVehicle: React.FC = () => {
   }, [vehicle]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event);
     const { name, value } = event.target;
     setVehicleData((prevData) => ({
       ...prevData,
@@ -257,6 +275,26 @@ const CreateVehicle: React.FC = () => {
     }));
   };
 
+  const engineTypeOptions = [
+    { label: 'Benzine', value: VehicleEngineType.BENZINE },
+    { label: 'Hybride benzine', value: VehicleEngineType.HYBRIDE_BENZINE },
+    { label: 'Diesel', value: VehicleEngineType.DIESEL },
+    { label: 'Hybride diesel', value: VehicleEngineType.HYBRIDE_DIESEL },
+    { label: 'Elektrisch', value: VehicleEngineType.ELEKTRISCH },
+  ];
+
+  const onSelectChange = (name: string) => {
+    const handleOnChange = (value: string) => {
+      setVehicleData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    };
+    return handleOnChange;
+  };
+
+  console.log(vehicleData);
+
   return (
     <div className="p-8">
       <div className="flex mb-4">
@@ -329,10 +367,12 @@ const CreateVehicle: React.FC = () => {
               />
             </Form.Item>{' '}
             <Form.Item<any> label="Motor" name="engineType">
-              <Input
+              <Select
+                size="large"
+                options={engineTypeOptions}
                 name="engineType"
                 value={vehicleData?.engineType}
-                onChange={handleInputChange}
+                onChange={onSelectChange('engineType')}
                 placeholder="e.g., V8"
               />
             </Form.Item>{' '}
@@ -344,11 +384,17 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., 5"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Batterij capaciteit" name="batteryCapacity">
-              <Input
+            <Form.Item<any>
+              label="Actieradius"
+              name="batteryCapacity"
+              // rules={[{ required: true, message: '' }]}
+            >
+              <InputNumber
+                className="w-full"
+                addonAfter="KM"
                 name="batteryCapacity"
                 value={vehicleData?.batteryCapacity}
-                onChange={handleInputChange}
+                onChange={onSelectChange('batteryCapacity')}
                 placeholder="e.g., 4000mAh"
               />
             </Form.Item>{' '}

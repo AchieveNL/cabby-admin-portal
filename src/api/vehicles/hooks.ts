@@ -268,3 +268,9 @@ export const useFilteredVehicles = (filter: any) => {
 
   return { data, loading, error };
 };
+
+export const useGetLastVehicleDetails = () =>
+  useQuery({
+    queryKey: ['vehicle', 'last'],
+    queryFn: VehicleAPI.getLastVehicleDetails,
+  });

@@ -49,11 +49,13 @@ export enum PaymentStatus {
 
 export type Payment = {
   id: string;
+  mollieId: string;
   userId: string;
   amount: number;
   currency: string;
   paymentDate: Date;
   orderId: string;
+  invoiceUrl: string;
   product: PaymentProduct;
   status: PaymentStatus;
 };

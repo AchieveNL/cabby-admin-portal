@@ -55,6 +55,7 @@ export interface DriverLicense {
 export interface PermitDetails {
   id: string;
   kiwaDocument?: string;
+  kvkNumber?: string;
   kvkDocument?: string;
   taxiPermitId?: string;
   taxiPermitExpiry?: string;

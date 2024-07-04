@@ -6,15 +6,15 @@ import Link from 'next/link';
 const OrdersPage = () => {
   return (
     <DashboardLayout
-      breadcrumbItems={[
-        {
-          title: (
-            <Link href={'/dashboard/orders'}>
-              <div className="text-primary-base">Orders</div>
-            </Link>
-          ),
-        },
-      ]}
+    // breadcrumbItems={[
+    //   {
+    //     title: (
+    //       <Link href={'/dashboard/orders'}>
+    //         <div className="text-primary-base">Orders</div>
+    //       </Link>
+    //     ),
+    //   },
+    // ]}
     >
       <Orders />
     </DashboardLayout>

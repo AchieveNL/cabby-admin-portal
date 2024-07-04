@@ -74,8 +74,8 @@
 }
 
 .ant-table-thead .ant-table-cell {
-  background-color: #1f3086 !important;
-  color: #fff !important;
+  background-color: #F9FAFB !important;
+  color: #0A0A1C !important;
   font-weight: 700;
   font-size: 1rem;
   font-family: 'THICCCBOI', sans-serif;
@@ -128,22 +128,25 @@
 
 .ant-btn-primary {
   background-color: #2d46c4;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-weight: 700;
+  /* border-radius: 0.5rem; */
+  /* padding: 0.5rem 1rem; */
+  /* font-weight: 700;
   font-size: 16px;
   line-height: 24px;
-  text-align: center;
+  text-align: center; */
   color: #fff;
-  min-width: 5.1875rem;
-  min-height: 2.5rem;
+  /* min-width: 5.1875rem; */
+  /* min-height: 2.5rem; */
 }
+
 .ant-form-item {
   margin-bottom: 15px;
 }
+
 .ant-btn-primary:hover {
   background-color: #566cdc !important;
 }
+
 .outline-btn,
 .outline-btn:hover {
   min-width: 110px;

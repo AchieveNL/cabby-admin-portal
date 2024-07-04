@@ -13,11 +13,13 @@ body {
 input {
   height: 45px;
 }
+
 .documentBox {
   width: 80%;
   border-radius: 20px;
   margin-top: 10px;
 }
+
 .primaryBtn {
   width: auto;
   height: 45px;
@@ -39,6 +41,7 @@ input {
   border: 1px solid grey;
   border-radius: 10px;
 }
+
 .outlineBtn:hover {
   width: auto;
   height: 45px;
@@ -71,6 +74,7 @@ input {
   padding-left: 28px;
   font-style: normal;
 }
+
 .ant-tabs-tab {
   font-size: 14px;
   font-weight: 500;
