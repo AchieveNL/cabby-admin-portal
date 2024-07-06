@@ -120,7 +120,7 @@ const CreateVehicle: React.FC = () => {
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
   const { mutate: create, isPending: isCreating } = useCreateVehicle();
-  const { update } = useUpdateVehicle();
+  const { mutateAsync: update } = useUpdateVehicle();
 
   const [form] = Form.useForm();
   const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
@@ -270,6 +270,7 @@ const CreateVehicle: React.FC = () => {
       console.log(error);
       message.error('Error!');
     }
+    router.push('/dashboard/vehicles');
   };
 
   const onSetPaperImageUrl = (url: string) => {
@@ -325,6 +326,16 @@ const CreateVehicle: React.FC = () => {
     return Promise.resolve();
   };
 
+  const zipcodeValidator = (rule, value, callback) => {
+    if (!value) {
+      return Promise.reject(new Error('Please input your zipcode!'));
+    }
+    if (!/^\d{4}[a-zA-Z]{2}$/.test(value)) {
+      return Promise.reject(new Error('Wrong format!'));
+    }
+    return Promise.resolve();
+  };
+
   const citiesOptions = nlJson.map((el) => ({ label: el, value: el }));
 
   return (
@@ -354,77 +365,41 @@ const CreateVehicle: React.FC = () => {
         scrollToFirstError
         className="flex flex-col gap-4"
       >
-        <div className="vehicle-form bg-white border border-gray-300 rounded-xl p-6">
-          <h1 className="text-xl mb-6 font-medium">Autodetails</h1>
+        <div className="bg-white border border-gray-300 rounded-xl p-6">
+          <h1 className="text-xl mb-6">Autodetails</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Automerk is required!' }]}
-              label="Automerk"
-              name="companyName"
-            >
+            <Form.Item<any> label="Automerk" name="companyName">
               <Input
                 name="companyName"
                 value={vehicleData?.companyName}
                 onChange={handleInputChange}
-                placeholder="e.g., Toyota"
+                placeholder="Bijv: Tesla"
               />
             </Form.Item>
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Model is required!' }]}
-              label="Model"
-              name="model"
-            >
+            <Form.Item<any> label="Model" name="model">
               <Input
                 name="model"
                 value={vehicleData?.model}
                 onChange={handleInputChange}
-                placeholder="e.g., Camry"
+                placeholder="Bijv: Model 3"
               />
             </Form.Item>
-            <Form.Item<any>
-              label="Kenteken"
-              name="licensePlate"
-              rules={[{ required: true, message: 'Kenteken is required!' }]}
-            >
+            <Form.Item<any> label="Kenteken" name="licensePlate">
               <Input
                 name="licensePlate"
                 value={vehicleData?.licensePlate}
                 onChange={handleInputChange}
-                placeholder="e.g., ABC 1234"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Company" name="companyName">
-              <Input
-                name="companyName"
-                value={vehicleData?.companyName}
-                onChange={handleInputChange}
-                placeholder="e.g., Toyota"
+                placeholder="Bijv: 12ABCD"
               />
             </Form.Item>
-            <Form.Item<any> label="Modelnaam" name="model">
+            <Form.Item<any> label="VIN nummer" name="vin">
               <Input
-                name="model"
-                value={vehicleData?.model}
+                name="vin"
+                value={vehicleData?.vin}
                 onChange={handleInputChange}
-                placeholder="e.g., Camry"
+                placeholder="Bijv: 12345678910111213"
               />
             </Form.Item>
-            <Form.Item<any> label="Type" name="availability">
-              <Input
-                name="availability"
-                value={vehicleData?.availability}
-                onChange={handleInputChange}
-                placeholder="e.g., Available"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Jaar" name="manufactureYear">
-              <Input
-                name="manufactureYear"
-                value={vehicleData?.manufactureYear}
-                onChange={handleInputChange}
-                placeholder="e.g., 2022"
-              />
-            </Form.Item>{' '}
             <Form.Item<any> label="Motor" name="engineType">
               <Select
                 size="large"
@@ -432,49 +407,25 @@ const CreateVehicle: React.FC = () => {
                 name="engineType"
                 value={vehicleData?.engineType}
                 onChange={onSelectChange('engineType')}
-                placeholder="e.g., V8"
+                placeholder="Bijv: Elektrisch"
               />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Zitplaatsen" name="seatingCapacity">
-              <Input
-                name="seatingCapacity"
-                value={vehicleData?.seatingCapacity}
-                onChange={handleInputChange}
-                placeholder="e.g., 5"
-              />
-            </Form.Item>{' '}
+            </Form.Item>
             <Form.Item<any>
               label="Actieradius"
               name="batteryCapacity"
               // rules={[{ required: true, message: '' }]}
             >
               <InputNumber
+                size="large"
                 className="w-full"
                 addonAfter="KM"
                 name="batteryCapacity"
                 value={vehicleData?.batteryCapacity}
                 onChange={onSelectChange('batteryCapacity')}
-                placeholder="e.g., 4000mAh"
-              />
-            </Form.Item>{' '}
-            {/* <Form.Item<any> label="Price From" name="pricePerDay">
-              <Input
-                type="number"
-                name="pricePerDay"
-                value={vehicleData?.pricePerDay}
-                onChange={handleInputChange}
-                placeholder="e.g., 100"
-              />
-            </Form.Item>{' '} */}
-            <Form.Item<any> label="Unique Feature" name="uniqueFeature">
-              <Input
-                name="uniqueFeature"
-                value={vehicleData?.uniqueFeature}
-                onChange={handleInputChange}
-                placeholder="e.g., Self-parking feature"
+                placeholder="Bijv: 100 km"
               />
             </Form.Item>
-            <Form.Item<any> label="VIN nummer" name="vin">
+            <Form.Item<any> label="Bouwjaar" name="manufactureYear">
               <Input
                 required
                 name="vin"
@@ -482,48 +433,46 @@ const CreateVehicle: React.FC = () => {
                 onChange={handleInputChange}
                 placeholder="Bijv: 12345678910111213"
               />
-            </Form.Item>
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Bouwjaar is required!' }]}
-              label="Bouwjaar"
-              name="manufactureYear"
-            >
+            </Form.Item>{' '}
+            <Form.Item<any> label="Zitplaatsen" name="seatingCapacity">
               <Input
-                type="number"
-                name="manufactureYear"
-                value={vehicleData?.manufactureYear}
-                onChange={handleInputChange}
-                placeholder="e.g., 2022"
-              />
-            </Form.Item>
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Actieradius is required!' }]}
-              label="Actieradius"
-              name="batteryCapacity"
-            >
-              <Input
-                type="number"
-                name="batteryCapacity"
-                value={vehicleData?.batteryCapacity}
-                onChange={handleInputChange}
-                placeholder="100 Km "
-              />
-            </Form.Item>
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Zitplaatsen is required!' }]}
-              label="Zitplaatsen"
-              name="seatingCapacity"
-            >
-              <Input
-                type="number"
                 name="seatingCapacity"
                 value={vehicleData?.seatingCapacity}
                 onChange={handleInputChange}
-                placeholder="e.g., 5"
+                placeholder="Bijv: 5"
               />
             </Form.Item>
-            <h1 className="col-span-full text-xl font-medium">Ophaallocatie</h1>
-            <div className="col-span-full flex w-full gap-2">
+            <Form.Item<any>
+              label="Titel"
+              name="title"
+              className="col-span-full"
+            >
+              <Input
+                name="title"
+                value={vehicleData?.seatingCapacity}
+                onChange={handleInputChange}
+                placeholder="Bij: Lorem"
+              />
+            </Form.Item>
+            <Form.Item<any>
+              label="Omschrijving"
+              name="description"
+              className="col-span-full"
+            >
+              <Input.TextArea
+                name="description"
+                value={vehicleData?.seatingCapacity}
+                onChange={handleInputChange}
+                placeholder="Bij: Lorem"
+                rows={5}
+              />
+            </Form.Item>
+          </div>
+        </div>
+        <div className="bg-white border border-gray-300 rounded-xl p-6">
+          <div className="">
+            <h1 className="col-span-full text-xl">Ophaallocatie</h1>
+            <div className="col-span-full grid grid-cols-2 w-full gap-2">
               <Form.Item<any>
                 rules={[{ required: true, message: 'Straatnaam is required!' }]}
                 label="Straatnaam"
@@ -552,42 +501,31 @@ const CreateVehicle: React.FC = () => {
                   placeholder="Bijv: 34"
                 />
               </Form.Item>
-            </div>
-            <div className="col-span-full flex w-full gap-2">
-              <div className="flex-1 flex gap-2">
-                <Form.Item<any>
-                  rules={[{ required: true, message: 'Postcode is required!' }]}
-                  label="Postcode"
-                  name="zipcodeNumber"
-                  className="flex-[2]"
-                >
-                  <Input
-                    name="zipcodeNumber"
-                    value={vehicleData?.zipcodeNumber}
-                    onChange={handleInputChange}
-                    placeholder="1234"
-                  />
-                </Form.Item>
-                <Form.Item<any>
-                  rules={[{ required: true, message: 'Is required!' }]}
-                  label=""
-                  name="zipcodeCharacter"
-                  className="flex flex-col justify-end flex-1"
-                >
-                  <Input
-                    name="zipcodeCharacter"
-                    value={vehicleData?.zipcodeCharacter}
-                    onChange={handleInputChange}
-                    placeholder="AB"
-                  />
-                </Form.Item>
-              </div>
               <Form.Item<any>
-                rules={[{ required: true, message: 'Plaats is required!' }]}
-                label="Plaats"
-                name="state"
-                className="flex-1"
+                label="Postcode"
+                name="zipcode"
+                className="w-full"
+                rules={[
+                  // {
+                  //   type: 'regexp',
+                  //   pattern: new RegExp('([a-zA-Z]{3,30}\\s*)+'),
+                  //   required: true,
+                  //   message: 'Wrong format!',
+                  // },
+                  {
+                    validator: zipcodeValidator,
+                  },
+                ]}
+                hasFeedback={false}
               >
+                <Input
+                  name="zipcode"
+                  value={vehicleData?.zipcodeNumber}
+                  onChange={handleInputChange}
+                  placeholder="Bijvoorbeed: 1234AB"
+                />
+              </Form.Item>
+              <Form.Item<any> label="Plaats" name="state" className="w-full">
                 <Input
                   name="state"
                   value={vehicleData?.state}
