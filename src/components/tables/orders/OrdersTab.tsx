@@ -262,7 +262,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
         const mollieId = record?.payment?.mollieId;
         const isPaid = record.payment?.status === PaymentStatus.PAID;
         return (
-          <div className="flex gap-1">
+          <div className="flex gap-1 justify-end">
             {status === 'UNPAID' ? (
               <>
                 {!isStopped && (
