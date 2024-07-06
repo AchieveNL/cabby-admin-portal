@@ -22,3 +22,8 @@ export const netherlandsTimeNow = dayjs()
   .utc()
   .add(netherlandsOffset, 'm')
   .toDate();
+
+export const dateTimeFormat = (date?: Date | string) =>
+  dayjsExtended(date).isValid()
+    ? dayjsExtended(date).format('DD/MM/YYYY • HH:mm')
+    : '';

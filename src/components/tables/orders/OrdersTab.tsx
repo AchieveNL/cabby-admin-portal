@@ -44,7 +44,7 @@ import {
   DownSquareTwoTone,
   MoreOutlined,
 } from '@ant-design/icons';
-import { dayjsExtended } from '@/utils/date';
+import { dateTimeFormat, dayjsExtended } from '@/utils/date';
 import DefaultModal from '@/components/modals/DefautlModal';
 import ButtonWithIcon from '@/components/buttons/buttons';
 import DeleteIcon from '@/components/icons/DeleteIcon';
@@ -145,7 +145,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
       className: 'table-bg-primary',
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
-        <>{dayjsExtended(row.rentalStartDate).format('DD/MM/YYYY • HH:mm')}</>
+        <>{dateTimeFormat(row.rentalStartDate)}</>
       ),
     },
     {
@@ -155,9 +155,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
       key: 'rentalStartDate',
       render: (value: string, row: Order) => (
         <>
-          <div>
-            {dayjsExtended(row.rentalEndDate).format('DD/MM/YYYY • HH:mm')}
-          </div>
+          <div>{dateTimeFormat(row.rentalEndDate)}</div>
         </>
       ),
     },
@@ -186,8 +184,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
             dataIndex: 'stopRentDate',
             key: 'stopRentDate',
             className: 'table-bg-primary',
-            render: (date: string) =>
-              date ? dayjsExtended.utc(date).format('DD/MM/YYYY • hh:mm') : '',
+            render: (date: string) => dateTimeFormat(date),
           },
           {
             title: 'Overtijd',
@@ -260,7 +257,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
         const mollieId = record?.payment?.mollieId;
         const isPaid = record.payment?.status === PaymentStatus.PAID;
         return (
-          <div className="flex gap-1">
+          <div className="flex gap-1 justify-end">
             {status === 'UNPAID' ? (
               <>
                 {!isStopped && (
