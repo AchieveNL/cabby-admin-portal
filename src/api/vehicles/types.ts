@@ -40,7 +40,8 @@ export type VehicleInput = {
   timeframes: number[][];
   streetName?: string;
   streetNumber?: string;
-  zipcodeNumber?: string;
-  zipcodeCharacter?: string;
+  zipcode?: string;
   state?: string;
+  title?: string;
+  description?: string;
 };

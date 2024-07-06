@@ -134,21 +134,10 @@ export const useCreateVehicle = () => {
 };
 
 export const useUpdateVehicle = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError | null>(null);
-
-  const update = useCallback(async (id: string, data: VehicleInput) => {
-    setLoading(true);
-    try {
-      await VehicleAPI.updateVehicle(id, data);
-    } catch (error) {
-      setError(error as AxiosError);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  return { update, loading, error };
+  return useMutation({
+    mutationFn: (data: { id: string; data: VehicleInput }) =>
+      VehicleAPI.updateVehicle(data.id, data.data),
+  });
 };
 
 export const useVehicleByModel = (model: string) => {

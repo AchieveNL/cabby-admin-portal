@@ -32,7 +32,7 @@ const DashboardLayout = ({ children, breadcrumbItems, headerTitle }: Props) => {
             onMenu={() => setShowSidebar(!showSidebar)}
             headerTitle={headerTitle}
           />
-          <div className="bg-primary-light-4 h-full">{children}</div>
+          <div className="bg-[#FCFCFD] h-full">{children}</div>
         </div>
       </main>
     </>
