@@ -118,7 +118,7 @@ const CreateVehicle: React.FC = () => {
   const isCreate = !router.query.vehicleId;
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
-  const { mutate: create, isPending: isCreating } = useCreateVehicle();
+  const { mutateAsync: create, isPending: isCreating } = useCreateVehicle();
   const { mutateAsync: update } = useUpdateVehicle();
 
   const [form] = Form.useForm();
@@ -245,21 +245,29 @@ const CreateVehicle: React.FC = () => {
   }
 
   const handleCreateVehicle = async () => {
-    const validate = validateForm(vehicleData);
-    if (!!validate) return;
-    if (router.query.vehicleId) {
-      // update
-      vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
-      // vehicleData.status = VehicleStatus.PENDING;
-      await update({ id: router.query.vehicleId as string, data: vehicleData });
-      message.success('Vehicle updated successfully');
-    } else {
-      const data = await create(vehicleData);
-      // if (data) {
-      message.success('Vehicle added successfully');
-      // }
+    try {
+      // const validate = validateForm(vehicleData);
+      // if (!!validate) return;
+      if (router.query.vehicleId) {
+        // update
+        vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
+        // vehicleData.status = VehicleStatus.PENDING;
+        await update({
+          id: router.query.vehicleId as string,
+          data: vehicleData,
+        });
+        message.success('Vehicle updated successfully');
+      } else {
+        const data = await create(vehicleData);
+        // if (data) {
+        message.success('Vehicle added successfully');
+        // }
+      }
+      router.push('/dashboard/vehicles');
+    } catch (error) {
+      console.log(error);
+      message.error('Error!');
     }
-    router.push('/dashboard/vehicles');
   };
 
   const onSetPaperImageUrl = (url: string) => {
