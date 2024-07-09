@@ -65,6 +65,7 @@ const CreateOrder = (props: Props) => {
     disabledMinutes: () => range(30, 60),
     disabledSeconds: () => [55, 56],
   });
+
   return (
     <div className="bg-white border border-gray-300 rounded-xl p-6 m-2">
       <h1 className="text-xl font-normal mb-4">Create Order</h1>
@@ -85,14 +86,24 @@ const CreateOrder = (props: Props) => {
           name="userId"
           rules={[{ required: true, message: 'Is required' }]}
         >
-          <Select size="large" options={driversOptions} />
+          <Select
+            showSearch
+            optionFilterProp="label"
+            size="large"
+            options={driversOptions}
+          />
         </Form.Item>
         <Form.Item<FieldType>
           label="Auto"
           name="vehicleId"
           rules={[{ required: true, message: 'Is required' }]}
         >
-          <Select size="large" options={vehiclesOptions} />
+          <Select
+            showSearch
+            optionFilterProp="label"
+            size="large"
+            options={vehiclesOptions}
+          />
         </Form.Item>
         <Form.Item<FieldType>
           label="Range"
