@@ -248,6 +248,7 @@ const CreateVehicle: React.FC = () => {
     try {
       const validate = validateForm(vehicleData);
       if (!!validate) return;
+      vehicleData.batteryCapacity = vehicleData.batteryCapacity?.toString();
       if (router.query.vehicleId) {
         // update
         vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
