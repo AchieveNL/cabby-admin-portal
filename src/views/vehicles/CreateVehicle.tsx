@@ -279,11 +279,16 @@ const CreateVehicle: React.FC = () => {
     }));
   };
   const onRemoveCarImage = (url: string) => {
-    setVehicleData((prevData) => ({
-      ...prevData,
-      images: prevData.images.filter((el) => el !== url),
-    }));
+    setVehicleData((prevData) => {
+      console.log(url, prevData.images);
+      return {
+        ...prevData,
+        images: prevData.images.filter((el) => el !== url),
+      };
+    });
   };
+
+  console.log(vehicleData);
   const onRemovePaperImage = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
@@ -313,16 +318,6 @@ const CreateVehicle: React.FC = () => {
       }));
     };
     return handleOnChange;
-  };
-
-  const zipcodeValidator = (rule, value, callback) => {
-    if (!value) {
-      return Promise.reject(new Error('Please input your zipcode!'));
-    }
-    if (!/^\d{4}[a-zA-Z]{2}$/.test(value)) {
-      return Promise.reject(new Error('Wrong format!'));
-    }
-    return Promise.resolve();
   };
 
   const zipcodeValidator = (rule, value, callback) => {
@@ -581,7 +576,7 @@ const CreateVehicle: React.FC = () => {
                     <Col span={6} key={image}>
                       <DisplayImage
                         imageUrl={image}
-                        onImageDelete={onRemoveCarImage}
+                        onImageDelete={onRemovePaperImage}
                       />
                     </Col>
                   ))}
@@ -602,7 +597,7 @@ const CreateVehicle: React.FC = () => {
                     <Col span={6} key={image}>
                       <DisplayImage
                         imageUrl={image}
-                        onImageDelete={onRemovePaperImage}
+                        onImageDelete={onRemoveCarImage}
                       />
                     </Col>
                   ))}

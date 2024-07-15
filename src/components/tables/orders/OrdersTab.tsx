@@ -308,7 +308,6 @@ const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
     return <div>Error loading data</div>;
   }
 
-  const [rangePickerValue, setRangePickerValue] = useState([null, null]);
   // const [start, end] = rangePickerValue;
   const start = rangePickerValue?.[0];
   const end = rangePickerValue?.[1];
