@@ -591,7 +591,7 @@ const CreateVehicle: React.FC = () => {
             </div>
             <div className="bg-white border border-gray-300 rounded-xl p-6">
               <h3 className="text-lg">Upload auto afbeeldingen</h3>
-              <div>
+              <div className="mb-2">
                 <Row gutter={16}>
                   {vehicleData.images.map((image) => (
                     <Col span={6} key={image}>

@@ -14,9 +14,9 @@ const DisplayImage: React.FC<DisplayImageProps> = ({
 }) => {
   const handleDelete = async () => {
     try {
-      onImageDelete(imageUrl);
       const filePath = imageUrl.split('cabby-bucket/')[1];
       await deleteFile(filePath);
+      onImageDelete(imageUrl);
     } catch (error) {
       console.error('Failed to delete the image:', error);
     }

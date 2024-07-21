@@ -50,22 +50,22 @@ export default function OrderDetails() {
         <Card bordered={false} style={{ margin: '16px' }}>
           <Descriptions title="User Information" bordered column={2}>
             <Descriptions.Item label="Profile Photo">
-              <Avatar src={order.user.profile.profilePhoto} />
+              <Avatar src={order.user.profile?.profilePhoto} />
             </Descriptions.Item>
             <Descriptions.Item label="Full Name">
-              {order.user.profile.fullName}
+              {order.user.profile?.fullName}
             </Descriptions.Item>
             <Descriptions.Item label="Phone Number">
-              {order.user.profile.phoneNumber}
+              {order.user.profile?.phoneNumber}
             </Descriptions.Item>
             <Descriptions.Item label="City">
-              {order.user.profile.city}
+              {order.user.profile?.city}
             </Descriptions.Item>
             <Descriptions.Item label="Full Address">
-              {order.user.profile.fullAddress}
+              {order.user.profile?.fullAddress}
             </Descriptions.Item>
             <Descriptions.Item label="Zip">
-              {order.user.profile.zip}
+              {order.user.profile?.zip}
             </Descriptions.Item>
           </Descriptions>
 

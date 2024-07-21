@@ -13,6 +13,7 @@ import {
   confirmOrder,
   createOrderRejectionReason,
   deleteOrder,
+  getRangeExcel,
   getRangeInvoices,
   invalidateOrders,
   rejectOrder,
@@ -319,6 +320,11 @@ const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
     console.log(res);
   }
 
+  async function exportExcel() {
+    const res = await getRangeExcel(start.toDate(), end.toDate());
+    console.log(res);
+  }
+
   return (
     <div className="px-2">
       <section className="flex justify-end items-center mb-2 gap-2">
@@ -327,7 +333,10 @@ const OrdersTable = ({ status, label }: { status: Keys; label: string }) => {
           onChange={setRangePickerValue}
         />
         <Button onClick={exportPdfs} disabled={!rangeIsSelected}>
-          Export
+          Export pdfs
+        </Button>
+        <Button onClick={exportExcel} disabled={!rangeIsSelected}>
+          Export Excel
         </Button>
         <Link href={'/dashboard/orders/create'}>
           <Button>Create order</Button>
