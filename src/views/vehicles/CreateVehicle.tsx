@@ -99,6 +99,8 @@ const initialVehicleData: VehicleInput = {
   batteryCapacity: NaN,
   uniqueFeature: '',
   images: [],
+  registrationCertificates: [],
+  insuranceCertificates: [],
   papers: [],
   availability: 'available',
   currency: 'EUR',
@@ -181,9 +183,14 @@ const CreateVehicle: React.FC = () => {
           ...initialVehicleData,
           ...vehicle,
           timeframes: initialVehicleData.timeframes,
+          damageReports: undefined,
         });
       }
-      setVehicleData({ ...initialVehicleData, ...vehicle });
+      setVehicleData({
+        ...initialVehicleData,
+        ...vehicle,
+        damageReports: undefined,
+      });
     }
   }, [vehicle]);
 
@@ -269,15 +276,23 @@ const CreateVehicle: React.FC = () => {
       console.log(error);
       message.error('Error!');
     }
-    router.push('/dashboard/vehicles');
   };
 
-  const onSetPaperImageUrl = (url: string) => {
+  const onSetInsuranceImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
-      papers: [...prevData.papers, url],
+      insuranceCertificates: [...prevData.insuranceCertificates, url],
     }));
   };
+  const onRemoveInsuranceImage = (url: string) => {
+    setVehicleData((prevData) => ({
+      ...prevData,
+      insuranceCertificates: prevData.insuranceCertificates.filter(
+        (el) => el !== url,
+      ),
+    }));
+  };
+
   const onRemoveCarImage = (url: string) => {
     setVehicleData((prevData) => {
       console.log(url, prevData.images);
@@ -288,13 +303,25 @@ const CreateVehicle: React.FC = () => {
     });
   };
 
-  console.log(vehicleData);
-  const onRemovePaperImage = (url: string) => {
+  const onSetRegistrationImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
-      papers: prevData.papers.filter((el) => el !== url),
+      registrationCertificates: [...prevData.registrationCertificates, url],
     }));
   };
+  const onRemoveRegistrationImage = (url: string) => {
+    setVehicleData((prevData) => {
+      return {
+        ...prevData,
+        registrationCertificates: prevData.registrationCertificates.filter(
+          (el) => el !== url,
+        ),
+      };
+    });
+  };
+
+  console.log(vehicleData);
+
   const onSetCarImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
@@ -569,23 +596,39 @@ const CreateVehicle: React.FC = () => {
         <div className="">
           <div className="flex flex-col gap-4">
             <div className="bg-white border border-gray-300 rounded-xl p-6">
-              <h3 className="text-lg">Paper images</h3>
-              <div>
-                <Row gutter={16}>
-                  {vehicleData.papers.map((image) => (
+              <h3 className="text-xl mb-2">Autopapieren</h3>
+              <div className="bg-white border border-gray-300 rounded-xl p-3 mb-2">
+                <h4 className="text-lg">Upload kentekenbewijs</h4>
+                <Row gutter={16} className="mb-2">
+                  {vehicleData.registrationCertificates.map((image) => (
                     <Col span={6} key={image}>
                       <DisplayImage
                         imageUrl={image}
-                        onImageDelete={onRemovePaperImage}
+                        onImageDelete={onRemoveRegistrationImage}
                       />
                     </Col>
                   ))}
                 </Row>
-              </div>
-              <div>
                 <UploadImage
                   placeholder="Geuploade bestanden"
-                  setImageUrl={onSetPaperImageUrl}
+                  setImageUrl={onSetRegistrationImageUrl}
+                />
+              </div>
+              <div className="bg-white border border-gray-300 rounded-xl p-3">
+                <h4 className="text-lg">Upload verzekeringsbewijs</h4>
+                <Row gutter={16} className="mb-2">
+                  {vehicleData.insuranceCertificates.map((image) => (
+                    <Col span={6} key={image}>
+                      <DisplayImage
+                        imageUrl={image}
+                        onImageDelete={onRemoveInsuranceImage}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+                <UploadImage
+                  placeholder="Geuploade bestanden"
+                  setImageUrl={onSetInsuranceImageUrl}
                 />
               </div>
             </div>
