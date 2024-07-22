@@ -3,6 +3,25 @@ export interface User {
   status: UserProfileStatus;
 }
 
+export enum RegistrationOrderStatus {
+  PAID = 'PAID',
+  REFUNDED = 'REFUNDED',
+  PENDING = 'PENDING',
+  FAILED = 'FAILED',
+}
+
+export interface RegistrationOrder {
+  id: string;
+  userId: string;
+  status: RegistrationOrderStatus;
+  totalAmount: number; // Decimal(6, 2) can be represented by number in TypeScript
+  paymentId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  note?: string;
+  invoiceUrl?: string;
+}
+
 export interface Driver {
   id: string;
   userId: string;

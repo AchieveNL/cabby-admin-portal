@@ -12,12 +12,13 @@ export type UserProfile = {
   profilePhoto?: string;
   signature?: string;
   zip?: string;
+  dateOfBirth?: string;
 };
 
 export type DriverLicense = {
   id: string;
   driverLicenseBack?: string;
-  driverLicenseExpiry?: Date;
+  driverLicenseExpiry?: string;
   driverLicenseFront?: string;
   dateOfBirth: string;
   bsnNumber?: string;
@@ -27,8 +28,11 @@ export type DriverLicense = {
 
 export type PermitDetails = {
   id: string;
+  companyName?: string;
   kiwaTaxiVergunningId?: string;
   kvkDocumentId?: string;
+  kvkDocument?: string;
+  kiwaDocument?: string;
   taxiPermitId?: string;
   taxiPermitExpiry?: string;
   taxiPermitPicture?: string;
