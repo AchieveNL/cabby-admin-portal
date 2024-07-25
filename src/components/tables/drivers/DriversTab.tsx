@@ -200,7 +200,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       title: 'KVK uittreksel',
       dataIndex: 'permitDetails',
       render: (permitDetails: PermitDetails) => {
-        const file = permitDetails.kvkDocument;
+        const file = permitDetails?.kvkDocument;
         async function fn() {
           await downloadFile(file);
         }
@@ -221,7 +221,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       title: 'KIWA taxivergunning',
       dataIndex: 'permitDetails',
       render: (permitDetails: PermitDetails) => {
-        const file = permitDetails.kiwaDocument;
+        const file = permitDetails?.kiwaDocument;
         async function fn() {
           await downloadFile(file);
         }
