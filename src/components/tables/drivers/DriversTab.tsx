@@ -155,7 +155,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       title: 'Rijbewijs',
       dataIndex: 'driverLicense',
       render: (driverLicense: DriverLicense) => {
-        const file = driverLicense.driverLicenseFront;
+        const file = driverLicense?.driverLicenseFront;
         async function fn() {
           await downloadFile(file);
         }
