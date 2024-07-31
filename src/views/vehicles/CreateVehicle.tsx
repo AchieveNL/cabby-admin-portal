@@ -630,7 +630,6 @@ const CreateVehicle: React.FC = () => {
                   setImageUrl={onSetInsuranceImageUrl}
                 />
               </div>
-
             </div>
             <div className="bg-white border border-gray-300 rounded-xl p-6">
               <h3 className="text-lg">Upload auto afbeeldingen</h3>
