@@ -165,7 +165,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
             key: 'stopRentDate',
             className: 'table-bg-primary',
             render: (date: string) =>
-              date ? dayjsExtended.utc(date).format('DD/MM/YYYY • hh:mm') : '',
+              date ? dayjsExtended(date).format('DD/MM/YYYY • HH:mm') : '',
           },
           {
             title: 'Overtijd',
@@ -173,7 +173,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
             key: 'id',
             className: 'table-bg-primary',
             render: (id: string, order: Order) => {
-              const endDate = dayjsExtended.utc(order.rentalEndDate).toDate();
+              const endDate = dayjsExtended(order.rentalEndDate).toDate();
               const overdue = dayjsExtended
                 .duration(
                   dayjsExtended(new Date()).diff(dayjsExtended(endDate)),
@@ -213,13 +213,6 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
           <div className="flex items-center gap-2 justify-end">
             {status === 'PENDING' ? (
               <>
-                {/* <ActionButtons
-                  onApprove={handleApprove}
-                  onRejectReason={onSubmitRejectReason}
-                  onReject={handleReject}
-                  recordId={id}
-                  confirmationMessage="Als u deze order bevestigt gaat de order naar “Afwijzen“."
-                /> */}
                 <DefaultModal
                   confirmPlaceholder="Bevestigen"
                   title="Wilt u deze bestuurder bevestigen?"

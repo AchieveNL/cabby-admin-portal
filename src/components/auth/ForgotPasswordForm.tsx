@@ -63,14 +63,14 @@ const ForgotPasswordForm = () => {
           />
         </Col>
         <Col span={1} className={styles.arrowBackLabel}>
-          Back
+          Terug
         </Col>
       </Row>
       <span className="margin-b-20"></span>
-      <h3 className={styles.loginHeading}>Forgot Password</h3>
+      <h3 className={styles.loginHeading}>Wachtwoord vergeten?</h3>
       <p className={styles.loginSubHeading}>
-        Enter the email address associated with your account to recieve reset
-        link.
+        Voer het e-mailadres in dat aan uw account is gekoppeld om de resetlink
+        te ontvangen.
       </p>
       <Form
         className={styles.form}
@@ -79,13 +79,13 @@ const ForgotPasswordForm = () => {
         onFinish={onFinish}
       >
         <MyFormItemGroup prefix={['user']}>
-          <MyFormItem name="username" label="Email Address">
+          <MyFormItem name="username" label="Email Adres">
             <Input
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="Type here"
+              placeholder="Type hier"
             />
           </MyFormItem>
         </MyFormItemGroup>
@@ -95,7 +95,7 @@ const ForgotPasswordForm = () => {
           htmlType="submit"
           onClick={onHandleNext}
         >
-          Next
+          Volgende
         </Button>
       </Form>
     </>

@@ -22,26 +22,6 @@ export const useAllVehicles = () => {
     queryKey: ['vehicles'],
     queryFn: VehicleAPI.getAllVehicles,
   });
-  // const [data, setData] = useState<Vehicle[]>([]);
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<AxiosError | null>(null);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const vehicles = await VehicleAPI.getAllVehicles();
-  //       setData(vehicles);
-  //     } catch (error) {
-  //       setError(error as AxiosError);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
-  // return { data, loading, error };
 };
 
 export const useVehiclesByStatus = (status: VehicleStatusType) => {
@@ -49,26 +29,6 @@ export const useVehiclesByStatus = (status: VehicleStatusType) => {
     queryKey: ['vehicles', status],
     queryFn: () => VehicleAPI.getVehiclesByStatus(status),
   });
-  // const [data, setData] = useState<Vehicle[]>([]);
-  // const [loading, setLoading] = useState<boolean>(false);
-
-  // const fetchData = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const vehicles = await VehicleAPI.getVehiclesByStatus(status);
-  //     setData(vehicles);
-  //   } catch (error) {
-  //     message.error((error as AxiosError).message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, [status]);
-
-  // return { data, loading, refresh: fetchData };
 };
 
 export const useGetDeposit = () => {
@@ -94,61 +54,14 @@ export const useCreateVehicle = () => {
     mutationFn: (data: VehicleInput) => VehicleAPI.createVehicle(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vehicles'] }),
   });
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<AxiosError | null>(null);
-
-  // const create = useCallback(async (data: VehicleInput) => {
-  //   setLoading(true);
-  //   try {
-  //     return await VehicleAPI.createVehicle(data);
-  //   } catch (error) {
-  //     const axiosError = error as AxiosError;
-  //     if (axiosError.response) {
-  //       const responseData = axiosError.response.data as {
-  //         rawErrors?: string[];
-  //       };
-  //       if (
-  //         responseData &&
-  //         responseData.rawErrors &&
-  //         responseData.rawErrors.length > 0
-  //       ) {
-  //         message.error(responseData.rawErrors[0]);
-  //       } else if (
-  //         responseData &&
-  //         typeof responseData === 'object' &&
-  //         'message' in responseData
-  //       ) {
-  //         message.error(responseData.message as string);
-  //       } else {
-  //         setError(error as AxiosError);
-  //       }
-  //     } else {
-  //       setError(error as AxiosError);
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, []);
-
-  // return { create, loading, error };
 };
 
 export const useUpdateVehicle = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError | null>(null);
-
-  const update = useCallback(async (id: string, data: VehicleInput) => {
-    setLoading(true);
-    try {
-      await VehicleAPI.updateVehicle(id, data);
-    } catch (error) {
-      setError(error as AxiosError);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  return { update, loading, error };
+  return useMutation({
+    mutationFn: ({ data, id }: { id: string; data: VehicleInput }) =>
+      VehicleAPI.updateVehicle(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vehicles'] }),
+  });
 };
 
 export const useVehicleByModel = (model: string) => {
