@@ -7,6 +7,7 @@ interface Props {
   hideModal: () => void;
   onConfirm: () => void;
   confirmationMessage: string;
+  paragraph?: string;
   confirmationPlaceholder?: string;
 }
 
@@ -15,6 +16,7 @@ const ConfirmationModal: React.FC<Props> = ({
   hideModal,
   onConfirm,
   confirmationMessage,
+  paragraph,
   confirmationPlaceholder,
 }) => (
   <Modal
@@ -35,6 +37,7 @@ const ConfirmationModal: React.FC<Props> = ({
       <h6 className="mb-2 text-base font-bold text-neutral-100">
         {confirmationMessage}
       </h6>
+      <p>{paragraph}</p>
       <div className="mt-6 flex gap-3">
         <button
           onClick={hideModal}
