@@ -29,7 +29,7 @@ import { currencyFormatter } from '@/common/utits';
 import Countdown from '@/components/CountDown/Countdown';
 import Image from 'next/image';
 import { CheckOutlined, CloseOutlined, MoreOutlined } from '@ant-design/icons';
-import { dayjsExtended, netherlandsTimeNow } from '@/utils/date';
+import { dayjsExtended } from '@/utils/date';
 import DefaultModal from '@/components/modals/DefautlModal';
 import ButtonWithIcon from '@/components/buttons/buttons';
 import DeleteIcon from '@/components/icons/DeleteIcon';
@@ -175,10 +175,12 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Order> => {
             render: (id: string, order: Order) => {
               const endDate = dayjsExtended(order.rentalEndDate).toDate();
               const overdue = dayjsExtended
-                .duration(dayjsExtended().diff(dayjsExtended(endDate)))
+                .duration(
+                  dayjsExtended(new Date()).diff(dayjsExtended(endDate)),
+                )
                 .format('D [days] HH:mm');
 
-              return <div>{endDate < netherlandsTimeNow ? overdue : ''}</div>;
+              return <div>{endDate < new Date() ? overdue : ''}</div>;
             },
           },
         ]
