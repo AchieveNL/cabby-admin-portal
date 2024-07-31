@@ -16,7 +16,7 @@ import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import DefaultModal from '@/components/modals/DefautlModal';
 import DeleteIcon from '@/components/icons/DeleteIcon';
-import { dayjsExtended, netherlandsTimeNow } from '@/utils/date';
+import { dayjsExtended } from '@/utils/date';
 import {
   VehicleConfirmModal,
   VehicleDeleteModal,
@@ -59,7 +59,7 @@ const useColumns = ({
       key: 'manufactureYear',
       render(value, record, index) {
         const timeframes = record.timeframes;
-        const day = dayjsExtended(netherlandsTimeNow).day() - 1;
+        const day = dayjsExtended(new Date()).day() - 1;
         const column = day >= 0 ? day : 6;
         const min = Math.min(...timeframes?.[column])?.toFixed(2);
 
@@ -72,7 +72,7 @@ const useColumns = ({
       key: 'engineType',
       render(value, record, index) {
         const timeframes = record.timeframes;
-        const day = dayjsExtended(netherlandsTimeNow).day() - 1;
+        const day = dayjsExtended(new Date()).day() - 1;
         const column = day >= 0 ? day : 6;
         const max = Math.max(...timeframes?.[column])?.toFixed(2);
 

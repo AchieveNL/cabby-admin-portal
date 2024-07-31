@@ -101,6 +101,7 @@ export default function ActionButtons({
         hideModal={() => setShowConfirm(false)}
         onConfirm={handleConfirm}
         confirmationMessage={confirmationMessage}
+        paragraph="Geef redenen waarom je deze bestuurder wilt afwijzen"
       />
 
       <RejectionModal

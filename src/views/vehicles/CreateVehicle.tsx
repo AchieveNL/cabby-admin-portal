@@ -123,7 +123,6 @@ const CreateVehicle: React.FC = () => {
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
   const { mutate: create, isPending: isCreating } = useCreateVehicle();
   const { mutateAsync: update } = useUpdateVehicle();
-
   const [form] = Form.useForm();
   const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
   const { data: lastVehicleDetails } = useGetLastVehicleDetails();
@@ -284,6 +283,7 @@ const CreateVehicle: React.FC = () => {
       insuranceCertificates: [...prevData.insuranceCertificates, url],
     }));
   };
+
   const onRemoveInsuranceImage = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
@@ -321,7 +321,6 @@ const CreateVehicle: React.FC = () => {
   };
 
   console.log(vehicleData);
-
   const onSetCarImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
@@ -631,6 +630,7 @@ const CreateVehicle: React.FC = () => {
                   setImageUrl={onSetInsuranceImageUrl}
                 />
               </div>
+
             </div>
             <div className="bg-white border border-gray-300 rounded-xl p-6">
               <h3 className="text-lg">Upload auto afbeeldingen</h3>

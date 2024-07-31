@@ -343,23 +343,12 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
             {status === 'PENDING' && (
               <>
                 <div className="flex gap-2 items-center">
-                  {false && (
-                    <ButtonWithIcon
-                      icon={<ExportOutlined rev={undefined} />}
-                      onClick={() =>
-                        router.push(`/dashboard/drivers/${driverId}`)
-                      }
-                      // className="whitespace-nowrap"
-                    >
-                      Open Profile
-                    </ButtonWithIcon>
-                  )}
                   <ActionButtons
                     onApprove={handleApprove}
                     onRejectReason={onSubmitRejectReason}
                     onReject={handleReject}
                     recordId={driverId}
-                    confirmationMessage="Are you sure you want to reject this driver?"
+                    confirmationMessage="Wil je deze bestuurder afwijzen?"
                   />
                   <ButtonWithIcon icon={<BlockIcon />} onClick={handleBlock}>
                     Block

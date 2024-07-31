@@ -14,16 +14,15 @@ dayjs.extend(utc);
 export default dayjs;
 
 const tz = 'Europe/Amsterdam';
-const netherlandsOffset = dayjs().tz(tz).utcOffset();
+const netherlandsOffset = () => dayjs().tz(tz).utcOffset();
 
 export const utcOffset = dayjs().utcOffset();
 export const dayjsExtended = dayjs;
-export const netherlandsTimeNow = dayjs()
-  .utc()
-  .add(netherlandsOffset, 'm')
-  .toDate();
 
 export const dateTimeFormat = (date?: Date | string) =>
   dayjsExtended(date).isValid()
     ? dayjsExtended(date).format('DD/MM/YYYY • HH:mm')
     : '';
+
+export const netherlandsTimeNow = () =>
+  dayjs().utc().add(netherlandsOffset(), 'm').toDate();

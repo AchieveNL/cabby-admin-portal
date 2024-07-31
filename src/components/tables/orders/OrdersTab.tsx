@@ -263,8 +263,42 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
         const mollieId = record?.payment?.mollieId;
         const isPaid = record.payment?.status === PaymentStatus.PAID;
         return (
-          <div className="flex gap-1 justify-end">
-            {status === 'UNPAID' ? (
+          <div className="flex items-center gap-2 justify-end">
+            {status === 'PENDING' ? (
+              <>
+                <DefaultModal
+                  confirmPlaceholder="Bevestigen"
+                  title="Wilt u deze bestuurder bevestigen?"
+                  fn={() => handleApprove(id)}
+                  button={
+                    <ButtonWithIcon
+                      icon={<CheckOutlined rev={undefined} />}
+                      className="text-success-base hover:text-success-light-2 hover:bg-success-base px-2 py-1 rounded-lg"
+                    >
+                      Bevestigen
+                    </ButtonWithIcon>
+                  }
+                >
+                  <>
+                    Als u deze bestuurder bevestigt gaat de bestuurder naar
+                    <strong className="ml-2">Bevestigd</strong>.
+                  </>
+                </DefaultModal>
+                <ActionButtons
+                  onCancel={handleCancel}
+                  recordId={id}
+                  confirmationMessage="Weet je zeker dat u deze order wilt annuleren?"
+                  cancelPlaceholder="Order annuleren"
+                />
+              </>
+            ) : status === 'CONFIRMED' ? (
+              <ActionButtons
+                onCancel={handleCancel}
+                recordId={id}
+                confirmationMessage="Weet je zeker dat u deze order wilt annuleren?"
+                cancelPlaceholder="Order annuleren"
+              />
+            ) : status === 'UNPAID' ? (
               <>
                 {!isStopped && (
                   <Button
