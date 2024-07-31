@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
-import { Modal, Radio, Table, message } from 'antd';
-import { Driver, DriverStatus, UserProfileStatus } from '@/api/drivers/types';
+import { Button, Modal, Radio, Table, message } from 'antd';
+import {
+  Driver,
+  DriverStatus,
+  RegistrationOrder,
+  User,
+  UserProfileStatus,
+} from '@/api/drivers/types';
 import { useDriversByStatus, useUpdateDriverStatus } from '@/api/drivers/hooks';
-import { DriverLicense, PermitDetails } from '@/api/orders/types';
+import {
+  DriverLicense,
+  Payment,
+  PaymentStatus,
+  PermitDetails,
+  UserProfile,
+} from '@/api/orders/types';
 import DefaultModal from '@/components/modals/DefautlModal';
 import { ExportOutlined, ReloadOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -13,6 +25,15 @@ import ButtonWithIcon from '@/components/buttons/buttons';
 import ActionButtons from '@/components/ActionButtons/ActionButtons';
 import { useRouter } from 'next/router';
 import BlockIcon from '@/components/icons/BlockIcon';
+import { refundPayment } from '@/api/payment/payment';
+import Image from 'next/image';
+import { downloadFile } from '@/utils/file';
+
+type Record = UserProfile & {
+  user: User & {
+    registrationOrder: RegistrationOrder & { payment: Payment };
+  };
+};
 
 const useDriversColumns = ({ status }: { status: DriverStatus }) => {
   const router = useRouter();
@@ -74,68 +95,190 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
     showBlockModal();
   };
 
+  const colWidth = 200;
+
   return [
     {
-      title: 'Bestuurder(s)',
+      // width: colWidth,
+      title: 'Bestuurder',
       dataIndex: 'fullName',
       render: (text: string) => <span>{text ? text : 'Not Available'}</span>,
     },
     {
-      title: 'KVK ID',
-      dataIndex: 'permitDetails',
-      render: (permitDetails: PermitDetails) => (
-        <span>
-          {permitDetails && permitDetails.kvkDocumentId
-            ? permitDetails.kvkDocumentId
-            : 'Not Available'}
+      // width: colWidth,
+      title: 'BSN nummer',
+      dataIndex: 'driverLicense',
+      render: (driverLicense: DriverLicense) => (
+        <span>{driverLicense?.bsnNumber || 'Not Available'}</span>
+      ),
+    },
+    {
+      // width: colWidth,
+      title: 'Email',
+      dataIndex: 'user',
+      render: (user: User) => (
+        <span className="lowercase">{user?.email || 'Not Available'}</span>
+      ),
+    },
+    {
+      // width: colWidth,
+      title: 'Geboortedatum',
+      dataIndex: 'user',
+      render: (user: User & { profile: UserProfile }) => (
+        <span className="">
+          {user?.profile?.dateOfBirth || 'Not Available'}
         </span>
       ),
     },
     {
-      title: 'Chauffeurspas',
-      dataIndex: 'permitDetails',
-      render: (permitDetails: PermitDetails) => (
-        <span className="uppercase">
-          {permitDetails && permitDetails.taxiPermitId
-            ? permitDetails.taxiPermitId
-            : 'Not Available'}
+      // width: colWidth,
+      title: 'Adres',
+      dataIndex: 'user',
+      render: (user: User & { profile: UserProfile }) => (
+        <span className="">
+          {user?.profile?.fullAddress || 'Not Available'}
         </span>
       ),
     },
     {
-      title: 'KIWA taxivergunning',
-      dataIndex: 'permitDetails',
-      render: (permitDetails: PermitDetails) => (
-        <span className="uppercase">
-          {permitDetails && permitDetails.kiwaTaxiVergunningId
-            ? permitDetails.kiwaTaxiVergunningId
-            : 'Not Available'}
+      // width: colWidth,
+      title: 'Telefoonnummer',
+      dataIndex: 'user',
+      render: (user: User & { profile: UserProfile }) => (
+        <span className="">
+          {user?.profile?.phoneNumber || 'Not Available'}
         </span>
       ),
     },
     {
+      // width: colWidth,
       title: 'Rijbewijs',
       dataIndex: 'driverLicense',
-      render: (driverLicense: DriverLicense) => (
-        <span>
-          {driverLicense && driverLicense.bsnNumber
-            ? driverLicense.bsnNumber
-            : 'Not Available'}
-        </span>
-      ),
+      render: (driverLicense: DriverLicense) => {
+        const file = driverLicense?.driverLicenseFront;
+        async function fn() {
+          await downloadFile(file);
+        }
+        return (
+          <Button onClick={fn} disabled={!file} className="flex gap-1">
+            <Image
+              width={20}
+              height={20}
+              src="/assets/table/invoice.svg"
+              alt="invoice"
+            />
+          </Button>
+        );
+      },
     },
     {
-      title: 'Verlopen op',
+      // width: colWidth,
+      title: 'Vervaldatum rijbewijs',
       dataIndex: 'driverLicense',
       render: (driverLicense: DriverLicense) => (
-        <span>
-          {driverLicense && driverLicense.driverLicenseExpiry
-            ? dayjs(driverLicense.driverLicenseExpiry).format('DD-MM-YYYY')
-            : 'Not Available'}
-        </span>
+        <span>{driverLicense?.driverLicenseExpiry || 'Not Available'}</span>
       ),
     },
     {
+      // width: colWidth,
+      title: 'Vervaldatum chauffeurspas',
+      dataIndex: 'driverLicense',
+      render: (driverLicense: DriverLicense) => (
+        <span>{driverLicense?.driverLicenseExpiry || 'Not Available'}</span>
+      ),
+    },
+    {
+      // width: colWidth,
+      title: 'Bedrijfsnaam',
+      dataIndex: 'permitDetails',
+      render: (permitDetails: PermitDetails) => (
+        <span>{permitDetails?.companyName || 'Not Available'}</span>
+      ),
+    },
+    {
+      // width: colWidth,
+      title: 'KVK uittreksel',
+      dataIndex: 'permitDetails',
+      render: (permitDetails: PermitDetails) => {
+        const file = permitDetails?.kvkDocument;
+        async function fn() {
+          await downloadFile(file);
+        }
+        return (
+          <Button onClick={fn} disabled={!file} className="flex gap-1">
+            <Image
+              width={20}
+              height={20}
+              src="/assets/table/invoice.svg"
+              alt="invoice"
+            />
+          </Button>
+        );
+      },
+    },
+    {
+      // width: colWidth,
+      title: 'KIWA taxivergunning',
+      dataIndex: 'permitDetails',
+      render: (permitDetails: PermitDetails) => {
+        const file = permitDetails?.kiwaDocument;
+        async function fn() {
+          await downloadFile(file);
+        }
+        return (
+          <Button onClick={fn} disabled={!file} className="flex gap-1">
+            <Image
+              width={20}
+              height={20}
+              src="/assets/table/invoice.svg"
+              alt="invoice"
+            />
+          </Button>
+        );
+      },
+    },
+    {
+      // width: colWidth,
+      title: 'Huurovereenkomst',
+      dataIndex: 'permitDetails',
+      render: (permitDetails: PermitDetails) => <span>{'Not Available'}</span>,
+    },
+    {
+      // width: colWidth,
+      title: 'Borg',
+      dataIndex: 'user',
+      render: (
+        user: User & {
+          registrationOrder: RegistrationOrder & { payment: Payment };
+        },
+      ) => {
+        let totalAmount = user.registrationOrder.totalAmount?.toString();
+        const paymentStatus = user.registrationOrder.payment.status;
+        totalAmount = totalAmount
+          ? '€ ' + totalAmount + ` (${paymentStatus})`
+          : totalAmount;
+
+        const file = user.registrationOrder.invoiceUrl;
+        async function fn() {
+          await downloadFile(file);
+        }
+        return (
+          <span className="flex gap-1 whitespace-nowrap">
+            <button disabled={!file} onClick={fn} className="w-6">
+              <Image
+                width={20}
+                height={20}
+                src="/assets/table/invoice.svg"
+                alt="invoice"
+              />
+            </button>
+            {totalAmount || 'Not Available'}
+          </span>
+        );
+      },
+    },
+    {
+      // width: colWidth,
       title: 'Details',
       dataIndex: 'id',
       render: (id: string) => (
@@ -143,13 +286,23 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
       ),
     },
     {
+      // width: colWidth,
       title: 'Actie',
       dataIndex: 'id',
-      render: (id: string, record: Driver) => {
-        const userId = record.userId;
+      render: (id: string, record: Record) => {
         const driverId = record.id;
+        const status = record.user?.registrationOrder?.payment?.status;
+        const refunded = status === PaymentStatus.REFUNDED;
+
+        const mollieId = record.user.registrationOrder.payment?.mollieId;
+
         return (
           <div className="flex gap-2 items-center">
+            <DefaultModal
+              button={<Button disabled={refunded || !mollieId}>Refund</Button>}
+              title="Refund user deposit"
+              fn={() => refundPayment(mollieId)}
+            ></DefaultModal>
             {['REJECTED', 'BLOCKED'].includes(status) && (
               <DefaultModal
                 title="Wil je zeker dat je deze bestuurder wilt deblokeren?"

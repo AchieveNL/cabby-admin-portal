@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import Image from 'next/image';
 
 // icons
@@ -8,9 +8,10 @@ import DeleteIcon from '@/components/icons/DeleteIcon';
 interface Props {
   confirmPlaceholder?: string;
   title: string;
-  fn: () => void;
+  fn: () => Promise<void>;
   children?: React.ReactNode;
   button: React.ReactNode;
+  icon?: string;
 }
 
 const DefaultModal = ({
@@ -19,6 +20,7 @@ const DefaultModal = ({
   confirmPlaceholder,
   button,
   title,
+  icon = '/assets/modal/success.svg',
 }: Props) => {
   const [open, setOpen] = useState(false);
 
@@ -31,30 +33,29 @@ const DefaultModal = ({
   };
 
   const handleConfirm = async () => {
-    await fn();
-    setOpen(false);
+    try {
+      await fn();
+      setOpen(false);
+      message.success('Successfully');
+    } catch (error) {
+      message.error('Error');
+    }
   };
 
   return (
     <>
       <div onClick={showModal}>{button}</div>
-
       <Modal
         className="remove-close"
         onCancel={hideModal}
-        width={320}
+        width={500}
         open={open}
         centered
         footer={false}
       >
         <div className="text-center">
-          <div className="relative bg-gray-50 rounded-3xl mx-auto w-32 h-32 mb-5">
-            <Image
-              fill
-              className="rounded-3xl"
-              src="/assets/reject-car-image.svg"
-              alt=".."
-            />
+          <div className="relative rounded-3xl mx-auto w-32 h-32 mb-5">
+            <Image fill className="rounded-3xl" src={icon} alt=".." />
           </div>
           <h6 className="mb-2 text-base font-bold text-neutral-100">
             {title ?? 'Title'}
@@ -74,7 +75,7 @@ const DefaultModal = ({
               className="btn-primary w-full"
             >
               <span className="text-base font-bold">
-                {confirmPlaceholder ?? 'Confirm'}
+                {confirmPlaceholder ?? 'Bevestigen'}
               </span>
             </button>
           </div>

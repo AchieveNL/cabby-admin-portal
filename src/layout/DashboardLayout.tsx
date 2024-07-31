@@ -24,15 +24,15 @@ const DashboardLayout = ({ children, breadcrumbItems, headerTitle }: Props) => {
         <meta property="og:title" content="Admin - Cabby" key="title" />
         <link rel="logo" sizes="57x57" href="/logo.png" />
       </Head>
-      <main className="lg:flex min-h-screen max-w-[130rem] mx-auto">
+      <main className="min-h-screen flex">
         <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
-        <div className="lg:flex flex-col flex-1">
+        <div className="lg:flex flex-col col-span-1 flex-1 min-w-0">
           <Header
             breadcrumbItems={breadcrumbItems}
             onMenu={() => setShowSidebar(!showSidebar)}
             headerTitle={headerTitle}
           />
-          <div className="bg-primary-light-4 h-full">{children}</div>
+          <div className="bg-[#FCFCFD] h-full">{children}</div>
         </div>
       </main>
     </>

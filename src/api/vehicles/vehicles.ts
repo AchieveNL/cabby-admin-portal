@@ -142,3 +142,9 @@ export const upsertDeposit = async ({
   await queryClient.invalidateQueries({ queryKey: ['deposit'] });
   return response.data;
 };
+
+export const getLastVehicleDetails = async (): Promise<Vehicle> => {
+  const response = await axios.get(`${VEHICLES_URL}/last-details`);
+
+  return response.data.payload;
+};

@@ -57,10 +57,10 @@ const Header = ({ onMenu, breadcrumbItems, headerTitle }: Props) => {
             </button>
           </div>
           <div className="mr-auto">
-            <h6 className="mb-2 text-primary-base text-base font-bold">
+            <h6 className="mb-2 text-black text-base font-bold">
               {getPageName()}
             </h6>
-            <Breadcrumb items={breadcrumbItems} />
+            {/* <Breadcrumb items={breadcrumbItems} /> */}
           </div>
           <div className="flex gap-6 lg:gap-8">
             <div className="flex items-center gap-3 lg:gap-6">

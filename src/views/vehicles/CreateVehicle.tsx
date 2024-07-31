@@ -6,14 +6,20 @@ import {
   Input,
   InputNumber,
   Row,
+  Select,
   Table,
   message,
 } from 'antd';
 import UploadImage from '@/components/inputs/UploadImage';
 import { useRouter } from 'next/router'; // Fixed 'next/navigation' to 'next/router'
-import { VehicleInput, VehicleStatus } from '@/api/vehicles/types';
+import {
+  VehicleEngineType,
+  VehicleInput,
+  VehicleStatus,
+} from '@/api/vehicles/types';
 import {
   useCreateVehicle,
+  useGetLastVehicleDetails,
   useUpdateVehicle,
   useVehicleById,
 } from '@/api/vehicles/hooks';
@@ -24,6 +30,7 @@ import {
   getVehicleByRDWLicencePlate,
 } from '@/api/vehicles/vehicles';
 import { ColumnsType } from 'antd/es/table';
+import nlJson from '@/utils/nl.json';
 
 const timeframesTitles = [
   '00:00 T/M 6:00',
@@ -87,11 +94,13 @@ const initialVehicleData: VehicleInput = {
   licensePlate: '',
   category: '',
   manufactureYear: '',
-  engineType: '',
+  engineType: undefined,
   seatingCapacity: '',
-  batteryCapacity: '',
+  batteryCapacity: NaN,
   uniqueFeature: '',
   images: [],
+  registrationCertificates: [],
+  insuranceCertificates: [],
   papers: [],
   availability: 'available',
   currency: 'EUR',
@@ -101,19 +110,30 @@ const initialVehicleData: VehicleInput = {
   timeframes: defaultTimeframes,
   streetName: '',
   streetNumber: '',
-  zipcodeNumber: '',
-  zipcodeCharacter: '',
+  zipcode: '',
   state: '',
+  title: '',
+  description: '',
 };
 
 const CreateVehicle: React.FC = () => {
+  const router = useRouter();
+  const isCreate = !router.query.vehicleId;
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
-  const { mutateAsync: create, isPending: isCreating } = useCreateVehicle();
+  const { mutate: create, isPending: isCreating } = useCreateVehicle();
   const { mutateAsync: update } = useUpdateVehicle();
-  const router = useRouter();
   const [form] = Form.useForm();
   const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
+  const { data: lastVehicleDetails } = useGetLastVehicleDetails();
+  useEffect(() => {
+    if (lastVehicleDetails && isCreate) {
+      setVehicleData((el) => ({
+        ...el,
+        timeframes: lastVehicleDetails.timeframes,
+      }));
+    }
+  }, [lastVehicleDetails]);
 
   const columns: ColumnsType<object> | undefined = timeframesStructure.map(
     (el, dayIndex) => ({
@@ -145,7 +165,7 @@ const CreateVehicle: React.FC = () => {
                 }));
               }}
               value={value}
-              addonAfter="€"
+              addonBefore="€"
               className="w-full"
             />
           </div>
@@ -162,9 +182,14 @@ const CreateVehicle: React.FC = () => {
           ...initialVehicleData,
           ...vehicle,
           timeframes: initialVehicleData.timeframes,
+          damageReports: undefined,
         });
       }
-      setVehicleData({ ...initialVehicleData, ...vehicle });
+      setVehicleData({
+        ...initialVehicleData,
+        ...vehicle,
+        damageReports: undefined,
+      });
     }
   }, [vehicle]);
 
@@ -226,42 +251,76 @@ const CreateVehicle: React.FC = () => {
   }
 
   const handleCreateVehicle = async () => {
-    const validate = validateForm(vehicleData);
-    if (!!validate) return;
-    if (router.query.vehicleId) {
-      // update
-      vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
-      // vehicleData.status = VehicleStatus.PENDING;
-      await update({ id: router.query.vehicleId as string, data: vehicleData });
-      message.success('Vehicle updated successfully');
+    try {
+      const validate = validateForm(vehicleData);
+      if (!!validate) return;
+      vehicleData.batteryCapacity = vehicleData.batteryCapacity?.toString();
+      if (router.query.vehicleId) {
+        // update
+        vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
+        // vehicleData.status = VehicleStatus.PENDING;
+        await update({
+          id: router.query.vehicleId as string,
+          data: vehicleData,
+        });
+        message.success('Vehicle updated successfully');
+      } else {
+        const data = await create(vehicleData);
+        // if (data) {
+        message.success('Vehicle added successfully');
+        // }
+      }
       router.push('/dashboard/vehicles');
-    } else {
-      const data = await create(vehicleData);
-      // if (data) {
-      message.success('Vehicle added successfully');
-      router.push('/dashboard/vehicles');
-      // }
+    } catch (error) {
+      console.log(error);
+      message.error('Error!');
     }
   };
 
-  const onSetPaperImageUrl = (url: string) => {
+  const onSetInsuranceImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
-      papers: [...prevData.papers, url],
+      insuranceCertificates: [...prevData.insuranceCertificates, url],
     }));
   };
+
+  const onRemoveInsuranceImage = (url: string) => {
+    setVehicleData((prevData) => ({
+      ...prevData,
+      insuranceCertificates: prevData.insuranceCertificates.filter(
+        (el) => el !== url,
+      ),
+    }));
+  };
+
   const onRemoveCarImage = (url: string) => {
+    setVehicleData((prevData) => {
+      console.log(url, prevData.images);
+      return {
+        ...prevData,
+        images: prevData.images.filter((el) => el !== url),
+      };
+    });
+  };
+
+  const onSetRegistrationImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
-      images: prevData.images.filter((el) => el !== url),
+      registrationCertificates: [...prevData.registrationCertificates, url],
     }));
   };
-  const onRemovePaperImage = (url: string) => {
-    setVehicleData((prevData) => ({
-      ...prevData,
-      papers: prevData.papers.filter((el) => el !== url),
-    }));
+  const onRemoveRegistrationImage = (url: string) => {
+    setVehicleData((prevData) => {
+      return {
+        ...prevData,
+        registrationCertificates: prevData.registrationCertificates.filter(
+          (el) => el !== url,
+        ),
+      };
+    });
   };
+
+  console.log(vehicleData);
   const onSetCarImageUrl = (url: string) => {
     setVehicleData((prevData) => ({
       ...prevData,
@@ -269,10 +328,43 @@ const CreateVehicle: React.FC = () => {
     }));
   };
 
+  const engineTypeOptions = [
+    { label: 'Benzine', value: VehicleEngineType.BENZINE },
+    { label: 'Hybride benzine', value: VehicleEngineType.HYBRIDE_BENZINE },
+    { label: 'Diesel', value: VehicleEngineType.DIESEL },
+    { label: 'Hybride diesel', value: VehicleEngineType.HYBRIDE_DIESEL },
+    { label: 'Elektrisch', value: VehicleEngineType.ELEKTRISCH },
+  ];
+
+  const onSelectChange = (name: string) => {
+    const handleOnChange = (value: string) => {
+      setVehicleData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    };
+    return handleOnChange;
+  };
+
+  const zipcodeValidator = (rule, value, callback) => {
+    if (!value) {
+      return Promise.reject(new Error('Please input your zipcode!'));
+    }
+    if (!/^\d{4}[a-zA-Z]{2}$/.test(value)) {
+      return Promise.reject(new Error('Wrong format!'));
+    }
+    return Promise.resolve();
+  };
+
+  const citiesOptions = nlJson.map((el) => ({ label: el, value: el }));
+
   return (
-    <div className="p-8">
+    <div className="p-4">
       <div className="flex mb-4">
-        <Input
+        <Button onClick={() => router.push('/dashboard/vehicles')}>
+          terug
+        </Button>
+        {/* <Input
           placeholder="Search Plate Number"
           value={searchPlate}
           onChange={(e) => setSearchPlate(e.target.value)}
@@ -283,106 +375,139 @@ const CreateVehicle: React.FC = () => {
           className="btn-primary min-w-[10rem] rounded-s-none"
         >
           <span className="font-bold">Search Vehicle</span>
-        </button>
+        </button> */}
       </div>
       <Form
         onFinish={handleCreateVehicle}
         form={form}
         layout={'vertical'}
         initialValues={vehicleData}
+        scrollToFirstError
+        className="flex flex-col gap-4"
       >
-        <div className="vehicle-form bg-white border border-gray-300 rounded-xl p-6">
-          <h1 className="text-xl mb-6 font-medium">Autodetails</h1>
+        <div className="bg-white border border-gray-300 rounded-xl p-6">
+          <h1 className="text-xl mb-6">Autodetails</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Automerk is required!' }]}
-              label="Automerk"
-              name="companyName"
-            >
+            <Form.Item<any> label="Automerk" name="companyName" required>
               <Input
                 name="companyName"
                 value={vehicleData?.companyName}
                 onChange={handleInputChange}
-                placeholder="e.g., Toyota"
+                placeholder="Bijv: Tesla"
+                required
               />
             </Form.Item>
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Model is required!' }]}
-              label="Model"
-              name="model"
-            >
+            <Form.Item<any> label="Model" name="model" required>
               <Input
+                required
                 name="model"
                 value={vehicleData?.model}
                 onChange={handleInputChange}
-                placeholder="e.g., Camry"
+                placeholder="Bijv: Model 3"
               />
             </Form.Item>
-            <Form.Item<any>
-              label="Kenteken"
-              name="licensePlate"
-              rules={[{ required: true, message: 'Kenteken is required!' }]}
-            >
+            <Form.Item<any> label="Kenteken" name="licensePlate" required>
               <Input
+                required
                 name="licensePlate"
                 value={vehicleData?.licensePlate}
                 onChange={handleInputChange}
-                placeholder="e.g., ABC 1234"
+                placeholder="Bijv: 12ABCD"
               />
-            </Form.Item>{' '}
-            <Form.Item<any>
-              rules={[{ required: true, message: 'VIN nummer is required!' }]}
-              label="VIN nummer"
-              name="vin"
-            >
+            </Form.Item>
+            <Form.Item<any> label="VIN nummer" name="vin" required>
               <Input
+                required
                 name="vin"
                 value={vehicleData?.vin}
                 onChange={handleInputChange}
-                placeholder="e.g., VIN number of the tesla"
+                placeholder="Bijv: 12345678910111213"
               />
             </Form.Item>
             <Form.Item<any>
-              rules={[{ required: true, message: 'Bouwjaar is required!' }]}
-              label="Bouwjaar"
-              name="manufactureYear"
+              label="Motor"
+              name="engineType"
+              rules={[{ required: true, message: '' }]}
             >
+              <Select
+                allowClear
+                size="large"
+                options={engineTypeOptions}
+                name="engineType"
+                value={vehicleData?.engineType}
+                onChange={onSelectChange('engineType')}
+                placeholder="Bijv: Elektrisch"
+              />
+            </Form.Item>
+            <Form.Item<any>
+              label="Actieradius"
+              name="batteryCapacity"
+              rules={[{ required: true, message: '' }]}
+            >
+              <InputNumber
+                required
+                size="large"
+                className="w-full"
+                addonAfter="KM"
+                name="batteryCapacity"
+                value={vehicleData?.batteryCapacity}
+                onChange={onSelectChange('batteryCapacity')}
+                placeholder="Bijv: 100 km"
+              />
+            </Form.Item>
+            <Form.Item<any> label="Bouwjaar" name="manufactureYear" required>
               <Input
-                type="number"
+                required
                 name="manufactureYear"
                 value={vehicleData?.manufactureYear}
                 onChange={handleInputChange}
-                placeholder="e.g., 2022"
+                placeholder="Bijv: 12345678910111213"
               />
-            </Form.Item>
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Actieradius is required!' }]}
-              label="Actieradius"
-              name="batteryCapacity"
-            >
+            </Form.Item>{' '}
+            <Form.Item<any> label="Zitplaatsen" name="seatingCapacity" required>
               <Input
-                type="number"
-                name="batteryCapacity"
-                value={vehicleData?.batteryCapacity}
-                onChange={handleInputChange}
-                placeholder="100 Km "
-              />
-            </Form.Item>
-            <Form.Item<any>
-              rules={[{ required: true, message: 'Zitplaatsen is required!' }]}
-              label="Zitplaatsen"
-              name="seatingCapacity"
-            >
-              <Input
-                type="number"
+                required
                 name="seatingCapacity"
                 value={vehicleData?.seatingCapacity}
                 onChange={handleInputChange}
-                placeholder="e.g., 5"
+                placeholder="Bijv: 5"
               />
             </Form.Item>
-            <h1 className="col-span-full text-xl font-medium">Ophaallocatie</h1>
-            <div className="col-span-full flex w-full gap-2">
+            <Form.Item<any>
+              label="Titel"
+              name="title"
+              className="col-span-full"
+              required
+            >
+              <Input
+                required
+                name="title"
+                value={vehicleData?.seatingCapacity}
+                onChange={handleInputChange}
+                placeholder="Bij: Lorem"
+              />
+            </Form.Item>
+            <Form.Item<any>
+              label="Omschrijving"
+              name="description"
+              className="col-span-full"
+              required
+            >
+              <Input.TextArea
+                required
+                name="description"
+                value={vehicleData?.seatingCapacity}
+                onChange={handleInputChange}
+                placeholder="Bij: Lorem"
+                rows={5}
+              />
+            </Form.Item>
+          </div>
+        </div>
+        <div className="bg-white border border-gray-300 rounded-xl p-6">
+          <div className="">
+            <h1 className="col-span-full text-xl">Ophaallocatie</h1>
+            <div className="col-span-full grid grid-cols-2 w-full gap-2">
               <Form.Item<any>
                 rules={[{ required: true, message: 'Straatnaam is required!' }]}
                 label="Straatnaam"
@@ -390,10 +515,11 @@ const CreateVehicle: React.FC = () => {
                 className="flex-1"
               >
                 <Input
+                  required
                   name="streetName"
                   value={vehicleData?.streetName}
                   onChange={handleInputChange}
-                  placeholder="Damstraat"
+                  placeholder="Bijv: Damstraat"
                 />
               </Form.Item>
               <Form.Item<any>
@@ -403,101 +529,129 @@ const CreateVehicle: React.FC = () => {
                 className="flex-1"
               >
                 <Input
+                  required
                   name="streetNumber"
                   value={vehicleData?.streetNumber}
                   onChange={handleInputChange}
-                  placeholder="34"
+                  placeholder="Bijv: 34"
                 />
               </Form.Item>
-            </div>
-            <div className="col-span-full flex w-full gap-2">
-              <div className="flex-1 flex gap-2">
-                <Form.Item<any>
-                  rules={[{ required: true, message: 'Postcode is required!' }]}
-                  label="Postcode"
-                  name="zipcodeNumber"
-                  className="flex-[2]"
-                >
-                  <Input
-                    name="zipcodeNumber"
-                    value={vehicleData?.zipcodeNumber}
-                    onChange={handleInputChange}
-                    placeholder="1234"
-                  />
-                </Form.Item>
-                <Form.Item<any>
-                  rules={[{ required: true, message: 'Is required!' }]}
-                  label=""
-                  name="zipcodeCharacter"
-                  className="flex flex-col justify-end flex-1"
-                >
-                  <Input
-                    name="zipcodeCharacter"
-                    value={vehicleData?.zipcodeCharacter}
-                    onChange={handleInputChange}
-                    placeholder="AB"
-                  />
-                </Form.Item>
-              </div>
               <Form.Item<any>
-                rules={[{ required: true, message: 'Plaats is required!' }]}
-                label="Plaats"
-                name="state"
-                className="flex-1"
+                label="Postcode"
+                name="zipcode"
+                className="w-full"
+                rules={[
+                  // {
+                  //   type: 'regexp',
+                  //   pattern: new RegExp('([a-zA-Z]{3,30}\\s*)+'),
+                  //   required: true,
+                  //   message: 'Wrong format!',
+                  // },
+                  {
+                    validator: zipcodeValidator,
+                  },
+                ]}
+                hasFeedback={false}
+                required
               >
                 <Input
+                  required
+                  name="zipcode"
+                  value={vehicleData?.zipcodeNumber}
+                  onChange={handleInputChange}
+                  placeholder="Bijvoorbeed: 1234AB"
+                />
+              </Form.Item>
+              <Form.Item<any>
+                label="Plaats"
+                name="state"
+                className="w-full"
+                required
+                rules={[{ required: true, message: '' }]}
+              >
+                <Select
+                  showSearch
+                  size="large"
+                  options={citiesOptions}
                   name="state"
                   value={vehicleData?.state}
-                  onChange={handleInputChange}
-                  placeholder="Amsterdam"
+                  onChange={onSelectChange('state')}
+                  placeholder="Bijv: Amsterdam"
+                  allowClear
                 />
               </Form.Item>
             </div>
           </div>
+        </div>
+        <div className="bg-white border border-gray-300 rounded-xl p-6">
+          <h3 className="text-lg">Prijzen</h3>
           <Table
             rowClassName="bg-primary-light-2"
             dataSource={dataSource}
             columns={columns}
             pagination={false}
           />
-          <div className={styles.columns}>
-            <h3 className="text-lg">Car images</h3>
-            <div>
-              <Row gutter={16}>
-                {vehicleData.images.map((image) => (
-                  <Col span={6} key={image}>
-                    <DisplayImage
-                      imageUrl={image}
-                      onImageDelete={onRemoveCarImage}
-                    />
-                  </Col>
-                ))}
-              </Row>
+        </div>
+        <div className="">
+          <div className="flex flex-col gap-4">
+            <div className="bg-white border border-gray-300 rounded-xl p-6">
+              <h3 className="text-xl mb-2">Autopapieren</h3>
+              <div className="bg-white border border-gray-300 rounded-xl p-3 mb-2">
+                <h4 className="text-lg">Upload kentekenbewijs</h4>
+                <Row gutter={16} className="mb-2">
+                  {vehicleData.registrationCertificates.map((image) => (
+                    <Col span={6} key={image}>
+                      <DisplayImage
+                        imageUrl={image}
+                        onImageDelete={onRemoveRegistrationImage}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+                <UploadImage
+                  placeholder="Geuploade bestanden"
+                  setImageUrl={onSetRegistrationImageUrl}
+                />
+              </div>
+              <div className="bg-white border border-gray-300 rounded-xl p-3">
+                <h4 className="text-lg">Upload verzekeringsbewijs</h4>
+                <Row gutter={16} className="mb-2">
+                  {vehicleData.insuranceCertificates.map((image) => (
+                    <Col span={6} key={image}>
+                      <DisplayImage
+                        imageUrl={image}
+                        onImageDelete={onRemoveInsuranceImage}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+                <UploadImage
+                  placeholder="Geuploade bestanden"
+                  setImageUrl={onSetInsuranceImageUrl}
+                />
+              </div>
+
             </div>
-            <div>
-              <UploadImage
-                placeholder="Upload car images"
-                setImageUrl={onSetCarImageUrl}
-              />
-            </div>
-            <h3 className="text-lg">Paper images</h3>
-            <div>
-              <Row gutter={16}>
-                {vehicleData.papers.map((image) => (
-                  <Col span={6} key={image}>
-                    <DisplayImage
-                      imageUrl={image}
-                      onImageDelete={onRemovePaperImage}
-                    />
-                  </Col>
-                ))}
-              </Row>
-            </div>
-            <div>
-              <UploadImage
-                placeholder="Upload paper images"
-                setImageUrl={onSetPaperImageUrl}
-              />
+            <div className="bg-white border border-gray-300 rounded-xl p-6">
+              <h3 className="text-lg">Upload auto afbeeldingen</h3>
+              <div className="mb-2">
+                <Row gutter={16}>
+                  {vehicleData.images.map((image) => (
+                    <Col span={6} key={image}>
+                      <DisplayImage
+                        imageUrl={image}
+                        onImageDelete={onRemoveCarImage}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+              <div>
+                <UploadImage
+                  placeholder="Geuploade bestanden"
+                  setImageUrl={onSetCarImageUrl}
+                />
+              </div>
             </div>
             <div>
               <Button

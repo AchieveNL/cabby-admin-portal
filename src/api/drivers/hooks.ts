@@ -9,26 +9,30 @@ import { useQuery } from '@tanstack/react-query';
 const key = 'drivers';
 
 export const useAllDrivers = () => {
-  const [data, setData] = useState<Driver[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError | null>(null);
+  return useQuery<Driver[]>({
+    queryKey: [key],
+    queryFn: DriverAPI.getAllDrivers,
+  });
+  // const [data, setData] = useState<Driver[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<AxiosError | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const drivers = await DriverAPI.getAllDrivers();
-        setData(drivers);
-      } catch (error) {
-        setError(error as AxiosError);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const drivers = await DriverAPI.getAllDrivers();
+  //       setData(drivers);
+  //     } catch (error) {
+  //       setError(error as AxiosError);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
-  return { data, loading, error };
+  // return { data, loading, error };
 };
 
 export const useDriversByStatus = (status: DriverStatus) => {

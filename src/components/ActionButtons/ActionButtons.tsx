@@ -9,7 +9,7 @@ import { invalidateOrders } from '@/api/orders/orders';
 import DefaultModal from '../modals/DefautlModal';
 
 interface Props {
-  onApprove?: (id: string) => void;
+  onApprove?: (id: string) => Promise<void>;
   onRejectReason?: (id: string, reason: string) => void;
   onReject?: (id: string) => void;
   onCancel?: (id: string) => void;
