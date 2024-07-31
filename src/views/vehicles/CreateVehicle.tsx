@@ -109,8 +109,8 @@ const initialVehicleData: VehicleInput = {
 const CreateVehicle: React.FC = () => {
   const [searchPlate, setSearchPlate] = useState<string>('');
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
-  const { mutate: create, isPending: isCreating } = useCreateVehicle();
-  const { update } = useUpdateVehicle();
+  const { mutateAsync: create, isPending: isCreating } = useCreateVehicle();
+  const { mutateAsync: update } = useUpdateVehicle();
   const router = useRouter();
   const [form] = Form.useForm();
   const { data: vehicle } = useVehicleById(router.query.vehicleId as string);
@@ -232,7 +232,7 @@ const CreateVehicle: React.FC = () => {
       // update
       vehicleData.pricePerDay = Number(vehicleData.pricePerDay);
       // vehicleData.status = VehicleStatus.PENDING;
-      await update(router.query.vehicleId as string, vehicleData);
+      await update({ id: router.query.vehicleId as string, data: vehicleData });
       message.success('Vehicle updated successfully');
       router.push('/dashboard/vehicles');
     } else {
@@ -280,14 +280,36 @@ const CreateVehicle: React.FC = () => {
         initialValues={vehicleData}
       >
         <div className="vehicle-form bg-white border border-gray-300 rounded-xl p-6">
-          <h1 className="text-xl mb-6">Autodetails</h1>
+          <h1 className="text-xl mb-6 font-medium">Autodetails</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Form.Item<any>
-              label="Nummerplaat"
+              rules={[{ required: true, message: 'Automerk is required!' }]}
+              label="Automerk"
+              name="companyName"
+            >
+              <Input
+                name="companyName"
+                value={vehicleData?.companyName}
+                onChange={handleInputChange}
+                placeholder="e.g., Toyota"
+              />
+            </Form.Item>
+            <Form.Item<any>
+              rules={[{ required: true, message: 'Model is required!' }]}
+              label="Model"
+              name="model"
+            >
+              <Input
+                name="model"
+                value={vehicleData?.model}
+                onChange={handleInputChange}
+                placeholder="e.g., Camry"
+              />
+            </Form.Item>
+            <Form.Item<any>
+              label="Kenteken"
               name="licensePlate"
-              // rules={[
-              //   { required: true, message: 'Please input your username!' },
-              // ]}
+              rules={[{ required: true, message: 'Kenteken is required!' }]}
             >
               <Input
                 name="licensePlate"
@@ -296,80 +318,11 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., ABC 1234"
               />
             </Form.Item>{' '}
-            <Form.Item<any> label="Company" name="companyName">
-              <Input
-                name="companyName"
-                value={vehicleData?.companyName}
-                onChange={handleInputChange}
-                placeholder="e.g., Toyota"
-              />
-            </Form.Item>
-            <Form.Item<any> label="Modelnaam" name="model">
-              <Input
-                name="model"
-                value={vehicleData?.model}
-                onChange={handleInputChange}
-                placeholder="e.g., Camry"
-              />
-            </Form.Item>
-            <Form.Item<any> label="Type" name="availability">
-              <Input
-                name="availability"
-                value={vehicleData?.availability}
-                onChange={handleInputChange}
-                placeholder="e.g., Available"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Jaar" name="manufactureYear">
-              <Input
-                name="manufactureYear"
-                value={vehicleData?.manufactureYear}
-                onChange={handleInputChange}
-                placeholder="e.g., 2022"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Motor" name="engineType">
-              <Input
-                name="engineType"
-                value={vehicleData?.engineType}
-                onChange={handleInputChange}
-                placeholder="e.g., V8"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Zitplaatsen" name="seatingCapacity">
-              <Input
-                name="seatingCapacity"
-                value={vehicleData?.seatingCapacity}
-                onChange={handleInputChange}
-                placeholder="e.g., 5"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Batterij capaciteit" name="batteryCapacity">
-              <Input
-                name="batteryCapacity"
-                value={vehicleData?.batteryCapacity}
-                onChange={handleInputChange}
-                placeholder="e.g., 4000mAh"
-              />
-            </Form.Item>{' '}
-            {/* <Form.Item<any> label="Price From" name="pricePerDay">
-              <Input
-                type="number"
-                name="pricePerDay"
-                value={vehicleData?.pricePerDay}
-                onChange={handleInputChange}
-                placeholder="e.g., 100"
-              />
-            </Form.Item>{' '} */}
-            <Form.Item<any> label="Unique Feature" name="uniqueFeature">
-              <Input
-                name="uniqueFeature"
-                value={vehicleData?.uniqueFeature}
-                onChange={handleInputChange}
-                placeholder="e.g., Self-parking feature"
-              />
-            </Form.Item>
-            <Form.Item<any> label="VIN nummer" name="vin">
+            <Form.Item<any>
+              rules={[{ required: true, message: 'VIN nummer is required!' }]}
+              label="VIN nummer"
+              name="vin"
+            >
               <Input
                 name="vin"
                 value={vehicleData?.vin}
@@ -377,29 +330,52 @@ const CreateVehicle: React.FC = () => {
                 placeholder="e.g., VIN number of the tesla"
               />
             </Form.Item>
-            <h1 className="col-span-full text-xl">Huurdetails</h1>
-            <Form.Item<any> label="Min. huurperiode" name="rentalDuration">
+            <Form.Item<any>
+              rules={[{ required: true, message: 'Bouwjaar is required!' }]}
+              label="Bouwjaar"
+              name="manufactureYear"
+            >
               <Input
-                name="rentalDuration"
-                value={vehicleData?.rentalDuration}
+                type="number"
+                name="manufactureYear"
+                value={vehicleData?.manufactureYear}
                 onChange={handleInputChange}
-                placeholder="e.g., 7 days"
-              />
-            </Form.Item>{' '}
-            <Form.Item<any> label="Munteenheid" name="currency">
-              <Input
-                name="currency"
-                value={vehicleData?.currency}
-                onChange={handleInputChange}
-                placeholder="e.g., EUR"
+                placeholder="e.g., 2022"
               />
             </Form.Item>
-            <h1 className="col-span-full text-xl">Ophaallocatie</h1>
-            <div className="col-span-1 flex w-full gap-2">
+            <Form.Item<any>
+              rules={[{ required: true, message: 'Actieradius is required!' }]}
+              label="Actieradius"
+              name="batteryCapacity"
+            >
+              <Input
+                type="number"
+                name="batteryCapacity"
+                value={vehicleData?.batteryCapacity}
+                onChange={handleInputChange}
+                placeholder="100 Km "
+              />
+            </Form.Item>
+            <Form.Item<any>
+              rules={[{ required: true, message: 'Zitplaatsen is required!' }]}
+              label="Zitplaatsen"
+              name="seatingCapacity"
+            >
+              <Input
+                type="number"
+                name="seatingCapacity"
+                value={vehicleData?.seatingCapacity}
+                onChange={handleInputChange}
+                placeholder="e.g., 5"
+              />
+            </Form.Item>
+            <h1 className="col-span-full text-xl font-medium">Ophaallocatie</h1>
+            <div className="col-span-full flex w-full gap-2">
               <Form.Item<any>
+                rules={[{ required: true, message: 'Straatnaam is required!' }]}
                 label="Straatnaam"
                 name="streetName"
-                className="w-full"
+                className="flex-1"
               >
                 <Input
                   name="streetName"
@@ -409,9 +385,10 @@ const CreateVehicle: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item<any>
+                rules={[{ required: true, message: 'Huisnummer is required!' }]}
                 label="Huisnummer"
                 name="streetNumber"
-                className="flex flex-col justify-end"
+                className="flex-1"
               >
                 <Input
                   name="streetNumber"
@@ -421,32 +398,41 @@ const CreateVehicle: React.FC = () => {
                 />
               </Form.Item>
             </div>
-            <div className="col-span-1 flex w-full gap-2">
-              <Form.Item<any>
-                label="Postcode"
-                name="zipcodeNumber"
-                className="w-full"
-              >
-                <Input
+            <div className="col-span-full flex w-full gap-2">
+              <div className="flex-1 flex gap-2">
+                <Form.Item<any>
+                  rules={[{ required: true, message: 'Postcode is required!' }]}
+                  label="Postcode"
                   name="zipcodeNumber"
-                  value={vehicleData?.zipcodeNumber}
-                  onChange={handleInputChange}
-                  placeholder="1234"
-                />
-              </Form.Item>
-              <Form.Item<any>
-                label=""
-                name="zipcodeCharacter"
-                className="flex flex-col justify-end"
-              >
-                <Input
+                  className="flex-[2]"
+                >
+                  <Input
+                    name="zipcodeNumber"
+                    value={vehicleData?.zipcodeNumber}
+                    onChange={handleInputChange}
+                    placeholder="1234"
+                  />
+                </Form.Item>
+                <Form.Item<any>
+                  rules={[{ required: true, message: 'Is required!' }]}
+                  label=""
                   name="zipcodeCharacter"
-                  value={vehicleData?.zipcodeCharacter}
-                  onChange={handleInputChange}
-                  placeholder="AB"
-                />
-              </Form.Item>
-              <Form.Item<any> label="Plaats" name="state" className="w-full">
+                  className="flex flex-col justify-end flex-1"
+                >
+                  <Input
+                    name="zipcodeCharacter"
+                    value={vehicleData?.zipcodeCharacter}
+                    onChange={handleInputChange}
+                    placeholder="AB"
+                  />
+                </Form.Item>
+              </div>
+              <Form.Item<any>
+                rules={[{ required: true, message: 'Plaats is required!' }]}
+                label="Plaats"
+                name="state"
+                className="flex-1"
+              >
                 <Input
                   name="state"
                   value={vehicleData?.state}
