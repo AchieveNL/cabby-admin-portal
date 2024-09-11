@@ -8,6 +8,8 @@ interface Props {
   children: React.ReactNode;
 }
 const AuthLayout = ({ children }: Props) => {
+  // TODO: add dashboard redirection when user logged in
+
   return (
     <>
       <Head>

@@ -252,8 +252,8 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
           registrationOrder: RegistrationOrder & { payment: Payment };
         },
       ) => {
-        let totalAmount = user.registrationOrder.totalAmount?.toString();
-        const paymentStatus = user.registrationOrder.payment.status;
+        let totalAmount = user.registrationOrder?.totalAmount?.toString();
+        const paymentStatus = user.registrationOrder?.payment?.status;
         totalAmount = totalAmount
           ? '€ ' + totalAmount + ` (${paymentStatus})`
           : totalAmount;
@@ -294,7 +294,7 @@ const useDriversColumns = ({ status }: { status: DriverStatus }) => {
         const status = record.user?.registrationOrder?.payment?.status;
         const refunded = status === PaymentStatus.REFUNDED;
 
-        const mollieId = record.user.registrationOrder.payment?.mollieId;
+        const mollieId = record.user.registrationOrder?.payment?.mollieId;
 
         return (
           <div className="flex gap-2 items-center">
