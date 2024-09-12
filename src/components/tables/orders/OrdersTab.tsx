@@ -127,7 +127,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
       ),
     },
     {
-      title: "Auto's",
+      title: 'Auto',
       dataIndex: 'vehicle',
       className: 'table-bg-primary',
       key: 'vehicle',
@@ -141,7 +141,7 @@ const useColumns = ({ status }: { status: Keys }): TableColumnsType<Data> => {
             className="rounded-full aspect-square object-cover"
           />
           {/* <img src={vehicle.images?.[0]} alt={vehicle.companyName} /> */}
-          <div>{vehicle.companyName}</div>
+          <div>{`${vehicle.companyName} ${vehicle.model}`}</div>
         </div>
       ),
     },
